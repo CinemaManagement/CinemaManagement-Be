@@ -2,7 +2,6 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const { ROLE } = require("../constraints/role");
-const { getRoleNameByKey } = require("../cache/roleCache");
 
 const handleSignup = async (req, res) => {
   if (!req.body?.email || !req.body?.password) {
@@ -24,11 +23,11 @@ const handleSignup = async (req, res) => {
     await User.create({
       email,
       password: hashPass,
-      roleKey: req.body?.roleKey,
+      role: req.body?.role,
     });
 
     return res.status(201).json({
-      message: `Welcome ${email} as ${req.body?.roleKey ? getRoleNameByKey(req.body.roleKey) : getRoleNameByKey(ROLE.CUSTOMER)}`,
+      message: `Welcome ${email} as ${req.body?.role ? req.body.role : ROLE.CUSTOMER}`,
     });
   } catch (error) {
     console.error(error);
@@ -68,8 +67,9 @@ const handleLogin = async (req, res) => {
 
     const accessToken = jwt.sign(
       {
+        userId: matchUser._id,
         email: matchUser.email,
-        roleKey: matchUser.roleKey,
+        role: matchUser.role,
       },
       process.env.ACCESS_TOKEN_SECRET,
       { expiresIn: "1h" },

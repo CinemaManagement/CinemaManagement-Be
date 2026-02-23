@@ -1,9 +1,23 @@
 const User = require("../models/User");
-
+const { ROLE } = require("../constraints/role");
 const getAllUsers = async (req, res) => {
   try {
     const users = await User.find();
     res.status(200).json(users);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Unexpected error occured!" });
+  }
+};
+const addUser = async (req, res) => {
+  try {
+    const { email, password, role } = req.body;
+    const user = await User.create({
+      email,
+      password,
+      role: role || ROLE.CUSTOMER,
+    });
+    res.status(201).json(user);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Unexpected error occured!" });
@@ -25,4 +39,4 @@ const deleteUser = async (req, res) => {
     res.status(500).json({ message: "Unexpected error occured!" });
   }
 };
-module.exports = { getAllUsers, deleteUser };
+module.exports = { getAllUsers, addUser, deleteUser };

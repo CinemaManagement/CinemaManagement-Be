@@ -1,14 +1,14 @@
 const verifyRoles = (...allowedRoles) => {
   return (req, res, next) => {
-    const roleKey = req.roleKey;
-    if (!roleKey) {
+    const role = req.role;
+    if (!role) {
       return res
         .status(401)
         .json({ message: "You haven't login yet! Please try again!" });
     }
     const rolesArray = [...allowedRoles];
 
-    const result = rolesArray.includes(req.roleKey);
+    const result = rolesArray.includes(req.role);
     if (!result)
       return res
         .status(401)

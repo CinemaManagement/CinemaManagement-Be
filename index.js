@@ -9,6 +9,8 @@ const app = express();
 require("dotenv").config();
 const { initSocket } = require("./socket/socket.js");
 const connectDB = require("./config/connectDB.js");
+const swaggerUi = require("swagger-ui-express");
+const swaggerFile = require("./swagger-output.json");
 
 const PORT = 3800;
 app.use(cors(corOptions));
@@ -24,6 +26,8 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerFile));
+
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
@@ -32,7 +36,6 @@ app.use("/auth", require("./routers/auth.route.js"));
 
 // verify jwt
 app.use(verifyJwt);
-app.use("/api/roles", require("./routers/api/role.route.js"));
 app.use("/api/users", require("./routers/api/user.route.js"));
 
 app.use((req, res, next) => {
@@ -43,4 +46,5 @@ app.use((req, res, next) => {
 
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}...`);
+  console.log(`Swagger is running on port http://localhost:${PORT}/api-docs`);
 });

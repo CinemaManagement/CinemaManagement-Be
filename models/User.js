@@ -13,8 +13,8 @@ const UserSchema = new Schema(
       type: String,
       require,
     },
-    roleKey: {
-      type: Number,
+    role: {
+      type: String,
       default: ROLE.CUSTOMER,
     },
   },

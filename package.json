@@ -4,7 +4,8 @@
   "description": "This is backend for Cinema Management System project",
   "main": "index.js",
   "scripts": {
-    "start": "node --watch index.js"
+    "start": "node --watch index.js",
+    "swagger": "node swagger.js"
   },
   "keywords": [],
   "author": "",
@@ -16,9 +17,12 @@
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.13.0",
+    "mongoose": "^8.9.7",
     "nodemailer": "^7.0.3",
     "socket.io": "^4.8.1",
-    "mongodb": "^6.13.0",
-    "mongoose": "^8.9.7"
+    "swagger-autogen": "^2.23.7",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
   }
 }
