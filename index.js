@@ -15,9 +15,6 @@ const swaggerFile = require("./swagger-output.json");
 const PORT = 3800;
 app.use(cors(corOptions));
 
-// Connect database
-connectDB();
-
 const server = http.createServer(app);
 initSocket(server);
 
@@ -33,6 +30,7 @@ app.get("/", (req, res) => {
 });
 //no verify jwt
 app.use("/auth", require("./routers/auth.route.js"));
+app.use("/otp", require("./routers/otp.route.js"));
 
 // verify jwt
 app.use(verifyJwt);
@@ -47,4 +45,7 @@ app.use((req, res, next) => {
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}...`);
   console.log(`Swagger is running on port http://localhost:${PORT}/api-docs`);
+
+  // Connect database
+  connectDB();
 });

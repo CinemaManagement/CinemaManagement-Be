@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const { ROLE } = require("../constraints/role");
+const STATUS = require("../constraints/status");
 const Schema = mongoose.Schema;
 
 const UserSchema = new Schema(
@@ -16,6 +17,14 @@ const UserSchema = new Schema(
     role: {
       type: String,
       default: ROLE.CUSTOMER,
+    },
+    fullName: {
+      type: String,
+      require,
+    },
+    status: {
+      type: String,
+      default: STATUS.ACTIVE,
     },
   },
   { timestamps: true },

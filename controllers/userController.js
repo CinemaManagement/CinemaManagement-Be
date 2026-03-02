@@ -9,6 +9,19 @@ const getAllUsers = async (req, res) => {
     res.status(500).json({ message: "Unexpected error occured!" });
   }
 };
+const getUserById = async (req, res) => {
+  const id = req.userId;
+  try {
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ message: `Not found user with id ${id}!` });
+    }
+    res.status(200).json(user);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Unexpected error occured!" });
+  }
+};
 const addUser = async (req, res) => {
   try {
     const { email, password, role } = req.body;
@@ -39,4 +52,4 @@ const deleteUser = async (req, res) => {
     res.status(500).json({ message: "Unexpected error occured!" });
   }
 };
-module.exports = { getAllUsers, addUser, deleteUser };
+module.exports = { getAllUsers, addUser, deleteUser, getUserById };

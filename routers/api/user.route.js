@@ -3,6 +3,7 @@ const {
   getAllUsers,
   addUser,
   deleteUser,
+  getUserById,
 } = require("../../controllers/userController");
 const verifyRoles = require("../../middlewares/roleMiddleware");
 const { ROLE } = require("../../constraints/role");
@@ -31,6 +32,12 @@ router.route("/").post(
   addUser,
   // #swagger.tags = ['Users']
   // #swagger.summary = 'Add new user'
+  // #swagger.security = [{ "bearerAuth": [] }]
+);
+router.route("/me").get(
+  getUserById,
+  // #swagger.tags = ['Users']
+  // #swagger.summary = 'Get personal information'
   // #swagger.security = [{ "bearerAuth": [] }]
 );
 
