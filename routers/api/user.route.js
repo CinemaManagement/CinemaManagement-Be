@@ -4,6 +4,7 @@ const {
   addUser,
   deleteUser,
   getUserById,
+  blockUser,
 } = require("../../controllers/userController");
 const verifyRoles = require("../../middlewares/roleMiddleware");
 const { ROLE } = require("../../constraints/role");
@@ -13,7 +14,7 @@ const {
 const router = express.Router();
 
 router.route("/").get(
-  verifyRoles(ROLE.ADMIN),
+  verifyRoles(ROLE.ADMIN, ROLE.MANAGER),
   // #swagger.tags = ['Users']
   // #swagger.summary = 'Get all users'
   // #swagger.security = [{ "bearerAuth": [] }]
@@ -24,6 +25,13 @@ router.route("/:id").delete(
   deleteUser,
   // #swagger.tags = ['Users']
   // #swagger.summary = 'Delete user'
+  // #swagger.security = [{ "bearerAuth": [] }]
+);
+router.route("/:id/block").put(
+  verifyRoles(ROLE.ADMIN),
+  blockUser,
+  // #swagger.tags = ['Users']
+  // #swagger.summary = 'Block user'
   // #swagger.security = [{ "bearerAuth": [] }]
 );
 router.route("/").post(

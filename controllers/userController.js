@@ -1,5 +1,6 @@
 const User = require("../models/User");
 const { ROLE } = require("../constraints/role");
+const STATUS = require("../constraints/status");
 const getAllUsers = async (req, res) => {
   try {
     const users = await User.find();
@@ -52,4 +53,26 @@ const deleteUser = async (req, res) => {
     res.status(500).json({ message: "Unexpected error occured!" });
   }
 };
-module.exports = { getAllUsers, addUser, deleteUser, getUserById };
+
+const blockUser = async (req, res) => {
+  try {
+    const id = req.params?.id;
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ message: `Not found user with id ${id}!` });
+    }
+    await User.updateOne(
+      { _id: id },
+      {
+        $set: {
+          status: STATUS.LOCKED,
+        },
+      },
+    );
+    res.status(200).json({ message: `Block user ${user.email} successfully!` });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Unexpected error occured!" });
+  }
+};
+module.exports = { getAllUsers, addUser, deleteUser, getUserById, blockUser };

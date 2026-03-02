@@ -4,6 +4,7 @@ const User = require("../models/User");
 const { ROLE } = require("../constraints/role");
 const OTP = require("../models/OTP");
 const { serverErrorMessageRes } = require("../helpers/serverErrorMessage");
+const STATUS = require("../constraints/status");
 
 const handleSignup = async (req, res) => {
   if (!req.body?.email || !req.body?.password) {
@@ -50,6 +51,12 @@ const handleLogin = async (req, res) => {
   if (!matchUser) {
     return res.status(401).json({
       message: "Email does not exist!",
+    });
+  }
+
+  if (matchUser.status === STATUS.LOCKED) {
+    return res.status(403).json({
+      message: "Your account has been locked!",
     });
   }
 
