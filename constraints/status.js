@@ -2,6 +2,7 @@ const STATUS = {
   ACTIVE: "ACTIVE",
   LOCKED: "LOCKED",
   HIDDEN: "HIDDEN",
+  MAINTENANCE: "MAINTENANCE",
 };
 
 module.exports = STATUS;
