@@ -1,4 +1,5 @@
 const User = require("../models/User");
+const bcrypt = require("bcrypt");
 const { ROLE } = require("../constraints/role");
 const STATUS = require("../constraints/status");
 const getAllUsers = async (req, res) => {
@@ -26,9 +27,10 @@ const getUserById = async (req, res) => {
 const addUser = async (req, res) => {
   try {
     const { email, password, role } = req.body;
+    const hashPass = await bcrypt.hash(password, 10);
     const user = await User.create({
       email,
-      password,
+      password: hashPass,
       role: role || ROLE.CUSTOMER,
     });
     res.status(201).json(user);

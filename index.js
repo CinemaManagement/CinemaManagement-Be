@@ -35,6 +35,7 @@ app.use("/otp", require("./routers/otp.route.js"));
 // verify jwt
 app.use(verifyJwt);
 app.use("/api/users", require("./routers/api/user.route.js"));
+app.use("/api/movies", require("./routers/api/movie.route.js"));
 
 app.use((req, res, next) => {
   res
