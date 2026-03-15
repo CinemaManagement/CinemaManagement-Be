@@ -565,6 +565,12 @@
           "Showtimes"
         ],
         "summary": "Get all showtimes",
+    "/api/rooms/": {
+      "get": {
+        "tags": [
+          "CinemaRooms"
+        ],
+        "summary": "Get all cinema rooms",
         "description": "",
         "responses": {
           "200": {
@@ -588,6 +594,9 @@
           "Showtimes"
         ],
         "summary": "Create a new showtime",
+          "CinemaRooms"
+        ],
+        "summary": "Create a new cinema room",
         "description": "",
         "responses": {
           "201": {
@@ -630,6 +639,10 @@
                     "example": "any"
                   },
                   "cinemaRoomId": {
+                  "roomName": {
+                    "example": "any"
+                  },
+                  "seats": {
                     "example": "any"
                   }
                 }
@@ -746,6 +759,67 @@
           "Showtimes"
         ],
         "summary": "Update showtime status",
+    "/api/rooms/{id}/seats": {
+      "patch": {
+        "tags": [
+          "CinemaRooms"
+        ],
+        "summary": "Update cinema room seats status",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/rooms/{id}/status": {
+      "patch": {
+        "tags": [
+          "CinemaRooms"
+        ],
+        "summary": "Update cinema room status",
         "description": "",
         "parameters": [
           {
