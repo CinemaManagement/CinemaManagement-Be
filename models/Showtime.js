@@ -1,21 +1,21 @@
 const mongoose = require("mongoose");
 const STATUS = require("../constraints/status");
-const TYPES = require("../constraints/type");
 const Schema = mongoose.Schema;
 
 const ShowtimeSchema = new Schema(
   {
     movieId: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "Movie",
+      required: true,
     },
     startTime: {
       type: Date,
-      require: true,
+      required: true,
     },
     endTime: {
       type: Date,
-      require: true,
+      required: true,
     },
     status: {
       type: String,
@@ -23,19 +23,38 @@ const ShowtimeSchema = new Schema(
       default: STATUS.ACTIVE,
     },
     pricingRule: {
-      NORMAL: {
-        type: Number,
-      },
-      VIP: {
-        type: Number,
-      },
-      COUPLE: {
-        type: Number,
-      },
+      NORMAL: { type: Number, required: true },
+      VIP: { type: Number, required: true },
+      COUPLE: { type: Number, required: true },
     },
-    seats: [{}],
+    cinemaRoomId: {
+      type: Schema.Types.ObjectId,
+      ref: "CinemaRoom",
+      required: true,
+    },
+    seats: [
+      {
+        seatId: {
+          type: Schema.Types.ObjectId,
+          required: true,
+        },
+        seatCode: {
+          type: String,
+          required: true,
+        },
+        price: {
+          type: Number,
+          required: true,
+        },
+        status: {
+          type: String,
+          enum: [STATUS.AVAILABLE, STATUS.HELD, STATUS.SOLD],
+          default: STATUS.AVAILABLE,
+        },
+      },
+    ],
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 module.exports = mongoose.model("Showtime", ShowtimeSchema);
