@@ -4,6 +4,15 @@ const STATUS = require("../constraints/status");
 
 const getAllActiveMovies = async (req, res) => {
   try {
+    const movies = await Movie.find({ status: STATUS.ACTIVE });
+    res.status(200).json(movies);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Unexpected error occured!" });
+  }
+};
+const getAllMovies = async (req, res) => {
+  try {
     const movies = await Movie.find();
     res.status(200).json(movies);
   } catch (error) {
@@ -44,7 +53,9 @@ const updateMovie = async (req, res) => {
     const updateData = req.body;
     const movie = await Movie.findByIdAndUpdate(id, updateData, { new: true });
     if (!movie) {
-      return res.status(404).json({ message: `Not found movie with id ${id}!` });
+      return res
+        .status(404)
+        .json({ message: `Not found movie with id ${id}!` });
     }
     res.status(200).json(movie);
   } catch (error) {
@@ -62,7 +73,9 @@ const hideMovie = async (req, res) => {
       { new: true },
     );
     if (!movie) {
-      return res.status(404).json({ message: `Not found movie with id ${id}!` });
+      return res
+        .status(404)
+        .json({ message: `Not found movie with id ${id}!` });
     }
     res
       .status(200)
@@ -73,5 +86,10 @@ const hideMovie = async (req, res) => {
   }
 };
 
-module.exports = { getAllActiveMovies, addMovie, updateMovie, hideMovie };
-
+module.exports = {
+  getAllActiveMovies,
+  addMovie,
+  getAllMovies,
+  updateMovie,
+  hideMovie,
+};

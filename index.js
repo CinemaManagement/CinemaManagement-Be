@@ -31,12 +31,12 @@ app.get("/", (req, res) => {
 //no verify jwt
 app.use("/auth", require("./routers/auth.route.js"));
 app.use("/otp", require("./routers/otp.route.js"));
+app.use("/api/movies", require("./routers/api/movie.route.js"));
 app.use("/redis-test", require("./routers/redisTest.route.js"));
 
 // verify jwt
 app.use(verifyJwt);
 app.use("/api/users", require("./routers/api/user.route.js"));
-app.use("/api/movies", require("./routers/api/movie.route.js"));
 app.use("/api/rooms", require("./routers/api/cinemaRoom.route.js"));
 app.use("/api/showtimes", require("./routers/api/showtime.route.js"));
 
