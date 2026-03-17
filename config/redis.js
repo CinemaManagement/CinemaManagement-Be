@@ -6,11 +6,28 @@ const redisClient = createClient({
   url: process.env.REDIS_URL,
   socket: {
     tls: process.env.REDIS_URL && process.env.REDIS_URL.startsWith("rediss://"),
-    rejectUnauthorized: false
+    rejectUnauthorized: false,
+    connectTimeout: 50000
+  },
+  pingInterval: 1000 * 60 * 4 // Ping every 4 minutes to keep connection alive
+});
+
+let hasPrintedSocketError = false;
+
+redisClient.on('error', (err) => {
+  if (err.name === 'SocketClosedUnexpectedlyError') {
+    if (!hasPrintedSocketError) {
+      console.log('Redis notice: Socket closed unexpectedly. Client will auto-reconnect...');
+      hasPrintedSocketError = true;
+    }
+  } else {
+    console.log('Redis Client Error', err);
   }
 });
 
-redisClient.on('error', (err) => console.log('Redis Client Error', err));
+redisClient.on('ready', () => {
+  hasPrintedSocketError = false; // Reset the flag once it successfully reconnects
+});
 
 (async () => {
   try {
