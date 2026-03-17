@@ -5,6 +5,7 @@ const { ROLE } = require("../constraints/role");
 const OTP = require("../models/OTP");
 const { serverErrorMessageRes } = require("../helpers/serverErrorMessage");
 const STATUS = require("../constraints/status");
+const redisClient = require("../config/redis");
 
 const handleSignup = async (req, res) => {
   if (!req.body?.email || !req.body?.password) {
@@ -68,7 +69,7 @@ const handleLogin = async (req, res) => {
 
     const refreshToken = jwt.sign(
       {
-        email: matchUser.email,
+        userId: matchUser._id,
       },
       process.env.REFRESH_TOKEN_SECRET,
       { expiresIn: "1d" },
@@ -91,8 +92,15 @@ const handleLogin = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    matchUser.refreshToken = refreshToken;
-    await matchUser.save();
+    // matchUser.refreshToken = refreshToken;
+    // await matchUser.save();
+    const resutl = await redisClient.set(
+      `token:${matchUser._id}`,
+      refreshToken,
+      {
+        EX: 60 * 60 * 24 * 7,
+      },
+    );
 
     res.status(200).json({
       accessToken,
@@ -104,42 +112,48 @@ const handleLogin = async (req, res) => {
   }
 };
 const handleRefreshAccessToken = async (req, res) => {
-  const cookies = req.cookies;
-
-  if (!cookies?.jwt) {
-    return res.sendStatus(401);
-  }
-
-  const refreshToken = cookies.jwt;
-
   try {
-    const matchUser = await User.findOne({ refreshToken }).exec();
+    const cookies = req.cookies;
 
+    if (!cookies?.jwt) {
+      return res.sendStatus(401);
+    }
+
+    const refreshToken = cookies.jwt;
+
+    if (!refreshToken) {
+      return res.status(403).json({
+        message: "You have not logged in yet!",
+      });
+    }
+
+    const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+    const userId = decoded.userId;
+
+    const storedToken = await redisClient.get(`token:${userId}`);
+
+    if (!storedToken || storedToken !== refreshToken) {
+      return res.status(403).json({
+        message: "Your token has expired or you has not logged in yet!",
+      });
+    }
+
+    const matchUser = await User.findById(userId).exec();
     if (!matchUser) {
       return res.sendStatus(403);
     }
 
-    jwt.verify(
-      refreshToken,
-      process.env.REFRESH_TOKEN_SECRET,
-      (error, decoded) => {
-        if (error || matchUser.email !== decoded.email) {
-          return res.sendStatus(403);
-        }
-
-        const accessToken = jwt.sign(
-          {
-            userId: matchUser._id,
-            email: matchUser.email,
-            role: matchUser.role,
-          },
-          process.env.ACCESS_TOKEN_SECRET,
-          { expiresIn: "1h" },
-        );
-
-        res.json({ accessToken });
+    const accessToken = jwt.sign(
+      {
+        userId: matchUser._id,
+        email: matchUser.email,
+        role: matchUser.role,
       },
+      process.env.ACCESS_TOKEN_SECRET,
+      { expiresIn: "1h" },
     );
+
+    res.json({ accessToken });
   } catch (error) {
     console.error(error);
     res.sendStatus(500);
@@ -167,10 +181,7 @@ const handleLogout = async (req, res) => {
       return res.sendStatus(204);
     }
 
-    await User.updateOne(
-      { _id: matchUser._id },
-      { $unset: { refreshToken: "" } },
-    );
+    await redisClient.del(`token:${matchUser._id}`);
 
     res.clearCookie("jwt", {
       httpOnly: true,

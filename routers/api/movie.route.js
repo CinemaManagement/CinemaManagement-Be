@@ -14,8 +14,15 @@ const router = express.Router();
 
 router
   .route("/")
-  .get(getAllActiveMovies)
+  .get(
+    // #swagger.tags = ['Movie']
+    // #swagger.summary = 'Get all active movies'
+    getAllActiveMovies,
+  )
   .post(
+    // #swagger.tags = ['Movie']
+    // #swagger.summary = 'Add a new movie'
+    // #swagger.security = [{ "bearerAuth": [] }]
     verifyRoles(ROLE.MANAGER),
     checkRequiredFields(
       "title",
@@ -30,7 +37,19 @@ router
 
 router
   .route("/:id")
-  .put(verifyRoles(ROLE.MANAGER), updateMovie)
-  .delete(verifyRoles(ROLE.ADMIN, ROLE.MANAGER), hideMovie);
+  .put(
+    // #swagger.tags = ['Movie']
+    // #swagger.summary = 'Update movie details'
+    // #swagger.security = [{ "bearerAuth": [] }]
+    verifyRoles(ROLE.MANAGER),
+    updateMovie,
+  )
+  .delete(
+    // #swagger.tags = ['Movie']
+    // #swagger.summary = 'Hide (soft delete) a movie'
+    // #swagger.security = [{ "bearerAuth": [] }]
+    verifyRoles(ROLE.ADMIN, ROLE.MANAGER),
+    hideMovie,
+  );
 
 module.exports = router;
