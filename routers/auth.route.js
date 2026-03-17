@@ -5,10 +5,17 @@ const {
   handleSignup,
   resetPassword,
   changePassword,
+  handleRefreshAccessToken,
 } = require("../controllers/authController");
 const { checkRequiredFields } = require("../middlewares/checkRequiredFields");
 const verifyJwt = require("../middlewares/authMiddleware");
 const router = express.Router();
+
+router.route("/refresh").get(
+  // #swagger.tags = ['Auth']
+  // #swagger.summary = 'Refresh access token using refresh token in cookie'
+  handleRefreshAccessToken,
+);
 
 router.route("/logout").post(
   // #swagger.tags = ['Auth']

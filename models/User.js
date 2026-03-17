@@ -26,6 +26,7 @@ const UserSchema = new Schema(
       type: String,
       default: STATUS.ACTIVE,
     },
+    refreshToken: String,
   },
   { timestamps: true },
 );

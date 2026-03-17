@@ -86,9 +86,13 @@ const handleLogin = async (req, res) => {
 
     res.cookie("jwt", refreshToken, {
       httpOnly: true,
-      sameSite: "None",
-      maxAge: 24 * 60 * 60 * 1000,
+      secure: true,
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
     });
+
+    matchUser.refreshToken = refreshToken;
+    await matchUser.save();
 
     res.status(200).json({
       accessToken,
@@ -99,32 +103,85 @@ const handleLogin = async (req, res) => {
     res.sendStatus(500);
   }
 };
+const handleRefreshAccessToken = async (req, res) => {
+  const cookies = req.cookies;
+
+  if (!cookies?.jwt) {
+    return res.sendStatus(401);
+  }
+
+  const refreshToken = cookies.jwt;
+
+  try {
+    const matchUser = await User.findOne({ refreshToken }).exec();
+
+    if (!matchUser) {
+      return res.sendStatus(403);
+    }
+
+    jwt.verify(
+      refreshToken,
+      process.env.REFRESH_TOKEN_SECRET,
+      (error, decoded) => {
+        if (error || matchUser.email !== decoded.email) {
+          return res.sendStatus(403);
+        }
+
+        const accessToken = jwt.sign(
+          {
+            userId: matchUser._id,
+            email: matchUser.email,
+            role: matchUser.role,
+          },
+          process.env.ACCESS_TOKEN_SECRET,
+          { expiresIn: "1h" },
+        );
+
+        res.json({ accessToken });
+      },
+    );
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500);
+  }
+};
 
 const handleLogout = async (req, res) => {
-  const cookies = req.headers?.cookie;
+  const cookies = req.cookies;
 
-  let refreshToken;
-  cookies.split(";").forEach((cookie) => {
-    const token = cookie.split("=")[0] === "jwt" ? cookie.split("=")[1] : "";
-    if (token.length > 0) {
-      refreshToken = token;
+  if (!cookies?.jwt) {
+    return res.sendStatus(204);
+  }
+
+  const refreshToken = cookies.jwt;
+
+  try {
+    const matchUser = await User.findOne({ refreshToken }).exec();
+
+    if (!matchUser) {
+      res.clearCookie("jwt", {
+        httpOnly: true,
+        secure: true,
+        sameSite: "strict",
+      });
+      return res.sendStatus(204);
     }
-  });
 
-  if (!refreshToken) {
-    return res.sendStatus(204);
+    await User.updateOne(
+      { _id: matchUser._id },
+      { $unset: { refreshToken: "" } },
+    );
+
+    res.clearCookie("jwt", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict",
+    });
+    res.sendStatus(204);
+  } catch (error) {
+    console.error(error);
+    res.sendStatus(500);
   }
-
-  const email = req.params;
-  const matchUser = await User.findOne({ email }).exec();
-
-  if (!matchUser) {
-    res.clearCookie("jwt", { httpOnly: true, sameSite: "None" });
-    return res.sendStatus(204);
-  }
-
-  res.clearCookie("jwt", { httpOnly: true, sameSite: "None" });
-  res.sendStatus(204);
 };
 
 const resetPassword = async (req, res) => {
@@ -252,4 +309,5 @@ module.exports = {
   resetPassword,
   changePassword,
   resetPasswordByAdmin,
+  handleRefreshAccessToken,
 };

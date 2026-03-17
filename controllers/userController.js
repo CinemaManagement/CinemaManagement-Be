@@ -13,7 +13,7 @@ const getAllUsers = async (req, res) => {
 const getUserById = async (req, res) => {
   const id = req.userId;
   try {
-    const user = await User.findById(id);
+    const user = await User.findById(id).select("-password -refreshToken");
     if (!user) {
       return res.status(404).json({ message: `Not found user with id ${id}!` });
     }
