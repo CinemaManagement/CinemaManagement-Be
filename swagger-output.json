@@ -7,6 +7,10 @@
   },
   "servers": [
     {
+      "url": "https://cinemamanagement-be.onrender.com",
+      "description": "Online server"
+    },
+    {
       "url": "http://localhost:3800",
       "description": "Local server"
     }
