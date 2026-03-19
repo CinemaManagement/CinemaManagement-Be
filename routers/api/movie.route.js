@@ -5,6 +5,7 @@ const {
   updateMovie,
   hideMovie,
   getAllMovies,
+  getMovieById,
 } = require("../../controllers/movieController");
 const verifyRoles = require("../../middlewares/roleMiddleware");
 const { ROLE } = require("../../constraints/role");
@@ -45,6 +46,12 @@ router.route("/all").get(
   // #swagger.summary = 'Get all movies for manager'
   verifyRoles(ROLE.MANAGER),
   getAllMovies,
+);
+
+router.route("/:id").get(
+  // #swagger.tags = ['Movie']
+  // #swagger.summary = 'Get movie by id'
+  getMovieById,
 );
 
 router
