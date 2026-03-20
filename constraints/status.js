@@ -8,6 +8,10 @@ const STATUS = {
   AVAILABLE: "AVAILABLE",
   HELD: "HELD",
   SOLD: "SOLD",
+  PENDING: "PENDING",
+  PAID: "PAID",
+  EXPIRED: "EXPIRED",
+  CHECKED_IN: "CHECKED_IN",
 };
 
 module.exports = STATUS;
