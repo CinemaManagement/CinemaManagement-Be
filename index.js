@@ -32,6 +32,7 @@ app.get("/", (req, res) => {
 app.use("/auth", require("./routers/auth.route.js"));
 app.use("/otp", require("./routers/otp.route.js"));
 app.use("/api/movies", require("./routers/api/movie.route.js"));
+app.use("/api/discounts", require("./routers/api/discount.route.js"));
 app.use("/redis-test", require("./routers/redisTest.route.js"));
 
 // verify jwt
