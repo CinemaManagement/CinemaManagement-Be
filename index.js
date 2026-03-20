@@ -41,8 +41,7 @@ app.use("/api/rooms", require("./routers/api/cinemaRoom.route.js"));
 app.use("/api/showtimes", require("./routers/api/showtime.route.js"));
 app.use("/api/foods", require("./routers/api/food.route.js"));
 app.use("/foods", require("./routers/api/food.route.js"));
-app.use("/api/food-bookings", require("./routers/api/foodBooking.route.js"));
-app.use("/food-bookings", require("./routers/api/foodBooking.route.js"));
+
 
 app.use((req, res, next) => {
   res
