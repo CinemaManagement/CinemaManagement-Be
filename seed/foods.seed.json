@@ -1,0 +1,92 @@
+[
+  {
+    "name": "Popcorn Salted (Large)",
+    "type": "SINGLE",
+    "price": 45000,
+    "description": "Large salted popcorn",
+    "status": "ACTIVE",
+    "items": []
+  },
+  {
+    "name": "Popcorn Caramel (Large)",
+    "type": "SINGLE",
+    "price": 55000,
+    "description": "Large caramel popcorn",
+    "status": "ACTIVE",
+    "items": []
+  },
+  {
+    "name": "Coca Cola 500ml",
+    "type": "SINGLE",
+    "price": 30000,
+    "description": "Chilled soft drink",
+    "status": "ACTIVE",
+    "items": []
+  },
+  {
+    "name": "Sprite 500ml",
+    "type": "SINGLE",
+    "price": 30000,
+    "description": "Chilled lemon-lime soda",
+    "status": "ACTIVE",
+    "items": []
+  },
+  {
+    "name": "Mineral Water 500ml",
+    "type": "SINGLE",
+    "price": 20000,
+    "description": "Still mineral water",
+    "status": "ACTIVE",
+    "items": []
+  },
+  {
+    "name": "Hotdog Classic",
+    "type": "SINGLE",
+    "price": 40000,
+    "description": "Classic hotdog with ketchup and mustard",
+    "status": "ACTIVE",
+    "items": []
+  },
+  {
+    "name": "Nachos Cheese",
+    "type": "SINGLE",
+    "price": 48000,
+    "description": "Crispy nachos with cheese dip",
+    "status": "ACTIVE",
+    "items": []
+  },
+  {
+    "name": "Combo 1: Popcorn + Coke",
+    "type": "COMBO",
+    "price": 70000,
+    "description": "Large popcorn + 1 coke 500ml",
+    "status": "ACTIVE",
+    "items": [
+      { "name": "Popcorn Salted (Large)", "quantity": 1 },
+      { "name": "Coca Cola 500ml", "quantity": 1 }
+    ]
+  },
+  {
+    "name": "Combo 2: Caramel Popcorn + Sprite",
+    "type": "COMBO",
+    "price": 80000,
+    "description": "Large caramel popcorn + 1 sprite 500ml",
+    "status": "ACTIVE",
+    "items": [
+      { "name": "Popcorn Caramel (Large)", "quantity": 1 },
+      { "name": "Sprite 500ml", "quantity": 1 }
+    ]
+  },
+  {
+    "name": "Combo Family",
+    "type": "COMBO",
+    "price": 135000,
+    "description": "2 large popcorns + 2 soft drinks",
+    "status": "ACTIVE",
+    "items": [
+      { "name": "Popcorn Salted (Large)", "quantity": 2 },
+      { "name": "Coca Cola 500ml", "quantity": 1 },
+      { "name": "Sprite 500ml", "quantity": 1 }
+    ]
+  }
+]
