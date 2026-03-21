@@ -43,6 +43,8 @@ app.use(verifyJwt);
 app.use("/api/users", require("./routers/api/user.route.js"));
 app.use("/api/rooms", require("./routers/api/cinemaRoom.route.js"));
 app.use("/api/showtimes", require("./routers/api/showtime.route.js"));
+app.use("/api/bookings", require("./routers/api/booking.route.js"));
+app.use("/api/discounts", require("./routers/api/discount.route.js"));
 
 app.use((req, res, next) => {
   res
