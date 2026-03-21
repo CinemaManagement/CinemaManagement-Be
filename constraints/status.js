@@ -8,18 +8,11 @@ const STATUS = {
   AVAILABLE: "AVAILABLE",
   HELD: "HELD",
   SOLD: "SOLD",
-<<<<<<< Updated upstream
   PENDING: "PENDING",
   PAID: "PAID",
   EXPIRED: "EXPIRED",
   CHECKED_IN: "CHECKED_IN",
-=======
-  PAID: "PAID",
-  CHECKED_IN: "CHECKED_IN",
-  EXPIRED: "EXPIRED",
-  PENDING: "PENDING",
   INACTIVE: "INACTIVE",
->>>>>>> Stashed changes
 };
 
 module.exports = STATUS;

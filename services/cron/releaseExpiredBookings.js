@@ -1,8 +1,8 @@
 // cron/releaseExpiredBookings.js
 const cron = require("node-cron");
-const MovieBooking = require("../models/MovieBooking");
-const Showtime = require("../models/Showtime");
-const STATUS = require("../constraints/status");
+const MovieBooking = require("../../models/MovieBooking");
+const Showtime = require("../../models/Showtime");
+const STATUS = require("../../constraints/status");
 
 // Run every minute
 cron.schedule("* * * * *", async () => {

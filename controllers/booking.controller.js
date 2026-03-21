@@ -11,6 +11,8 @@ const {
   getBookingHistoryService,
   checkInService,
   paymentService,
+  addFoodToBookingService,
+  cancelBookingService,
 } = require("../services/booking.services");
 const { search } = require("../routers/redisTest.route");
 
@@ -67,7 +69,7 @@ const getBookingHistory = async (req, res) => {
   try {
     const userId = req.userId;
 
-    const { movieBookings, foodBookings } =
+    const { rawMovieBookingHistory, foodBookingHistory } =
       await getBookingHistoryService(userId);
 
     res.status(200).json({
@@ -88,7 +90,7 @@ const checkIn = async (req, res) => {
     res.status(200).json({ message: "Checked in successfully", booking });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Internal server error" });
+    res.status(error.status).json({ success: false, message: error.message });
   }
 };
 
@@ -102,11 +104,23 @@ const addFoodToBooking = async (req, res) => {
   }
 }
 
+const cancelBooking = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const booking = await cancelBookingService(id);
+    res.status(200).json({ success: true, message: "Booking cancelled successfully", data: booking });
+  } catch (error) {
+    console.error(error);
+    res.status(error.status || 500).json({ success: false, message: error.message || "Internal server error" });
+  }
+};
+
 module.exports = {
   reserveMovieTickets,
   orderFood,
   confirmPayment,
   getBookingHistory,
   checkIn,
-  addFoodToBooking
+  addFoodToBooking,
+  cancelBooking
 };

@@ -5,8 +5,7 @@ const verifyRoles = require("../../middlewares/roleMiddleware");
 const { ROLE } = require("../../constraints/role");
 
 // Booking specific endpoints
-router.post(
-  "/movie",
+router.post("/movie",
   verifyRoles(ROLE.CUSTOMER, ROLE.CINEMA),
   // #swagger.tags = ['Bookings']
   // #swagger.summary = 'Reserve movie tickets'
@@ -44,8 +43,7 @@ router.post(
   bookingController.reserveMovieTickets,
 );
 
-router.post(
-  "/food",
+router.post("/food",
   verifyRoles(ROLE.CUSTOMER, ROLE.CINEMA),
   // #swagger.tags = ['Bookings']
   // #swagger.summary = 'Order food for booking'
@@ -85,8 +83,7 @@ router.post(
   bookingController.orderFood,
 );
 
-router.post(
-  "/:id/pay",
+router.post("/:id/pay",
   verifyRoles(ROLE.CUSTOMER, ROLE.CINEMA),
   // #swagger.tags = ['Bookings']
   // #swagger.summary = 'Confirm booking payment'
@@ -130,8 +127,7 @@ router.post(
   bookingController.confirmPayment,
 );
 
-router.get(
-  "/history",
+router.get("/history",
   verifyRoles(ROLE.CUSTOMER),
   // #swagger.tags = ['Bookings']
   // #swagger.summary = 'Get booking history'
@@ -165,8 +161,7 @@ router.get(
   bookingController.getBookingHistory,
 );
 
-router.patch(
-  "/:id/checkin",
+router.patch("/:id/checkin",
   verifyRoles(ROLE.CINEMA),
   // #swagger.tags = ['Bookings']
   // #swagger.summary = 'Check in a booking'
@@ -193,6 +188,22 @@ router.patch(
      }
    }*/
   bookingController.checkIn,
+);
+
+router.patch("/:id/cancel",
+  verifyRoles(ROLE.CUSTOMER),
+  // #swagger.tags = ['Bookings']
+  // #swagger.summary = 'Cancel a booking'
+  // #swagger.security = [{ "bearerAuth": [] }]
+  bookingController.cancelBooking,
+);
+
+router.patch("/add-food-order",
+  verifyRoles(ROLE.CUSTOMER, ROLE.CINEMA),
+  // #swagger.tags = ['Bookings']
+  // #swagger.summary = 'Attach a food booking to a movie booking'
+  // #swagger.security = [{ "bearerAuth": [] }]
+  bookingController.addFoodToBooking,
 );
 
 module.exports = router;
