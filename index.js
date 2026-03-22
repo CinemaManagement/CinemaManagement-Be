@@ -29,6 +29,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerFile));
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
+
 //no verify jwt
 app.use("/auth", require("./routers/auth.route.js"));
 app.use("/otp", require("./routers/otp.route.js"));

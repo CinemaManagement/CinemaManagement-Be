@@ -28,6 +28,24 @@ router.route("/").post(
   // #swagger.tags = ['Movie']
   // #swagger.summary = 'Add a new movie'
   // #swagger.security = [{ "bearerAuth": [] }]
+  /*  #swagger.parameters['body'] = {
+        in: 'body',
+        description: 'New movie data',
+        schema: {
+            title: "Movie Title",
+            duration: 120,
+            ageRestriction: 13,
+            posterUrl: "http://url",
+            trailerUrl: "http://url",
+            revenueSharePercent: 50,
+            category: ["Action"],
+            description: "Some description here",
+            director: [{ name: "Director Name", avatar: "Dir url"}],
+            actors: [{ name: "Actor name", avatar: "Actor url"}],
+            rate: 5,
+            showingStatus: "Đang chiếu"
+        }
+} */
   verifyRoles(ROLE.MANAGER),
   checkRequiredFields(
     "title",
@@ -36,11 +54,12 @@ router.route("/").post(
     "posterUrl",
     "trailerUrl",
     "revenueSharePercent",
+    "description",
+    "rate"
   ),
   addMovie,
 );
 
-// no need jwt
 router.route("/all").get(
   // #swagger.tags = ['Movie']
   // #swagger.summary = 'Get all movies for manager'

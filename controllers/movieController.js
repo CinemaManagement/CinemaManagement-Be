@@ -46,6 +46,12 @@ const addMovie = async (req, res) => {
       posterUrl,
       trailerUrl,
       revenueSharePercent,
+      category,
+      description,
+      director,
+      actors,
+      rate,
+      showingStatus,
     } = req.body;
     const movie = await Movie.create({
       title,
@@ -54,6 +60,12 @@ const addMovie = async (req, res) => {
       posterUrl,
       trailerUrl,
       revenueSharePercent,
+      category,
+      description,
+      director,
+      actors,
+      rate,
+      showingStatus,
       status: STATUS.ACTIVE,
     });
     res.status(201).json(movie);
