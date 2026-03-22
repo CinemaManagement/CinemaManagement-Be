@@ -118,6 +118,50 @@ const hideMovie = async (req, res) => {
   }
 };
 
+const rateMovie = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { score } = req.body;
+    const { userId } = req;
+
+    if (!score || score < 1 || score > 5) {
+      return res.status(400).json({ message: "Score must be between 1 and 5." });
+    }
+
+    const movie = await Movie.findById(id);
+    if (!movie) {
+      return res.status(404).json({ message: "Movie not found." });
+    }
+
+    if (!movie.ratings) {
+      movie.ratings = [];
+    }
+
+    const existingRatingIndex = movie.ratings.findIndex(
+      (r) => r.userId?.toString() === userId.toString()
+    );
+
+    if (existingRatingIndex > -1) {
+      movie.ratings[existingRatingIndex].score = score;
+    } else {
+      movie.ratings.push({ userId, score });
+    }
+
+    const totalScore = movie.ratings.reduce((sum, r) => sum + r.score, 0);
+    movie.rate = (totalScore / movie.ratings.length).toFixed(1);
+
+    await movie.save();
+    res.status(200).json({
+      message: "Rating updated successfully",
+      rate: movie.rate,
+      totalRatings: movie.ratings.length,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Unexpected error occured!" });
+  }
+};
+
 module.exports = {
   getAllActiveMovies,
   addMovie,
@@ -125,4 +169,5 @@ module.exports = {
   getMovieById,
   updateMovie,
   hideMovie,
+  rateMovie,
 };
