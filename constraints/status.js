@@ -12,6 +12,7 @@ const STATUS = {
   PAID: "PAID",
   EXPIRED: "EXPIRED",
   CHECKED_IN: "CHECKED_IN",
+  INACTIVE: "INACTIVE",
 };
 
 module.exports = STATUS;

@@ -23,6 +23,7 @@ const MovieBookingSchema = new Schema(
       paidAt: { type: Date },
       transactionId: { type: String },
     },
+    discountId: { type: Schema.Types.ObjectId, ref: "Discount" },
     expiredAt: { type: Date, required: true },
   },
   { timestamps: true }
