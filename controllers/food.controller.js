@@ -62,8 +62,8 @@ const getFoods = async (req, res) => {
       return foodObj;
     });
 
-    await redisClient.set(cacheKey, JSON.stringify(foods), {
-      EX: 60 * 60 * 24, // 1 day
+    await redisClient.set(cacheKey, JSON.stringify(enrichedFoods), {
+      EX: 60 * 60 * 12, // 12 hours is better than 24h for food data
     });
 
     res.status(200).json(enrichedFoods);
