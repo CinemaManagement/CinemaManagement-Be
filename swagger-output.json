@@ -2134,6 +2134,31 @@
         ]
       }
     },
+    "/api/bookings/all-history": {
+      "get": {
+        "tags": [
+          "Bookings"
+        ],
+        "summary": "Get all booking history in the system",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/api/bookings/{id}/checkin": {
       "patch": {
         "tags": [

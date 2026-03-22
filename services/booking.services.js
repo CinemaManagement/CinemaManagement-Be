@@ -268,24 +268,18 @@ if(booking.foodBookingId){
 };
 
 const getBookingHistoryService = async (userId) => {
-  const rawMovieBookingHistory = await MovieBooking.find({ userId })
-    .populate({
-      path: "showtimeId",
-      populate: {
-        path: "movieId",
-        select: "title posterUrl"
-      }
-    })
+  const movieBookings = await MovieBooking.find({ userId })
+    .populate("showtimeId")
     .populate("foodBookingId")
-    .lean()
-    .transform(bookings => bookings.map((booking) => {
+    .lean();
+
+  const rawMovieBookingHistory = movieBookings.map((booking) => {
     const { foodBookingId, ...rest } = booking;
     return {
       ...rest,
       foodBooking: foodBookingId || null,
     };
-    
-  }));    
+  });
   
   // Get array of ONLY the FoodBooking IDs as strings so .includes() will work
   const foodBookingIdsInMovieBooking = rawMovieBookingHistory
@@ -293,16 +287,43 @@ const getBookingHistoryService = async (userId) => {
     .map(booking => ( booking.foodBooking._id.toString()));
 
   // Get raw food bookings
-  const rawFoodBookingHistory = await FoodBooking.find({ userId }).lean();
+  const rawFoodBookingHistory = await FoodBooking.find().lean();
 
   // Filter out any FoodBookings that we already returned nested inside the movieBookingHistory
   const foodBookingHistory = rawFoodBookingHistory.filter(
     booking => !foodBookingIdsInMovieBooking.includes(booking._id.toString())
   );
 
+  return { rawMovieBookingHistory, foodBookingHistory };
+};
+
+const getAllBookingHistoryService = async () => {
+  const movieBookings = await MovieBooking.find()
+    .populate("showtimeId")
+    .populate("foodBookingId")
+    .lean();
+
+  const rawMovieBookingHistory = movieBookings.map((booking) => {
+    const { foodBookingId, ...rest } = booking;
+    return {
+      ...rest,
+      foodBooking: foodBookingId || null,
+    };
+  });
   
-  console.log(rawMovieBookingHistory)
-  console.log(foodBookingHistory)
+  // Get array of ONLY the FoodBooking IDs as strings so .includes() will work
+  const foodBookingIdsInMovieBooking = rawMovieBookingHistory
+    .filter(booking => booking.foodBooking)
+    .map(booking => ( booking.foodBooking._id.toString()));
+
+  // Get raw food bookings
+  const rawFoodBookingHistory = await FoodBooking.find().lean();
+
+  // Filter out any FoodBookings that we already returned nested inside the movieBookingHistory
+  const foodBookingHistory = rawFoodBookingHistory.filter(
+    booking => !foodBookingIdsInMovieBooking.includes(booking._id.toString())
+  );
+
   return { rawMovieBookingHistory, foodBookingHistory };
 };
 
@@ -401,6 +422,7 @@ module.exports = {
   foodOrderService,
   paymentService,
   getBookingHistoryService,
+  getAllBookingHistoryService,
   checkInService,
   addFoodToBookingService,
   cancelBookingService,

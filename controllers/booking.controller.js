@@ -14,6 +14,7 @@ const {
   addFoodToBookingService,
   cancelBookingService,
   cancelFoodBookingService,
+  getAllBookingHistoryService,
 } = require("../services/booking.services");
 const { search } = require("../routers/redisTest.route");
 
@@ -83,6 +84,20 @@ const getBookingHistory = async (req, res) => {
   }
 };
 
+const getAllBookingHistory = async (req, res) => {
+  try {
+    const { rawMovieBookingHistory, foodBookingHistory } =
+      await getAllBookingHistoryService();
+    
+    res.status(200).json({
+      movieBookingHistory: rawMovieBookingHistory,
+      foodBookingHistory: foodBookingHistory,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
 const checkIn = async (req, res) => {
   try {
     const { id } = req.params;
@@ -132,6 +147,7 @@ module.exports = {
   orderFood,
   confirmPayment,
   getBookingHistory,
+  getAllBookingHistory,
   checkIn,
   addFoodToBooking,
   cancelBooking,
