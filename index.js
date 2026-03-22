@@ -50,6 +50,7 @@ app.use("/api/foods", require("./routers/api/food.route.js"));
 app.use("/api/cart", require("./routers/api/cart.route.js"));
 
 app.use("/api/bookings", require("./routers/api/booking.route.js"));
+app.use("/api/statistics", require("./routers/api/statistics.route.js"));
 app.use("/api/discounts", require("./routers/api/discount.route.js"));
 
 app.use((req, res, next) => {
