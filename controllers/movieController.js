@@ -162,6 +162,45 @@ const rateMovie = async (req, res) => {
   }
 };
 
+const getMoviesByShowingStatus = async (req, res) => {
+  try {
+    const { showingStatus } = req.params;
+    const movies = await Movie.find({
+      status: STATUS.ACTIVE,
+      showingStatus: showingStatus,
+    });
+    res.status(200).json(movies);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Unexpected error occured!" });
+  }
+};
+
+const getUserMovieRating = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { userId } = req;
+
+    const movie = await Movie.findById(id);
+    if (!movie) {
+      return res.status(404).json({ message: "Movie not found." });
+    }
+
+    if (!movie.ratings) {
+      return res.status(200).json({ score: 0 });
+    }
+
+    const userRating = movie.ratings.find(
+      (r) => r.userId?.toString() === userId.toString()
+    );
+
+    res.status(200).json({ score: userRating ? userRating.score : 0 });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Unexpected error occured!" });
+  }
+};
+
 module.exports = {
   getAllActiveMovies,
   addMovie,
@@ -170,4 +209,6 @@ module.exports = {
   updateMovie,
   hideMovie,
   rateMovie,
+  getMoviesByShowingStatus,
+  getUserMovieRating,
 };

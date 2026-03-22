@@ -478,6 +478,34 @@
         }
       }
     },
+    "/api/movies/{showingStatus}": {
+      "get": {
+        "tags": [
+          "Movie"
+        ],
+        "summary": "Get movies by showing status",
+        "description": "",
+        "parameters": [
+          {
+            "name": "showingStatus",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Status of the movie (NOW_SHOWING, COMING_SOON)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/api/movies/all": {
       "get": {
         "tags": [
@@ -604,6 +632,42 @@
       }
     },
     "/api/movies/{id}/rate": {
+      "get": {
+        "tags": [
+          "Movie"
+        ],
+        "summary": "Get current user rate for a movie",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
       "post": {
         "tags": [
           "Movie"

@@ -7,6 +7,8 @@ const {
   getAllMovies,
   getMovieById,
   rateMovie,
+  getMoviesByShowingStatus,
+  getUserMovieRating,
 } = require("../../controllers/movieController");
 const verifyRoles = require("../../middlewares/roleMiddleware");
 const { ROLE } = require("../../constraints/role");
@@ -21,6 +23,18 @@ router.route("/").get(
   // #swagger.tags = ['Movie']
   // #swagger.summary = 'Get all active movies'
   getAllActiveMovies,
+);
+
+router.route("/:showingStatus").get(
+  // #swagger.tags = ['Movie']
+  // #swagger.summary = 'Get movies by showing status'
+  /*  #swagger.parameters['showingStatus'] = {
+        in: 'path',
+        description: 'Status of the movie (NOW_SHOWING, COMING_SOON)',
+        required: true,
+        type: 'string'
+  } */
+  getMoviesByShowingStatus,
 );
 
 // need jwt
@@ -91,16 +105,24 @@ router
     hideMovie,
   );
 
-router.route("/:id/rate").post(
-  // #swagger.tags = ['Movie']
-  // #swagger.summary = 'Rate a movie'
-  // #swagger.security = [{ "bearerAuth": [] }]
-  /*  #swagger.parameters['score'] = {
-        in: 'body',
-        description: 'Movie score (1-5)',
-        schema: { score: 5 }
-  } */
-  rateMovie,
-);
+router
+  .route("/:id/rate")
+  .get(
+    // #swagger.tags = ['Movie']
+    // #swagger.summary = 'Get current user rate for a movie'
+    // #swagger.security = [{ "bearerAuth": [] }]
+    getUserMovieRating,
+  )
+  .post(
+    // #swagger.tags = ['Movie']
+    // #swagger.summary = 'Rate a movie'
+    // #swagger.security = [{ "bearerAuth": [] }]
+    /*  #swagger.parameters['score'] = {
+          in: 'body',
+          description: 'Movie score (1-5)',
+          schema: { score: 5 }
+    } */
+    rateMovie,
+  );
 
 module.exports = router;
