@@ -23,7 +23,7 @@ const getFoods = async (req, res) => {
 
 const createFood = async (req, res) => {
   try {
-    const { name, type, price, description, items } = req.body;
+    const { name, type, price, description, items, imageUrl } = req.body;
 
     if (!["SINGLE", "COMBO"].includes(type)) {
       return res.status(400).json({ message: "Invalid food type" });
@@ -45,6 +45,7 @@ const createFood = async (req, res) => {
       name,
       type,
       price,
+      imageUrl,
       description,
       status: STATUS.ACTIVE,
       items: Array.isArray(items) ? items : [],
