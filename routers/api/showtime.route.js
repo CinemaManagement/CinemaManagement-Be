@@ -1,12 +1,14 @@
 const express = require("express");
 const {
   getAllShowtimes,
+  getShowtimesByMovie,
   addShowtime,
   getShowtimeSeats,
   updateSeatStatus,
   updateShowtimeStatus,
 } = require("../../controllers/showtimeController");
 const verifyRoles = require("../../middlewares/roleMiddleware");
+const verifyJwt = require("../../middlewares/authMiddleware");
 const { ROLE } = require("../../constraints/role");
 const {
   checkRequiredFields,
@@ -16,28 +18,33 @@ const router = express.Router();
 router
   .route("/")
   .get(
-    verifyRoles(ROLE.CUSTOMER, ROLE.CINEMA, ROLE.MANAGER),
     // #swagger.tags = ['Showtimes']
-    // #swagger.summary = 'Get all showtimes'
-    // #swagger.security = [{ "bearerAuth": [] }]
+    // #swagger.summary = 'Get all showtimes (public)'
     getAllShowtimes
   )
   .post(
+    verifyJwt,
     verifyRoles(ROLE.MANAGER, ROLE.CINEMA),
     checkRequiredFields(
       "movieId",
       "startTime",
-      "endTime",
       "pricingRule",
       "cinemaRoomId"
     ),
     // #swagger.tags = ['Showtimes']
-    // #swagger.summary = 'Create a new showtime'
+    // #swagger.summary = 'Create a new showtime (endTime auto-computed from movie duration)'
     // #swagger.security = [{ "bearerAuth": [] }]
     addShowtime
   );
 
+router.route("/movie/:movieId").get(
+  // #swagger.tags = ['Showtimes']
+  // #swagger.summary = 'Get all showtimes by movieId (public)'
+  getShowtimesByMovie
+);
+
 router.route("/:id/seats").get(
+  verifyJwt,
   verifyRoles(ROLE.MANAGER, ROLE.CINEMA, ROLE.CUSTOMER),
   // #swagger.tags = ['Showtimes']
   // #swagger.summary = 'Get all seats of a showtime'
@@ -46,6 +53,7 @@ router.route("/:id/seats").get(
 );
 
 router.route("/:showTimeId/seats/:seatId").patch(
+  verifyJwt,
   verifyRoles(ROLE.MANAGER, ROLE.CINEMA),
   checkRequiredFields("status"),
   // #swagger.tags = ['Showtimes']
@@ -55,6 +63,7 @@ router.route("/:showTimeId/seats/:seatId").patch(
 );
 
 router.route("/:id").patch(
+  verifyJwt,
   verifyRoles(ROLE.MANAGER, ROLE.CINEMA),
   checkRequiredFields("status"),
   // #swagger.tags = ['Showtimes']

@@ -1,5 +1,6 @@
 const Showtime = require("../models/Showtime");
 const CinemaRoom = require("../models/CinemaRoom");
+const Movie = require("../models/Movie");
 const STATUS = require("../constraints/status");
 
 const getAllShowtimes = async (req, res) => {
@@ -14,14 +15,59 @@ const getAllShowtimes = async (req, res) => {
   }
 };
 
+const getShowtimesByMovie = async (req, res) => {
+  try {
+    const { movieId } = req.params;
+    const showtimes = await Showtime.find({ movieId })
+      .populate("movieId")
+      .populate("cinemaRoomId")
+      .sort({ startTime: 1 });
+    res.status(200).json(showtimes);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Unexpected error occured!" });
+  }
+};
+
 const addShowtime = async (req, res) => {
   try {
-    const { movieId, startTime, endTime, pricingRule, cinemaRoomId } = req.body;
+    const { movieId, startTime, pricingRule, cinemaRoomId } = req.body;
+
+    // Fetch movie to get duration
+    const movie = await Movie.findById(movieId);
+    if (!movie) {
+      return res.status(404).json({ message: "Movie not found!" });
+    }
+
+    // Compute endTime from startTime + duration (minutes)
+    const startDate = new Date(startTime);
+    const endDate = new Date(startDate.getTime() + movie.duration * 60 * 1000);
 
     // Fetch CinemaRoom to get seats
     const room = await CinemaRoom.findById(cinemaRoomId);
     if (!room) {
       return res.status(404).json({ message: "Cinema room not found!" });
+    }
+
+    // Check for time overlap with existing showtimes in the same room
+    const overlapping = await Showtime.findOne({
+      cinemaRoomId,
+      status: { $ne: STATUS.CANCELLED },
+      $or: [
+        // New showtime starts during an existing one
+        { startTime: { $lt: endDate }, endTime: { $gt: startDate } },
+      ],
+    });
+
+    if (overlapping) {
+      return res.status(409).json({
+        message: "This time slot overlaps with an existing showtime in the same room!",
+        conflictWith: {
+          id: overlapping._id,
+          startTime: overlapping.startTime,
+          endTime: overlapping.endTime,
+        },
+      });
     }
 
     // Initialize seats for the showtime based on the room's seats
@@ -34,8 +80,8 @@ const addShowtime = async (req, res) => {
 
     const newShowtime = await Showtime.create({
       movieId,
-      startTime,
-      endTime,
+      startTime: startDate,
+      endTime: endDate,
       pricingRule,
       cinemaRoomId,
       seats,
@@ -120,6 +166,7 @@ const updateShowtimeStatus = async (req, res) => {
 
 module.exports = {
   getAllShowtimes,
+  getShowtimesByMovie,
   addShowtime,
   getShowtimeSeats,
   updateSeatStatus,
