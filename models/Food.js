@@ -12,6 +12,7 @@ const FoodSchema = new Schema(
     status: { type: String, default: STATUS.ACTIVE },
     items: [
       {
+        foodId: { type: Schema.Types.ObjectId, ref: "Food" },
         name: { type: String },
         quantity: { type: Number },
         imageUrl: { type: String },

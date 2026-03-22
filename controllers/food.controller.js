@@ -25,21 +25,39 @@ const getFoods = async (req, res) => {
 
     const foods = await Food.find(filter);
 
-    // Get all single foods to map images for combo items
+    // Fetch all active single foods to use for enrichment (indexing by ID and Name)
     const singleFoods = await Food.find({ type: "SINGLE", status: STATUS.ACTIVE });
-    const imageMap = {};
+    const foodMap = {}; // Map by ID
+    const nameMap = {}; // Map by Name (fallback)
+
     singleFoods.forEach((f) => {
-      imageMap[f.name.toLowerCase().trim()] = f.imageUrl;
+      foodMap[f._id.toString()] = f;
+      nameMap[f.name.toLowerCase().trim()] = f;
     });
 
-    // Enrich combo items with imageURL
+    // Enrich combo items with the latest name and imageURL from the source single food
     const enrichedFoods = foods.map((food) => {
       const foodObj = food.toObject();
       if (foodObj.type === "COMBO" && foodObj.items) {
-        foodObj.items = foodObj.items.map((item) => ({
-          ...item,
-          imageUrl: imageMap[item.name.toLowerCase().trim()] || null,
-        }));
+        foodObj.items = foodObj.items.map((item) => {
+          // Priority 1: Match by foodId
+          let sourceFood = item.foodId ? foodMap[item.foodId.toString()] : null;
+          
+          // Priority 2: Match by name (fallback for legacy data)
+          if (!sourceFood && item.name) {
+            sourceFood = nameMap[item.name.toLowerCase().trim()];
+          }
+
+          if (sourceFood) {
+            return {
+              ...item,
+              foodId: sourceFood._id, // Ensure ID is present
+              name: sourceFood.name,  // Overwrite with latest name
+              imageUrl: sourceFood.imageUrl || null, // Overwrite with latest image
+            };
+          }
+          return item; // Keep as is if no match found
+        });
       }
       return foodObj;
     });
