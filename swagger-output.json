@@ -1562,6 +1562,44 @@
         }
       }
     },
+    "/api/rooms/{id}": {
+      "get": {
+        "tags": [
+          "CinemaRooms"
+        ],
+        "summary": "Get a cinema room by id",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/api/rooms/{id}/seats": {
       "patch": {
         "tags": [
