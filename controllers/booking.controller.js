@@ -74,8 +74,8 @@ const getBookingHistory = async (req, res) => {
       await getBookingHistoryService(userId);
 
     res.status(200).json({
-      movieBookings,
-      foodBookings,
+      rawMovieBookingHistory,
+      foodBookingHistory,
     });
   } catch (error) {
     console.error(error);
