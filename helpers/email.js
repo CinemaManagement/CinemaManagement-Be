@@ -12,4 +12,13 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-module.exports = { transporter };
+const sendEmail = async (to, subject, text) => {
+  await transporter.sendMail({
+    from: process.env.EMAIL_ADMIN,
+    to,
+    subject,
+    text,
+  });
+};
+
+module.exports = { transporter, sendEmail };
