@@ -1,6 +1,7 @@
 const express = require("express");
 const {
   getAllShowtimes,
+  getShowtimeById,
   getShowtimesByMovie,
   addShowtime,
   getShowtimeSeats,
@@ -62,14 +63,21 @@ router.route("/:showTimeId/seats/:seatCode").patch(
   updateSeatStatus
 );
 
-router.route("/:id").patch(
-  verifyJwt,
-  verifyRoles(ROLE.MANAGER, ROLE.CINEMA),
-  checkRequiredFields("status"),
-  // #swagger.tags = ['Showtimes']
-  // #swagger.summary = 'Update showtime status'
-  // #swagger.security = [{ "bearerAuth": [] }]
-  updateShowtimeStatus
-);
+router
+  .route("/:id")
+  .get(
+    // #swagger.tags = ['Showtimes']
+    // #swagger.summary = 'Get a showtime by id (public)'
+    getShowtimeById
+  )
+  .patch(
+    verifyJwt,
+    verifyRoles(ROLE.MANAGER, ROLE.CINEMA),
+    checkRequiredFields("status"),
+    // #swagger.tags = ['Showtimes']
+    // #swagger.summary = 'Update showtime status'
+    // #swagger.security = [{ "bearerAuth": [] }]
+    updateShowtimeStatus
+  );
 
 module.exports = router;

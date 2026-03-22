@@ -39,6 +39,46 @@ const addCinemaRoom = async (req, res) => {
   }
 };
 
+const updateCinemaRoom = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { roomName, status, seats } = req.body;
+    const room = await CinemaRoom.findById(id);
+    if (!room) {
+      return res.status(404).json({ message: `Not found room with id ${id}!` });
+    }
+
+    const updateData = {};
+    if (roomName) updateData.roomName = roomName;
+    if (status) updateData.status = status;
+    if (seats) updateData.seats = seats;
+
+    const updatedRoom = await CinemaRoom.findByIdAndUpdate(
+      id,
+      { $set: updateData },
+      { new: true }
+    );
+    res.status(200).json(updatedRoom);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Unexpected error occured!" });
+  }
+};
+
+const deleteCinemaRoom = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const room = await CinemaRoom.findByIdAndDelete(id);
+    if (!room) {
+      return res.status(404).json({ message: `Not found room with id ${id}!` });
+    }
+    res.status(200).json({ message: "Delete room successfully!" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Unexpected error occured!" });
+  }
+};
+
 const updateCinemaRoomStatus = async (req, res) => {
   try {
     const id = req.params?.id;
@@ -73,5 +113,7 @@ module.exports = {
   getAllCinemaRooms,
   getCinemaRoomById,
   addCinemaRoom,
+  updateCinemaRoom,
+  deleteCinemaRoom,
   updateCinemaRoomStatus,
 };
