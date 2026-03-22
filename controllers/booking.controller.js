@@ -13,6 +13,7 @@ const {
   paymentService,
   addFoodToBookingService,
   cancelBookingService,
+  cancelFoodBookingService,
 } = require("../services/booking.services");
 const { search } = require("../routers/redisTest.route");
 
@@ -115,6 +116,17 @@ const cancelBooking = async (req, res) => {
   }
 };
 
+const cancelFoodBooking = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const foodBooking = await cancelFoodBookingService(id);
+    res.status(200).json({ success: true, message: "Food booking cancelled successfully", data: foodBooking });
+  } catch (error) {
+    console.error(error);
+    res.status(error.status || 500).json({ success: false, message: error.message || "Internal server error" });
+  }
+};
+
 module.exports = {
   reserveMovieTickets,
   orderFood,
@@ -122,5 +134,6 @@ module.exports = {
   getBookingHistory,
   checkIn,
   addFoodToBooking,
-  cancelBooking
+  cancelBooking,
+  cancelFoodBooking
 };

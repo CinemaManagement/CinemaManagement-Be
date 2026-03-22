@@ -206,4 +206,12 @@ router.patch("/add-food-order",
   bookingController.addFoodToBooking,
 );
 
+router.patch("/food/:id/cancel",
+  verifyRoles(ROLE.CUSTOMER),
+  // #swagger.tags = ['Bookings']
+  // #swagger.summary = 'Cancel a standalone food booking'
+  // #swagger.security = [{ "bearerAuth": [] }]
+  bookingController.cancelFoodBooking,
+);
+
 module.exports = router;

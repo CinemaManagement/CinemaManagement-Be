@@ -1992,9 +1992,6 @@
           },
           "401": {
             "description": "Unauthorized"
-          },
-          "500": {
-            "description": "Internal Server Error"
           }
         },
         "security": [
@@ -2076,6 +2073,41 @@
             }
           }
         }
+      }
+    },
+    "/api/bookings/food/{id}/cancel": {
+      "patch": {
+        "tags": [
+          "Bookings"
+        ],
+        "summary": "Cancel a standalone food booking",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     }
   },

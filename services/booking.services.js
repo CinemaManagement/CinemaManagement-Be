@@ -366,6 +366,29 @@ const cancelBookingService = async (id) => {
 
   return booking;
 };
+
+const cancelFoodBookingService = async (foodBookingId) => {
+  const foodBooking = await FoodBooking.findById(foodBookingId);
+  if (!foodBooking) throw { status: 404, message: "Food Booking not found" };
+
+  if (foodBooking.status === STATUS.CANCELLED) {
+    throw { status: 400, message: "Food booking is already cancelled" };
+  }
+
+  // Mark as cancelled
+  foodBooking.status = STATUS.CANCELLED;
+  await foodBooking.save();
+
+  // If this food booking was attached to a MovieBooking, you might want to remove the link 
+  // so the user can order food again on the same movie ticket
+  await MovieBooking.updateMany(
+    { foodBookingId: foodBookingId },
+    { $unset: { foodBookingId: "" } } 
+  );
+
+  return foodBooking;
+};
+
 module.exports = {
   reserveMovieTicketsService,
   foodOrderService,
@@ -373,5 +396,6 @@ module.exports = {
   getBookingHistoryService,
   checkInService,
   addFoodToBookingService,
-  cancelBookingService
+  cancelBookingService,
+  cancelFoodBookingService
 };
