@@ -1,5 +1,6 @@
 const Food = require("../models/Food");
 const STATUS = require("../constraints/status");
+const redisClient = require("../config/redis");
 
 const getFoods = async (req, res) => {
   try {
@@ -13,7 +14,21 @@ const getFoods = async (req, res) => {
       filter.type = type;
     }
 
+
+    const cacheKey = `foods:${type || 'ALL'}`;
+    const cachedFoods = await redisClient.get(cacheKey);
+    if (cachedFoods) {
+      return res.status(200).json(JSON.parse(cachedFoods));
+    }
+
+
+
     const foods = await Food.find(filter);
+
+    await redisClient.set(cacheKey, JSON.stringify(foods), {
+      EX: 60 * 60 * 24, // 1 day
+    });
+
     res.status(200).json(foods);
   } catch (error) {
     console.error(error);
@@ -49,6 +64,8 @@ const createFood = async (req, res) => {
       status: STATUS.ACTIVE,
       items: Array.isArray(items) ? items : [],
     });
+
+    await redisClient.del(["foods:ALL", "foods:SINGLE", "foods:COMBO"]);
 
     res.status(201).json(food);
   } catch (error) {
@@ -91,6 +108,8 @@ const updateFood = async (req, res) => {
     Object.assign(food, updates);
     await food.save();
 
+    await redisClient.del(["foods:ALL", "foods:SINGLE", "foods:COMBO"]);
+
     res.status(200).json(food);
   } catch (error) {
     console.error(error);
@@ -110,6 +129,9 @@ const deleteFood = async (req, res) => {
           .status(404)
           .json({ message: `Not found food with id ${id}!` });
       }
+
+      await redisClient.del(["foods:ALL", "foods:SINGLE", "foods:COMBO"]);
+
       return res
         .status(200)
         .json({ message: "Food deleted permanently", food: deleted });
@@ -125,6 +147,9 @@ const deleteFood = async (req, res) => {
         .status(404)
         .json({ message: `Not found food with id ${id}!` });
     }
+
+    await redisClient.del(["foods:ALL", "foods:SINGLE", "foods:COMBO"]);
+
     res
       .status(200)
       .json({ message: "Food hidden successfully", food: updated });

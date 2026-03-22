@@ -65,8 +65,15 @@ const foodOrderService = async (items, userId) =>{
       const foodItem = await Food.findById(item.foodId);
       if (!foodItem) throw new Error({status:404, message: `Food item ${item.foodId} not found` });
 
+<<<<<<< Updated upstream
       const subtotal = foodItem.price * item.quantity;
       totalAmount += subtotal;
+=======
+  await MovieBooking.updateMany(
+    { foodBookingId: foodBookingId },
+    { $unset: { foodBookingId: "" } } 
+  );
+>>>>>>> Stashed changes
 
       detailedItems.push({
         foodId: foodItem._id,
