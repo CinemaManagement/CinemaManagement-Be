@@ -28,9 +28,7 @@
     },
     "/auth/refresh": {
       "get": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "summary": "Refresh access token using refresh token in cookie",
         "description": "",
         "responses": {
@@ -51,9 +49,7 @@
     },
     "/auth/logout": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "summary": "Logout from the application",
         "description": "",
         "responses": {
@@ -68,9 +64,7 @@
     },
     "/auth/change-pass": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "summary": "Change password (require login)",
         "description": "",
         "responses": {
@@ -113,9 +107,7 @@
     },
     "/auth/reset-password": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "summary": "Reset password after verifying OTP",
         "description": "",
         "responses": {
@@ -150,9 +142,7 @@
     },
     "/auth/login": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "summary": "Login to the application",
         "description": "",
         "responses": {
@@ -190,9 +180,7 @@
     },
     "/auth/register": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "summary": "Register a new user",
         "description": "",
         "responses": {
@@ -230,9 +218,7 @@
     },
     "/otp/send": {
       "post": {
-        "tags": [
-          "OTP"
-        ],
+        "tags": ["OTP"],
         "summary": "Request to send OTP through email",
         "description": "",
         "responses": {
@@ -264,9 +250,7 @@
     },
     "/otp/verify": {
       "post": {
-        "tags": [
-          "OTP"
-        ],
+        "tags": ["OTP"],
         "summary": "Verify OTP",
         "description": "",
         "responses": {
@@ -298,9 +282,7 @@
     },
     "/api/movies/": {
       "get": {
-        "tags": [
-          "Movie"
-        ],
+        "tags": ["Movie"],
         "summary": "Get all active movies",
         "description": "",
         "responses": {
@@ -313,9 +295,7 @@
         }
       },
       "post": {
-        "tags": [
-          "Movie"
-        ],
+        "tags": ["Movie"],
         "summary": "Add a new movie",
         "description": "",
         "responses": {
@@ -370,9 +350,7 @@
     },
     "/api/movies/all": {
       "get": {
-        "tags": [
-          "Movie"
-        ],
+        "tags": ["Movie"],
         "summary": "Get all movies for manager",
         "description": "",
         "responses": {
@@ -390,9 +368,7 @@
     },
     "/api/movies/{id}": {
       "get": {
-        "tags": [
-          "Movie"
-        ],
+        "tags": ["Movie"],
         "summary": "Get movie by id",
         "description": "",
         "parameters": [
@@ -421,9 +397,7 @@
         }
       },
       "put": {
-        "tags": [
-          "Movie"
-        ],
+        "tags": ["Movie"],
         "summary": "Update movie details",
         "description": "",
         "parameters": [
@@ -457,9 +431,7 @@
         ]
       },
       "delete": {
-        "tags": [
-          "Movie"
-        ],
+        "tags": ["Movie"],
         "summary": "Hide (soft delete) a movie",
         "description": "",
         "parameters": [
@@ -495,9 +467,7 @@
     },
     "/api/discounts/": {
       "get": {
-        "tags": [
-          "Discounts"
-        ],
+        "tags": ["Discounts"],
         "summary": "Get active discounts (public)",
         "description": "",
         "responses": {
@@ -513,9 +483,7 @@
         }
       },
       "post": {
-        "tags": [
-          "Discounts"
-        ],
+        "tags": ["Discounts"],
         "summary": "Create new discount (manager)",
         "description": "",
         "responses": {
@@ -585,9 +553,7 @@
     },
     "/api/discounts/{id}": {
       "patch": {
-        "tags": [
-          "Discounts"
-        ],
+        "tags": ["Discounts"],
         "summary": "Update discount (manager)",
         "description": "",
         "parameters": [
@@ -643,9 +609,7 @@
     },
     "/api/expenses/": {
       "get": {
-        "tags": [
-          "Expenses"
-        ],
+        "tags": ["Expenses"],
         "description": "",
         "parameters": [
           {
@@ -705,9 +669,7 @@
         ]
       },
       "post": {
-        "tags": [
-          "Expenses"
-        ],
+        "tags": ["Expenses"],
         "description": "",
         "responses": {
           "201": {
@@ -769,11 +731,9 @@
         }
       }
     },
-    "/foods/": {
+    "/api/foods/": {
       "get": {
-        "tags": [
-          "Foods"
-        ],
+        "tags": ["Foods"],
         "summary": "Get food menu",
         "description": "",
         "parameters": [
@@ -798,9 +758,7 @@
         }
       },
       "post": {
-        "tags": [
-          "Foods"
-        ],
+        "tags": ["Foods"],
         "summary": "Create a new food/combo",
         "description": "",
         "responses": {
@@ -850,11 +808,9 @@
         }
       }
     },
-    "/foods/{id}": {
+    "/api/foods/{id}": {
       "put": {
-        "tags": [
-          "Foods"
-        ],
+        "tags": ["Foods"],
         "summary": "Update food details",
         "description": "",
         "parameters": [
@@ -908,9 +864,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "Foods"
-        ],
+        "tags": ["Foods"],
         "summary": "Delete (soft/hard) a food item",
         "description": "",
         "parameters": [
@@ -953,9 +907,7 @@
     },
     "/api/users/": {
       "get": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "summary": "Get all users",
         "description": "",
         "responses": {
@@ -976,9 +928,7 @@
         ]
       },
       "post": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "summary": "Add new user",
         "description": "",
         "responses": {
@@ -1024,9 +974,7 @@
     },
     "/api/users/{id}": {
       "delete": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "summary": "Delete user",
         "description": "",
         "parameters": [
@@ -1062,9 +1010,7 @@
     },
     "/api/users/{id}/block": {
       "put": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "summary": "Block user",
         "description": "",
         "parameters": [
@@ -1100,9 +1046,7 @@
     },
     "/api/users/me": {
       "get": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "summary": "Get personal information",
         "description": "",
         "responses": {
@@ -1128,9 +1072,7 @@
     },
     "/api/rooms/": {
       "get": {
-        "tags": [
-          "CinemaRooms"
-        ],
+        "tags": ["CinemaRooms"],
         "summary": "Get all cinema rooms",
         "description": "",
         "responses": {
@@ -1151,9 +1093,7 @@
         ]
       },
       "post": {
-        "tags": [
-          "CinemaRooms"
-        ],
+        "tags": ["CinemaRooms"],
         "summary": "Create a new cinema room",
         "description": "",
         "responses": {
@@ -1196,9 +1136,7 @@
     },
     "/api/rooms/{id}/seats": {
       "patch": {
-        "tags": [
-          "CinemaRooms"
-        ],
+        "tags": ["CinemaRooms"],
         "summary": "Update cinema room seats status",
         "description": "",
         "parameters": [
@@ -1251,9 +1189,7 @@
     },
     "/api/rooms/{id}/status": {
       "patch": {
-        "tags": [
-          "CinemaRooms"
-        ],
+        "tags": ["CinemaRooms"],
         "summary": "Update cinema room status",
         "description": "",
         "parameters": [
@@ -1306,9 +1242,7 @@
     },
     "/api/showtimes/": {
       "get": {
-        "tags": [
-          "Showtimes"
-        ],
+        "tags": ["Showtimes"],
         "summary": "Get all showtimes",
         "description": "",
         "responses": {
@@ -1329,9 +1263,7 @@
         ]
       },
       "post": {
-        "tags": [
-          "Showtimes"
-        ],
+        "tags": ["Showtimes"],
         "summary": "Create a new showtime",
         "description": "",
         "responses": {
@@ -1386,9 +1318,7 @@
     },
     "/api/showtimes/{id}/seats": {
       "get": {
-        "tags": [
-          "Showtimes"
-        ],
+        "tags": ["Showtimes"],
         "summary": "Get all seats of a showtime",
         "description": "",
         "parameters": [
@@ -1424,9 +1354,7 @@
     },
     "/api/showtimes/{showTimeId}/seats/{seatId}": {
       "patch": {
-        "tags": [
-          "Showtimes"
-        ],
+        "tags": ["Showtimes"],
         "summary": "Update seat status in a showtime",
         "description": "",
         "parameters": [
@@ -1487,9 +1415,7 @@
     },
     "/api/showtimes/{id}": {
       "patch": {
-        "tags": [
-          "Showtimes"
-        ],
+        "tags": ["Showtimes"],
         "summary": "Update showtime status",
         "description": "",
         "parameters": [
@@ -1542,9 +1468,7 @@
     },
     "/api/bookings/movie": {
       "post": {
-        "tags": [
-          "Bookings"
-        ],
+        "tags": ["Bookings"],
         "summary": "Reserve movie tickets",
         "description": "",
         "responses": {
@@ -1558,10 +1482,7 @@
                     "_id": "67d6f39cd8a4d18fb21461f3",
                     "showtimeId": "67d6f295d8a4d18fb2145f2a",
                     "userId": "67d6ef74d8a4d18fb2144f10",
-                    "seats": [
-                      "A1",
-                      "A2"
-                    ],
+                    "seats": ["A1", "A2"],
                     "status": "PENDING"
                   }
                 }
@@ -1583,10 +1504,7 @@
             "application/json": {
               "example": {
                 "showtimeId": "67d6f295d8a4d18fb2145f2a",
-                "seats": [
-                  "A1",
-                  "A2"
-                ],
+                "seats": ["A1", "A2"],
                 "foodBookingId": "67d6f2f0d8a4d18fb2146011"
               }
             }
@@ -1596,9 +1514,7 @@
     },
     "/api/bookings/food": {
       "post": {
-        "tags": [
-          "Bookings"
-        ],
+        "tags": ["Bookings"],
         "summary": "Order food for booking",
         "description": "",
         "responses": {
@@ -1661,9 +1577,7 @@
     },
     "/api/bookings/{id}/pay": {
       "post": {
-        "tags": [
-          "Bookings"
-        ],
+        "tags": ["Bookings"],
         "summary": "Confirm booking payment",
         "description": "",
         "parameters": [
@@ -1722,9 +1636,7 @@
     },
     "/api/bookings/history": {
       "get": {
-        "tags": [
-          "Bookings"
-        ],
+        "tags": ["Bookings"],
         "summary": "Get booking history",
         "description": "",
         "responses": {
@@ -1737,10 +1649,7 @@
                     {
                       "_id": "67d6f39cd8a4d18fb21461f3",
                       "showtimeId": "67d6f295d8a4d18fb2145f2a",
-                      "seats": [
-                        "A1",
-                        "A2"
-                      ],
+                      "seats": ["A1", "A2"],
                       "status": "PAID"
                     }
                   ],
@@ -1776,9 +1685,7 @@
     },
     "/api/bookings/{id}/checkin": {
       "patch": {
-        "tags": [
-          "Bookings"
-        ],
+        "tags": ["Bookings"],
         "summary": "Check in a booking",
         "description": "",
         "parameters": [
@@ -1821,9 +1728,7 @@
     },
     "/api/bookings/{id}/cancel": {
       "patch": {
-        "tags": [
-          "Bookings"
-        ],
+        "tags": ["Bookings"],
         "summary": "Cancel a booking",
         "description": "",
         "parameters": [
@@ -1856,9 +1761,7 @@
     },
     "/api/bookings/add-food-order": {
       "patch": {
-        "tags": [
-          "Bookings"
-        ],
+        "tags": ["Bookings"],
         "summary": "Attach a food booking to a movie booking",
         "description": "",
         "responses": {
@@ -1895,9 +1798,7 @@
     },
     "/api/bookings/food/{id}/cancel": {
       "patch": {
-        "tags": [
-          "Bookings"
-        ],
+        "tags": ["Bookings"],
         "summary": "Cancel a standalone food booking",
         "description": "",
         "parameters": [
