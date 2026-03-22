@@ -28,9 +28,7 @@
     },
     "/auth/refresh": {
       "get": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "summary": "Refresh access token using refresh token in cookie",
         "description": "",
         "responses": {
@@ -51,9 +49,7 @@
     },
     "/auth/logout": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "summary": "Logout from the application",
         "description": "",
         "responses": {
@@ -68,9 +64,7 @@
     },
     "/auth/change-pass": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "summary": "Change password (require login)",
         "description": "",
         "responses": {
@@ -113,9 +107,7 @@
     },
     "/auth/reset-password": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "summary": "Reset password after verifying OTP",
         "description": "",
         "responses": {
@@ -150,9 +142,7 @@
     },
     "/auth/login": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "summary": "Login to the application",
         "description": "",
         "responses": {
@@ -190,9 +180,7 @@
     },
     "/auth/register": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "summary": "Register a new user",
         "description": "",
         "responses": {
@@ -230,9 +218,7 @@
     },
     "/otp/send": {
       "post": {
-        "tags": [
-          "OTP"
-        ],
+        "tags": ["OTP"],
         "summary": "Request to send OTP through email",
         "description": "",
         "responses": {
@@ -264,9 +250,7 @@
     },
     "/otp/verify": {
       "post": {
-        "tags": [
-          "OTP"
-        ],
+        "tags": ["OTP"],
         "summary": "Verify OTP",
         "description": "",
         "responses": {
@@ -298,9 +282,7 @@
     },
     "/api/movies/": {
       "get": {
-        "tags": [
-          "Movie"
-        ],
+        "tags": ["Movie"],
         "summary": "Get all active movies",
         "description": "",
         "responses": {
@@ -313,9 +295,7 @@
         }
       },
       "post": {
-        "tags": [
-          "Movie"
-        ],
+        "tags": ["Movie"],
         "summary": "Add a new movie",
         "description": "",
         "parameters": [
@@ -352,9 +332,7 @@
                 },
                 "category": {
                   "type": "array",
-                  "example": [
-                    "Action"
-                  ],
+                  "example": ["Action"],
                   "items": {
                     "type": "string"
                   }
@@ -477,9 +455,7 @@
     },
     "/api/movies/all": {
       "get": {
-        "tags": [
-          "Movie"
-        ],
+        "tags": ["Movie"],
         "summary": "Get all movies for manager",
         "description": "",
         "responses": {
@@ -497,9 +473,7 @@
     },
     "/api/movies/{id}": {
       "get": {
-        "tags": [
-          "Movie"
-        ],
+        "tags": ["Movie"],
         "summary": "Get movie by id",
         "description": "",
         "parameters": [
@@ -528,9 +502,7 @@
         }
       },
       "put": {
-        "tags": [
-          "Movie"
-        ],
+        "tags": ["Movie"],
         "summary": "Update movie details",
         "description": "",
         "parameters": [
@@ -564,9 +536,7 @@
         ]
       },
       "delete": {
-        "tags": [
-          "Movie"
-        ],
+        "tags": ["Movie"],
         "summary": "Hide (soft delete) a movie",
         "description": "",
         "parameters": [
@@ -602,9 +572,7 @@
     },
     "/api/discounts/": {
       "get": {
-        "tags": [
-          "Discounts"
-        ],
+        "tags": ["Discounts"],
         "summary": "Get active discounts (public)",
         "description": "",
         "responses": {
@@ -620,9 +588,7 @@
         }
       },
       "post": {
-        "tags": [
-          "Discounts"
-        ],
+        "tags": ["Discounts"],
         "summary": "Create new discount (manager)",
         "description": "",
         "responses": {
@@ -692,9 +658,7 @@
     },
     "/api/discounts/{id}": {
       "patch": {
-        "tags": [
-          "Discounts"
-        ],
+        "tags": ["Discounts"],
         "summary": "Update discount (manager)",
         "description": "",
         "parameters": [
@@ -750,9 +714,7 @@
     },
     "/api/expenses/": {
       "get": {
-        "tags": [
-          "Expenses"
-        ],
+        "tags": ["Expenses"],
         "description": "",
         "parameters": [
           {
@@ -812,9 +774,7 @@
         ]
       },
       "post": {
-        "tags": [
-          "Expenses"
-        ],
+        "tags": ["Expenses"],
         "description": "",
         "responses": {
           "201": {
@@ -878,9 +838,7 @@
     },
     "/api/foods/": {
       "get": {
-        "tags": [
-          "Foods"
-        ],
+        "tags": ["Foods"],
         "summary": "Get food menu",
         "description": "",
         "parameters": [
@@ -908,9 +866,7 @@
         }
       },
       "post": {
-        "tags": [
-          "Foods"
-        ],
+        "tags": ["Foods"],
         "summary": "Create a new food/combo",
         "description": "",
         "responses": {
@@ -965,9 +921,7 @@
     },
     "/api/foods/{id}": {
       "put": {
-        "tags": [
-          "Foods"
-        ],
+        "tags": ["Foods"],
         "summary": "Update food details",
         "description": "",
         "parameters": [
@@ -1021,9 +975,7 @@
         }
       },
       "delete": {
-        "tags": [
-          "Foods"
-        ],
+        "tags": ["Foods"],
         "summary": "Delete (soft/hard) a food item",
         "description": "",
         "parameters": [
@@ -1064,388 +1016,23 @@
         ]
       }
     },
-    "/api/users/": {
-      "get": {
-        "tags": [
-          "Users"
-        ],
-        "summary": "Get all users",
-        "description": "",
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      },
-      "post": {
-        "tags": [
-          "Users"
-        ],
-        "summary": "Add new user",
-        "description": "",
-        "responses": {
-          "201": {
-            "description": "Created"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "email": {
-                    "example": "any"
-                  },
-                  "password": {
-                    "example": "any"
-                  },
-                  "role": {
-                    "example": "any"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/users/{id}": {
-      "delete": {
-        "tags": [
-          "Users"
-        ],
-        "summary": "Delete user",
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/users/{id}/block": {
-      "put": {
-        "tags": [
-          "Users"
-        ],
-        "summary": "Block user",
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/users/me": {
-      "get": {
-        "tags": [
-          "Users"
-        ],
-        "summary": "Get personal information",
-        "description": "",
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
-    "/api/rooms/": {
-      "get": {
-        "tags": [
-          "CinemaRooms"
-        ],
-        "summary": "Get all cinema rooms",
-        "description": "",
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      },
-      "post": {
-        "tags": [
-          "CinemaRooms"
-        ],
-        "summary": "Create a new cinema room",
-        "description": "",
-        "responses": {
-          "201": {
-            "description": "Created"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "roomName": {
-                    "example": "any"
-                  },
-                  "seats": {
-                    "example": "any"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/rooms/{id}/seats": {
-      "patch": {
-        "tags": [
-          "CinemaRooms"
-        ],
-        "summary": "Update cinema room seats status",
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "status": {
-                    "example": "any"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/rooms/{id}/status": {
-      "patch": {
-        "tags": [
-          "CinemaRooms"
-        ],
-        "summary": "Update cinema room status",
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "status": {
-                    "example": "any"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/showtimes/": {
       "get": {
-        "tags": [
-          "Showtimes"
-        ],
-        "summary": "Get all showtimes",
+        "tags": ["Showtimes"],
+        "summary": "Get all showtimes (public)",
         "description": "",
         "responses": {
           "200": {
             "description": "OK"
           },
-          "401": {
-            "description": "Unauthorized"
-          },
           "500": {
             "description": "Internal Server Error"
           }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
+        }
       },
       "post": {
-        "tags": [
-          "Showtimes"
-        ],
-        "summary": "Create a new showtime",
+        "tags": ["Showtimes"],
+        "summary": "Create a new showtime (endTime auto-computed from movie duration)",
         "description": "",
         "responses": {
           "201": {
@@ -1459,6 +1046,9 @@
           },
           "404": {
             "description": "Not Found"
+          },
+          "409": {
+            "description": "Conflict"
           },
           "500": {
             "description": "Internal Server Error"
@@ -1481,9 +1071,6 @@
                   "startTime": {
                     "example": "any"
                   },
-                  "endTime": {
-                    "example": "any"
-                  },
                   "pricingRule": {
                     "example": "any"
                   },
@@ -1497,11 +1084,34 @@
         }
       }
     },
+    "/api/showtimes/movie/{movieId}": {
+      "get": {
+        "tags": ["Showtimes"],
+        "summary": "Get all showtimes by movieId (public)",
+        "description": "",
+        "parameters": [
+          {
+            "name": "movieId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/api/showtimes/{id}/seats": {
       "get": {
-        "tags": [
-          "Showtimes"
-        ],
+        "tags": ["Showtimes"],
         "summary": "Get all seats of a showtime",
         "description": "",
         "parameters": [
@@ -1537,9 +1147,7 @@
     },
     "/api/showtimes/{showTimeId}/seats/{seatId}": {
       "patch": {
-        "tags": [
-          "Showtimes"
-        ],
+        "tags": ["Showtimes"],
         "summary": "Update seat status in a showtime",
         "description": "",
         "parameters": [
@@ -1600,9 +1208,7 @@
     },
     "/api/showtimes/{id}": {
       "patch": {
-        "tags": [
-          "Showtimes"
-        ],
+        "tags": ["Showtimes"],
         "summary": "Update showtime status",
         "description": "",
         "parameters": [
@@ -1653,12 +1259,10 @@
         }
       }
     },
-    "/api/cart/": {
+    "/api/users/": {
       "get": {
-        "tags": [
-          "Cart"
-        ],
-        "summary": "Get current user cart",
+        "tags": ["Users"],
+        "summary": "Get all users",
         "description": "",
         "responses": {
           "200": {
@@ -1666,9 +1270,6 @@
           },
           "401": {
             "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
           },
           "500": {
             "description": "Internal Server Error"
@@ -1679,19 +1280,12 @@
             "bearerAuth": []
           }
         ]
-      }
-    },
-    "/api/cart/add": {
+      },
       "post": {
-        "tags": [
-          "Cart"
-        ],
-        "summary": "Add item to cart",
+        "tags": ["Users"],
+        "summary": "Add new user",
         "description": "",
         "responses": {
-          "200": {
-            "description": "OK"
-          },
           "201": {
             "description": "Created"
           },
@@ -1701,12 +1295,6 @@
           "401": {
             "description": "Unauthorized"
           },
-          "403": {
-            "description": "Forbidden"
-          },
-          "404": {
-            "description": "Not Found"
-          },
           "500": {
             "description": "Internal Server Error"
           }
@@ -1717,73 +1305,35 @@
           }
         ],
         "requestBody": {
-          "required": true,
           "content": {
             "application/json": {
-              "example": {
-                "foodId": "67d6f4f6d8a4d18fb21463a2",
-                "quantity": 2
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "example": "any"
+                  },
+                  "password": {
+                    "example": "any"
+                  },
+                  "role": {
+                    "example": "any"
+                  }
+                }
               }
             }
           }
         }
       }
     },
-    "/api/cart/update": {
-      "put": {
-        "tags": [
-          "Cart"
-        ],
-        "summary": "Update item quantity in cart",
-        "description": "",
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "example": {
-                "foodId": "67d6f4f6d8a4d18fb21463a2",
-                "quantity": 5
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/cart/remove/{foodId}": {
+    "/api/users/{id}": {
       "delete": {
-        "tags": [
-          "Cart"
-        ],
-        "summary": "Remove item from cart",
+        "tags": ["Users"],
+        "summary": "Delete user",
         "description": "",
         "parameters": [
           {
-            "name": "foodId",
+            "name": "id",
             "in": "path",
             "required": true,
             "schema": {
@@ -1798,8 +1348,41 @@
           "401": {
             "description": "Unauthorized"
           },
-          "403": {
-            "description": "Forbidden"
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/users/{id}/block": {
+      "put": {
+        "tags": ["Users"],
+        "summary": "Block user",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
           },
           "404": {
             "description": "Not Found"
@@ -1815,12 +1398,10 @@
         ]
       }
     },
-    "/api/cart/clear": {
-      "delete": {
-        "tags": [
-          "Cart"
-        ],
-        "summary": "Clear all items from cart",
+    "/api/users/me": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get personal information",
         "description": "",
         "responses": {
           "200": {
@@ -1829,8 +1410,8 @@
           "401": {
             "description": "Unauthorized"
           },
-          "403": {
-            "description": "Forbidden"
+          "404": {
+            "description": "Not Found"
           },
           "500": {
             "description": "Internal Server Error"
@@ -1843,11 +1424,179 @@
         ]
       }
     },
+    "/api/rooms/": {
+      "get": {
+        "tags": ["CinemaRooms"],
+        "summary": "Get all cinema rooms",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": ["CinemaRooms"],
+        "summary": "Create a new cinema room",
+        "description": "",
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "roomName": {
+                    "example": "any"
+                  },
+                  "seats": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/rooms/{id}/seats": {
+      "patch": {
+        "tags": ["CinemaRooms"],
+        "summary": "Update cinema room seats status",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/rooms/{id}/status": {
+      "patch": {
+        "tags": ["CinemaRooms"],
+        "summary": "Update cinema room status",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/bookings/movie": {
       "post": {
-        "tags": [
-          "Bookings"
-        ],
+        "tags": ["Bookings"],
         "summary": "Reserve movie tickets",
         "description": "",
         "responses": {
@@ -1861,10 +1610,7 @@
                     "_id": "67d6f39cd8a4d18fb21461f3",
                     "showtimeId": "67d6f295d8a4d18fb2145f2a",
                     "userId": "67d6ef74d8a4d18fb2144f10",
-                    "seats": [
-                      "A1",
-                      "A2"
-                    ],
+                    "seats": ["A1", "A2"],
                     "status": "PENDING"
                   }
                 }
@@ -1886,10 +1632,7 @@
             "application/json": {
               "example": {
                 "showtimeId": "67d6f295d8a4d18fb2145f2a",
-                "seats": [
-                  "A1",
-                  "A2"
-                ],
+                "seats": ["A1", "A2"],
                 "foodBookingId": "67d6f2f0d8a4d18fb2146011"
               }
             }
@@ -1899,9 +1642,7 @@
     },
     "/api/bookings/food": {
       "post": {
-        "tags": [
-          "Bookings"
-        ],
+        "tags": ["Bookings"],
         "summary": "Order food for booking",
         "description": "",
         "responses": {
@@ -1964,9 +1705,7 @@
     },
     "/api/bookings/{id}/pay": {
       "post": {
-        "tags": [
-          "Bookings"
-        ],
+        "tags": ["Bookings"],
         "summary": "Confirm booking payment",
         "description": "",
         "parameters": [
@@ -2025,9 +1764,7 @@
     },
     "/api/bookings/history": {
       "get": {
-        "tags": [
-          "Bookings"
-        ],
+        "tags": ["Bookings"],
         "summary": "Get booking history",
         "description": "",
         "responses": {
@@ -2040,10 +1777,7 @@
                     {
                       "_id": "67d6f39cd8a4d18fb21461f3",
                       "showtimeId": "67d6f295d8a4d18fb2145f2a",
-                      "seats": [
-                        "A1",
-                        "A2"
-                      ],
+                      "seats": ["A1", "A2"],
                       "status": "PAID"
                     }
                   ],
@@ -2079,9 +1813,7 @@
     },
     "/api/bookings/{id}/checkin": {
       "patch": {
-        "tags": [
-          "Bookings"
-        ],
+        "tags": ["Bookings"],
         "summary": "Check in a booking",
         "description": "",
         "parameters": [
@@ -2124,9 +1856,7 @@
     },
     "/api/bookings/{id}/cancel": {
       "patch": {
-        "tags": [
-          "Bookings"
-        ],
+        "tags": ["Bookings"],
         "summary": "Cancel a booking",
         "description": "",
         "parameters": [
@@ -2159,9 +1889,7 @@
     },
     "/api/bookings/add-food-order": {
       "patch": {
-        "tags": [
-          "Bookings"
-        ],
+        "tags": ["Bookings"],
         "summary": "Attach a food booking to a movie booking",
         "description": "",
         "responses": {
@@ -2198,9 +1926,7 @@
     },
     "/api/bookings/food/{id}/cancel": {
       "patch": {
-        "tags": [
-          "Bookings"
-        ],
+        "tags": ["Bookings"],
         "summary": "Cancel a standalone food booking",
         "description": "",
         "parameters": [
