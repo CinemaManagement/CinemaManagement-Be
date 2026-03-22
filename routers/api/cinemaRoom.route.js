@@ -1,6 +1,7 @@
 const express = require("express");
 const {
   getAllCinemaRooms,
+  getCinemaRoomById,
   addCinemaRoom,
   updateCinemaRoomStatus,
 } = require("../../controllers/cinemaRoomController");
@@ -17,6 +18,14 @@ router.route("/").get(
   // #swagger.summary = 'Get all cinema rooms'
   // #swagger.security = [{ "bearerAuth": [] }]
   getAllCinemaRooms,
+);
+
+router.route("/:id").get(
+  verifyRoles(ROLE.MANAGER, ROLE.CINEMA),
+  // #swagger.tags = ['CinemaRooms']
+  // #swagger.summary = 'Get a cinema room by id'
+  // #swagger.security = [{ "bearerAuth": [] }]
+  getCinemaRoomById
 );
 
 router.route("/").post(
