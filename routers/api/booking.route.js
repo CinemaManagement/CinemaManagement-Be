@@ -17,7 +17,6 @@ router.post("/movie",
          example: {
            "showtimeId": "67d6f295d8a4d18fb2145f2a",
            "seats": ["A1", "A2"],
-           "foodBookingId": "67d6f2f0d8a4d18fb2146011"
          }
        }
      }
