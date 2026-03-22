@@ -4,6 +4,8 @@ const {
   getShowtimeById,
   getShowtimesByMovie,
   addShowtime,
+  updateShowtime,
+  deleteShowtime,
   getShowtimeSeats,
   updateSeatStatus,
   updateShowtimeStatus,
@@ -21,27 +23,22 @@ router
   .get(
     // #swagger.tags = ['Showtimes']
     // #swagger.summary = 'Get all showtimes (public)'
-    getAllShowtimes
+    getAllShowtimes,
   )
   .post(
     verifyJwt,
     verifyRoles(ROLE.MANAGER, ROLE.CINEMA),
-    checkRequiredFields(
-      "movieId",
-      "startTime",
-      "pricingRule",
-      "cinemaRoomId"
-    ),
+    checkRequiredFields("movieId", "startTime", "pricingRule", "cinemaRoomId"),
     // #swagger.tags = ['Showtimes']
     // #swagger.summary = 'Create a new showtime (endTime auto-computed from movie duration)'
     // #swagger.security = [{ "bearerAuth": [] }]
-    addShowtime
+    addShowtime,
   );
 
 router.route("/movie/:movieId").get(
   // #swagger.tags = ['Showtimes']
   // #swagger.summary = 'Get all showtimes by movieId (public)'
-  getShowtimesByMovie
+  getShowtimesByMovie,
 );
 
 router.route("/:id/seats").get(
@@ -50,7 +47,7 @@ router.route("/:id/seats").get(
   // #swagger.tags = ['Showtimes']
   // #swagger.summary = 'Get all seats of a showtime'
   // #swagger.security = [{ "bearerAuth": [] }]
-  getShowtimeSeats
+  getShowtimeSeats,
 );
 
 router.route("/:showTimeId/seats/:seatCode").patch(
@@ -60,7 +57,7 @@ router.route("/:showTimeId/seats/:seatCode").patch(
   // #swagger.tags = ['Showtimes']
   // #swagger.summary = 'Update seat status in a showtime using seatCode'
   // #swagger.security = [{ "bearerAuth": [] }]
-  updateSeatStatus
+  updateSeatStatus,
 );
 
 router
@@ -68,16 +65,23 @@ router
   .get(
     // #swagger.tags = ['Showtimes']
     // #swagger.summary = 'Get a showtime by id (public)'
-    getShowtimeById
+    getShowtimeById,
   )
   .patch(
     verifyJwt,
     verifyRoles(ROLE.MANAGER, ROLE.CINEMA),
-    checkRequiredFields("status"),
     // #swagger.tags = ['Showtimes']
-    // #swagger.summary = 'Update showtime status'
+    // #swagger.summary = 'Update a showtime (partial)'
     // #swagger.security = [{ "bearerAuth": [] }]
-    updateShowtimeStatus
+    updateShowtime,
+  )
+  .delete(
+    verifyJwt,
+    verifyRoles(ROLE.MANAGER, ROLE.CINEMA),
+    // #swagger.tags = ['Showtimes']
+    // #swagger.summary = 'Delete a showtime'
+    // #swagger.security = [{ "bearerAuth": [] }]
+    deleteShowtime,
   );
 
 module.exports = router;
