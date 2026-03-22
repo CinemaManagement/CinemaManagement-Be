@@ -1201,12 +1201,12 @@
         ]
       }
     },
-    "/api/showtimes/{showTimeId}/seats/{seatId}": {
+    "/api/showtimes/{showTimeId}/seats/{seatCode}": {
       "patch": {
         "tags": [
           "Showtimes"
         ],
-        "summary": "Update seat status in a showtime",
+        "summary": "Update seat status in a showtime using seatCode",
         "description": "",
         "parameters": [
           {
@@ -1218,7 +1218,7 @@
             }
           },
           {
-            "name": "seatId",
+            "name": "seatCode",
             "in": "path",
             "required": true,
             "schema": {
