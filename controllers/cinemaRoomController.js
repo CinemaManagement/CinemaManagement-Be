@@ -11,12 +11,26 @@ const getAllCinemaRooms = async (req, res) => {
   }
 };
 
+const getCinemaRoomById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const room = await CinemaRoom.findById(id);
+    if (!room) {
+      return res.status(404).json({ message: `Not found room with id ${id}!` });
+    }
+    res.status(200).json(room);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Unexpected error occured!" });
+  }
+};
+
 const addCinemaRoom = async (req, res) => {
   try {
     const { roomName, seats } = req.body;
     const newRoom = await CinemaRoom.create({
       roomName,
-      seats: seats || [],
+      seats: seats || { NORMAL: [], VIP: [], COUPLE: [] },
     });
     res.status(201).json(newRoom);
   } catch (error) {
@@ -55,4 +69,9 @@ const updateCinemaRoomStatus = async (req, res) => {
   }
 };
 
-module.exports = { getAllCinemaRooms, addCinemaRoom, updateCinemaRoomStatus };
+module.exports = {
+  getAllCinemaRooms,
+  getCinemaRoomById,
+  addCinemaRoom,
+  updateCinemaRoomStatus,
+};
