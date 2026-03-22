@@ -478,34 +478,6 @@
         }
       }
     },
-    "/api/movies/{showingStatus}": {
-      "get": {
-        "tags": [
-          "Movie"
-        ],
-        "summary": "Get movies by showing status",
-        "description": "",
-        "parameters": [
-          {
-            "name": "showingStatus",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Status of the movie (NOW_SHOWING, COMING_SOON)"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
     "/api/movies/all": {
       "get": {
         "tags": [
@@ -732,6 +704,34 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/api/movie-status/{showingStatus}": {
+      "get": {
+        "tags": [
+          "Movie"
+        ],
+        "summary": "Get movies by showing status",
+        "description": "",
+        "parameters": [
+          {
+            "name": "showingStatus",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Status of the movie (NOW_SHOWING, COMING_SOON)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }

@@ -7,7 +7,6 @@ const {
   getAllMovies,
   getMovieById,
   rateMovie,
-  getMoviesByShowingStatus,
   getUserMovieRating,
 } = require("../../controllers/movieController");
 const verifyRoles = require("../../middlewares/roleMiddleware");
@@ -23,18 +22,6 @@ router.route("/").get(
   // #swagger.tags = ['Movie']
   // #swagger.summary = 'Get all active movies'
   getAllActiveMovies,
-);
-
-router.route("/:showingStatus").get(
-  // #swagger.tags = ['Movie']
-  // #swagger.summary = 'Get movies by showing status'
-  /*  #swagger.parameters['showingStatus'] = {
-        in: 'path',
-        description: 'Status of the movie (NOW_SHOWING, COMING_SOON)',
-        required: true,
-        type: 'string'
-  } */
-  getMoviesByShowingStatus,
 );
 
 // need jwt
