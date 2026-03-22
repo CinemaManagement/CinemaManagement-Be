@@ -20,7 +20,7 @@ const { search } = require("../routers/redisTest.route");
 
 const reserveMovieTickets = async (req, res) => {
   try {
-    const { showtimeId, seats, foodBookingId } = req.body; // seats: [seatCode]
+    const { showtimeId, seats} = req.body; // seats: [seatCode]
     const userId = req.userId;
 
     const newBooking = await reserveMovieTicketsService(
