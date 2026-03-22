@@ -52,12 +52,12 @@ router.route("/:id/seats").get(
   getShowtimeSeats
 );
 
-router.route("/:showTimeId/seats/:seatId").patch(
+router.route("/:showTimeId/seats/:seatCode").patch(
   verifyJwt,
   verifyRoles(ROLE.MANAGER, ROLE.CINEMA),
   checkRequiredFields("status"),
   // #swagger.tags = ['Showtimes']
-  // #swagger.summary = 'Update seat status in a showtime'
+  // #swagger.summary = 'Update seat status in a showtime using seatCode'
   // #swagger.security = [{ "bearerAuth": [] }]
   updateSeatStatus
 );

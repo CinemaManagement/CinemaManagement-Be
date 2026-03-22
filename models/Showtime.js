@@ -34,10 +34,6 @@ const ShowtimeSchema = new Schema(
     },
     seats: [
       {
-        seatId: {
-          type: Schema.Types.ObjectId,
-          required: true,
-        },
         seatCode: {
           type: String,
           required: true,
@@ -54,7 +50,7 @@ const ShowtimeSchema = new Schema(
       },
     ],
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 module.exports = mongoose.model("Showtime", ShowtimeSchema);

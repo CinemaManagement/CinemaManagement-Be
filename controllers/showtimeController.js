@@ -70,13 +70,21 @@ const addShowtime = async (req, res) => {
       });
     }
 
-    // Initialize seats for the showtime based on the room's seats
-    const seats = room.seats.map((seat) => ({
-      seatId: seat._id,
-      seatCode: seat.seatCode,
-      price: pricingRule[seat.type] || pricingRule.NORMAL,
-      status: STATUS.AVAILABLE,
-    }));
+    // Initialize seats for the showtime based on the room's seats object
+    const showtimeSeats = [];
+    const seatTypes = ["NORMAL", "VIP", "COUPLE"];
+
+    seatTypes.forEach((type) => {
+      if (room.seats[type] && Array.isArray(room.seats[type])) {
+        room.seats[type].forEach((seatCode) => {
+          showtimeSeats.push({
+            seatCode,
+            price: pricingRule[type] || pricingRule.NORMAL,
+            status: STATUS.AVAILABLE,
+          });
+        });
+      }
+    });
 
     const newShowtime = await Showtime.create({
       movieId,
@@ -84,7 +92,7 @@ const addShowtime = async (req, res) => {
       endTime: endDate,
       pricingRule,
       cinemaRoomId,
-      seats,
+      seats: showtimeSeats,
     });
 
     res.status(201).json(newShowtime);
@@ -110,7 +118,7 @@ const getShowtimeSeats = async (req, res) => {
 
 const updateSeatStatus = async (req, res) => {
   try {
-    const { showTimeId, seatId } = req.params;
+    const { showTimeId, seatCode } = req.params;
     const { status } = req.body;
 
     if (![STATUS.AVAILABLE, STATUS.HELD, STATUS.SOLD].includes(status)) {
@@ -118,7 +126,7 @@ const updateSeatStatus = async (req, res) => {
     }
 
     const showtime = await Showtime.findOneAndUpdate(
-      { _id: showTimeId, "seats.seatId": seatId },
+      { _id: showTimeId, "seats.seatCode": seatCode },
       {
         $set: {
           "seats.$.status": status,
