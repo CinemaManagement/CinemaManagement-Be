@@ -269,7 +269,13 @@ if(booking.foodBookingId){
 
 const getBookingHistoryService = async (userId) => {
   const rawMovieBookingHistory = await MovieBooking.find({ userId })
-    .populate("showtimeId")
+    .populate({
+      path: "showtimeId",
+      populate: {
+        path: "movieId",
+        select: "title posterUrl"
+      }
+    })
     .populate("foodBookingId")
     .lean()
     .transform(bookings => bookings.map((booking) => {

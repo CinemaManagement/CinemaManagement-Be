@@ -25,11 +25,48 @@ const getFoods = async (req, res) => {
 
     const foods = await Food.find(filter);
 
+    // Fetch all active single foods to use for enrichment (indexing by ID and Name)
+    const singleFoods = await Food.find({ type: "SINGLE", status: STATUS.ACTIVE });
+    const foodMap = {}; // Map by ID
+    const nameMap = {}; // Map by Name (fallback)
+
+    singleFoods.forEach((f) => {
+      foodMap[f._id.toString()] = f;
+      nameMap[f.name.toLowerCase().trim()] = f;
+    });
+
+    // Enrich combo items with the latest name and imageURL from the source single food
+    const enrichedFoods = foods.map((food) => {
+      const foodObj = food.toObject();
+      if (foodObj.type === "COMBO" && foodObj.items) {
+        foodObj.items = foodObj.items.map((item) => {
+          // Priority 1: Match by foodId
+          let sourceFood = item.foodId ? foodMap[item.foodId.toString()] : null;
+          
+          // Priority 2: Match by name (fallback for legacy data)
+          if (!sourceFood && item.name) {
+            sourceFood = nameMap[item.name.toLowerCase().trim()];
+          }
+
+          if (sourceFood) {
+            return {
+              ...item,
+              foodId: sourceFood._id, // Ensure ID is present
+              name: sourceFood.name,  // Overwrite with latest name
+              imageUrl: sourceFood.imageUrl || null, // Overwrite with latest image
+            };
+          }
+          return item; // Keep as is if no match found
+        });
+      }
+      return foodObj;
+    });
+
     await redisClient.set(cacheKey, JSON.stringify(foods), {
       EX: 60 * 60 * 24, // 1 day
     });
 
-    res.status(200).json(foods);
+    res.status(200).json(enrichedFoods);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Unexpected error occured!" });
