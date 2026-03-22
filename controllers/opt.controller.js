@@ -1,19 +1,7 @@
-const nodemailer = require("nodemailer");
 const User = require("../models/User");
 const OTP = require("../models/OTP");
 const { serverErrorMessageRes } = require("../helpers/serverErrorMessage");
-
-// Tạo transporter để gửi email
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  auth: {
-    type: "OAuth2",
-    user: "lovealarm.work@gmail.com",
-    clientId: process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    refreshToken: process.env.GOOGLE_REFRESH_TOKEN,
-  },
-});
+const { sendEmail } = require("../helpers/email");
 
 // Tạo mã OTP random
 const generateOtp = () => {
@@ -49,12 +37,11 @@ const sendOtpByEmail = async (req, res) => {
       await OTP.insertOne({ email, otp, expire: expiresAt });
     }
 
-    await transporter.sendMail({
-      from: process.env.EMAIL_ADMIN,
-      to: email,
-      subject: "Cinema Management - Your OTP",
-      text: `Your OTP: ${otp}. This code will be expired in 2 minutes. \nAfter this code is verified, you have 5 minutes to change your password. Take your time!.`,
-    });
+    await sendEmail(
+      email,
+      "Cinema Management - Your OTP",
+      `Your OTP: ${otp}. This code will be expired in 2 minutes. \nAfter this code is verified, you have 5 minutes to change your password. Take your time!.`,
+    );
 
     res.status(200).json({ message: "Check mail to get OTP!" });
   } catch (error) {

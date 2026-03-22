@@ -25,6 +25,7 @@ const MovieBookingSchema = new Schema(
     },
     discountId: { type: Schema.Types.ObjectId, ref: "Discount" },
     expiredAt: { type: Date, required: true },
+    barcodeUrl: { type: String },
   },
   { timestamps: true }
 );
