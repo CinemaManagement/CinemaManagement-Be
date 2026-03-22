@@ -25,11 +25,30 @@ const getFoods = async (req, res) => {
 
     const foods = await Food.find(filter);
 
+    // Get all single foods to map images for combo items
+    const singleFoods = await Food.find({ type: "SINGLE", status: STATUS.ACTIVE });
+    const imageMap = {};
+    singleFoods.forEach((f) => {
+      imageMap[f.name.toLowerCase().trim()] = f.imageUrl;
+    });
+
+    // Enrich combo items with imageURL
+    const enrichedFoods = foods.map((food) => {
+      const foodObj = food.toObject();
+      if (foodObj.type === "COMBO" && foodObj.items) {
+        foodObj.items = foodObj.items.map((item) => ({
+          ...item,
+          imageUrl: imageMap[item.name.toLowerCase().trim()] || null,
+        }));
+      }
+      return foodObj;
+    });
+
     await redisClient.set(cacheKey, JSON.stringify(foods), {
       EX: 60 * 60 * 24, // 1 day
     });
 
-    res.status(200).json(foods);
+    res.status(200).json(enrichedFoods);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Unexpected error occured!" });
