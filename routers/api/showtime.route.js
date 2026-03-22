@@ -9,6 +9,7 @@ const {
   getShowtimeSeats,
   updateSeatStatus,
   updateShowtimeStatus,
+  getShowtimeByRoomId,
 } = require("../../controllers/showtimeController");
 const verifyRoles = require("../../middlewares/roleMiddleware");
 const verifyJwt = require("../../middlewares/authMiddleware");
@@ -39,6 +40,11 @@ router.route("/movie/:movieId").get(
   // #swagger.tags = ['Showtimes']
   // #swagger.summary = 'Get all showtimes by movieId (public)'
   getShowtimesByMovie,
+);
+router.route("/room/:roomId").get(
+  // #swagger.tags = ['Showtimes']
+  // #swagger.summary = 'Get all showtimes by roomId (public)'
+  getShowtimeByRoomId,
 );
 
 router.route("/:id/seats").get(

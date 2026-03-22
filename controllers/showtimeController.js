@@ -31,6 +31,22 @@ const getShowtimeById = async (req, res) => {
   }
 };
 
+const getShowtimeByRoomId = async (req, res) => {
+  try {
+    const { roomId } = req.params;
+    const showtime = await Showtime.find({ cinemaRoomId: roomId })
+      .select("movieId startTime endTime status")
+      .sort({ startTime: 1 });
+    if (!showtime) {
+      return res.status(404).json({ message: "Showtime not found!" });
+    }
+    res.status(200).json(showtime);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Unexpected error occured!" });
+  }
+};
+
 const getShowtimesByMovie = async (req, res) => {
   try {
     const { movieId } = req.params;
@@ -77,7 +93,8 @@ const addShowtime = async (req, res) => {
 
     if (overlapping) {
       return res.status(409).json({
-        message: "This time slot overlaps with an existing showtime in the same room!",
+        message:
+          "This time slot overlaps with an existing showtime in the same room!",
         conflictWith: {
           id: overlapping._id,
           startTime: overlapping.startTime,
@@ -162,7 +179,7 @@ const updateShowtime = async (req, res) => {
       updateData.startTime = currentStartTime;
       updateData.cinemaRoomId = currentCinemaRoomId;
       updateData.endTime = new Date(
-        currentStartTime.getTime() + movie.duration * 60 * 1000
+        currentStartTime.getTime() + movie.duration * 60 * 1000,
       );
     }
 
@@ -190,7 +207,7 @@ const updateShowtime = async (req, res) => {
     const updatedShowtime = await Showtime.findByIdAndUpdate(
       id,
       { $set: updateData },
-      { new: true }
+      { new: true },
     );
     res.status(200).json(updatedShowtime);
   } catch (error) {
@@ -229,7 +246,7 @@ const updateSeatStatus = async (req, res) => {
           "seats.$.status": status,
         },
       },
-      { new: true }
+      { new: true },
     );
 
     if (!showtime) {
@@ -255,7 +272,7 @@ const updateShowtimeStatus = async (req, res) => {
     const showtime = await Showtime.findByIdAndUpdate(
       id,
       { status },
-      { new: true }
+      { new: true },
     );
 
     if (!showtime) {
@@ -279,4 +296,5 @@ module.exports = {
   getShowtimeSeats,
   updateSeatStatus,
   updateShowtimeStatus,
+  getShowtimeByRoomId,
 };
