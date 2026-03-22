@@ -15,6 +15,22 @@ const getAllShowtimes = async (req, res) => {
   }
 };
 
+const getShowtimeById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const showtime = await Showtime.findById(id)
+      .populate("movieId")
+      .populate("cinemaRoomId");
+    if (!showtime) {
+      return res.status(404).json({ message: "Showtime not found!" });
+    }
+    res.status(200).json(showtime);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Unexpected error occured!" });
+  }
+};
+
 const getShowtimesByMovie = async (req, res) => {
   try {
     const { movieId } = req.params;
@@ -174,6 +190,7 @@ const updateShowtimeStatus = async (req, res) => {
 
 module.exports = {
   getAllShowtimes,
+  getShowtimeById,
   getShowtimesByMovie,
   addShowtime,
   getShowtimeSeats,
