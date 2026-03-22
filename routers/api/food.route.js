@@ -8,26 +8,43 @@ const {
 const verifyRoles = require("../../middlewares/roleMiddleware");
 const { ROLE } = require("../../constraints/role");
 const { checkRequiredFields } = require("../../middlewares/checkRequiredFields");
-const verifyJwt = require("../../middlewares/authMiddleware");
 const router = express.Router();
 
-router.use(verifyJwt);
+router.get(
+  "/",
+  // Public menu
+  // #swagger.tags = ['Foods']
+  // #swagger.summary = 'Get food menu'
+  getFoods,
+);
 
-router
-  .route("/")
-  .get(
-    verifyRoles(ROLE.MANAGER, ROLE.CINEMA, ROLE.CUSTOMER),
-    getFoods,
-  )
-  .post(
-    verifyRoles(ROLE.MANAGER),
-    checkRequiredFields("name", "type", "price"),
-    createFood,
-  );
+// Protected endpoints
+router.use(require("../../middlewares/authMiddleware"));
+
+router.route("/").post(
+  verifyRoles(ROLE.MANAGER),
+  checkRequiredFields("name", "type", "price"),
+  // #swagger.tags = ['Foods']
+  // #swagger.summary = 'Create a new food/combo'
+  // #swagger.security = [{ "bearerAuth": [] }]
+  createFood,
+);
 
 router
   .route("/:id")
-  .put(verifyRoles(ROLE.MANAGER), updateFood)
-  .delete(verifyRoles(ROLE.MANAGER), deleteFood);
+  .put(
+    verifyRoles(ROLE.MANAGER),
+    // #swagger.tags = ['Foods']
+    // #swagger.summary = 'Update food details'
+    // #swagger.security = [{ "bearerAuth": [] }]
+    updateFood,
+  )
+  .delete(
+    verifyRoles(ROLE.MANAGER),
+    // #swagger.tags = ['Foods']
+    // #swagger.summary = 'Delete (soft/hard) a food item'
+    // #swagger.security = [{ "bearerAuth": [] }]
+    deleteFood,
+  );
 
 module.exports = router;

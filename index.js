@@ -11,6 +11,7 @@ const { initSocket } = require("./socket/socket.js");
 const connectDB = require("./config/connectDB.js");
 const swaggerUi = require("swagger-ui-express");
 const swaggerFile = require("./swagger-output.json");
+require("./services/cron/releaseExpiredBookings.js");
 
 const PORT = 3800;
 app.use(cors(corOptions));
@@ -32,7 +33,11 @@ app.get("/", (req, res) => {
 app.use("/auth", require("./routers/auth.route.js"));
 app.use("/otp", require("./routers/otp.route.js"));
 app.use("/api/movies", require("./routers/api/movie.route.js"));
+app.use("/api/discounts", require("./routers/api/discount.route.js"));
+app.use("/api/expenses", require("./routers/api/expense.route.js"));
 app.use("/redis-test", require("./routers/redisTest.route.js"));
+app.use("/api/foods", require("./routers/api/food.route.js"));
+app.use("/foods", require("./routers/api/food.route.js"));
 
 // verify jwt
 app.use(verifyJwt);
@@ -42,6 +47,8 @@ app.use("/api/showtimes", require("./routers/api/showtime.route.js"));
 app.use("/api/foods", require("./routers/api/food.route.js"));
 app.use("/foods", require("./routers/api/food.route.js"));
 
+app.use("/api/bookings", require("./routers/api/booking.route.js"));
+app.use("/api/discounts", require("./routers/api/discount.route.js"));
 
 app.use((req, res, next) => {
   res

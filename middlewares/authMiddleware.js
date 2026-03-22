@@ -11,11 +11,13 @@ const verifyJwt = (req, res, next) => {
 
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
     if (err) {
+      console.log("JWT verify error:", err);
       return res
         .status(401)
         .json({ message: "Your token has expired or you hasn't logged in!" });
     }
 
+    console.log("Decoded token:", decoded);
     req.email = decoded.email;
     req.role = decoded.role;
     req.userId = decoded.userId;
