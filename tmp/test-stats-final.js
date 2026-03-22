@@ -1,31 +1,25 @@
+require("dotenv").config();
+const mongoose = require("mongoose");
 const MovieBooking = require("../models/MovieBooking");
 const FoodBooking = require("../models/FoodBooking");
 const Showtime = require("../models/Showtime");
-const User = require("../models/User");
+const Movie = require("../models/Movie");
 const STATUS = require("../constraints/status");
 
-const getDashboardStats = async (req, res) => {
+const testFinalStats = async () => {
   try {
+    await mongoose.connect(process.env.CONNECTION_STRING);
+    console.log("Connected to MongoDB");
+
     const now = new Date();
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-    const endOfMonth = new Date(
-      now.getFullYear(),
-      now.getMonth() + 1,
-      0,
-      23,
-      59,
-      59,
-      999,
-    );
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
 
     const queryMatch = {
       status: { $in: [STATUS.PAID, STATUS.CHECKED_IN] },
       "payment.paidAt": { $gte: startOfMonth, $lte: endOfMonth },
     };
 
-    // 1. Movie & Production Share Statistics
-    // We need to join with FoodBooking to get the net ticket revenue (excluding food if attached)
-    // We use preserveNullAndEmptyArrays: true so bookings are still counted even if showtime/movie is missing
     const movieStats = await MovieBooking.aggregate([
       { $match: queryMatch },
       {
@@ -56,11 +50,9 @@ const getDashboardStats = async (req, res) => {
       { $unwind: { path: "$movie", preserveNullAndEmptyArrays: true } },
       {
         $addFields: {
-          // If food is attached, totalAmount includes it. We subtract it to get net ticket revenue.
           foodAmount: {
             $ifNull: [{ $arrayElemAt: ["$attachedFood.totalAmount", 0] }, 0],
           },
-          // Production share percent defaults to 0 if movie not found
           sharePercent: { $ifNull: ["$movie.revenueSharePercent", 0] },
         },
       },
@@ -86,7 +78,6 @@ const getDashboardStats = async (req, res) => {
       },
     ]);
 
-    // 2. Total Food Revenue (Calculated from all paid food bookings)
     const foodStats = await FoodBooking.aggregate([
       { $match: queryMatch },
       {
@@ -97,42 +88,18 @@ const getDashboardStats = async (req, res) => {
       },
     ]);
 
-    // 3. Active Users (Total active in system)
-    const activeUsersCount = await User.countDocuments({
-      status: STATUS.ACTIVE,
-    });
+    console.log("--- FINAL Statistics Results ---");
+    console.log("Total Tickets Sold:", movieStats[0]?.totalTicketsSold || 0);
+    console.log("Ticket Revenue (Net):", movieStats[0]?.totalTicketRevenue || 0);
+    console.log("Food Revenue (Total):", foodStats[0]?.totalFoodRevenue || 0);
+    console.log("Production Share:", movieStats[0]?.totalProductionShare || 0);
+    console.log("--------------------------------");
 
-    // 4. Showtimes Scheduled in this month
-    const showtimesCount = await Showtime.countDocuments({
-      startTime: { $gte: startOfMonth, $lte: endOfMonth },
-      status: { $ne: STATUS.CANCELLED },
-    });
-
-    const ticketRevenue = movieStats[0]?.totalTicketRevenue || 0;
-    const foodRevenue = foodStats[0]?.totalFoodRevenue || 0;
-    const ticketsSold = movieStats[0]?.totalTicketsSold || 0;
-    const productionShare = movieStats[0]?.totalProductionShare || 0;
-
-    res.status(200).json({
-      success: true,
-      data: {
-        totalRevenue: ticketRevenue + foodRevenue,
-        activeUsers: activeUsersCount,
-        ticketsSold: ticketsSold,
-        showtimes: showtimesCount,
-        ticketRevenue: ticketRevenue,
-        foodRevenue: foodRevenue,
-        productionShare: productionShare,
-        timeRange: {
-          start: startOfMonth,
-          end: endOfMonth,
-        },
-      },
-    });
+    process.exit(0);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    console.error("Test failed:", error);
+    process.exit(1);
   }
 };
 
-module.exports = { getDashboardStats };
+testFinalStats();
