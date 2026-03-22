@@ -161,6 +161,15 @@ router.get("/history",
   bookingController.getBookingHistory,
 );
 
+router.get("/all-history",
+  verifyRoles(ROLE.ADMIN, ROLE.CINEMA, ROLE.MANAGER),
+  // #swagger.tags = ['Bookings']
+  // #swagger.summary = 'Get all booking history in the system'
+  // #swagger.security = [{ "bearerAuth": [] }]
+  bookingController.getAllBookingHistory,
+);
+
+
 router.patch("/:id/checkin",
   verifyRoles(ROLE.CINEMA),
   // #swagger.tags = ['Bookings']
