@@ -12,6 +12,7 @@ const connectDB = require("./config/connectDB.js");
 const swaggerUi = require("swagger-ui-express");
 const swaggerFile = require("./swagger-output.json");
 require("./services/cron/releaseExpiredBookings.js");
+require("./services/cron/updateMovieStatus.js");
 
 const PORT = 3800;
 app.use(cors(corOptions));

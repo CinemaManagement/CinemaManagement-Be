@@ -21,6 +21,7 @@ const MovieSchema = new Schema(
       avatar: { type: String }
     }],
     rate: { type: Number },
+    releaseDate: { type: Date },
     showingStatus: {
       type: String,
       enum: [STATUS.SHOWING, STATUS.COMING_SOON, STATUS.STOPPED],
@@ -30,5 +31,25 @@ const MovieSchema = new Schema(
   },
   { timestamps: true },
 );
+
+MovieSchema.pre("save", function (next) {
+  if (this.releaseDate) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const release = new Date(this.releaseDate);
+    release.setHours(0, 0, 0, 0);
+
+    if (today < release) {
+      if (this.showingStatus !== STATUS.STOPPED) {
+        this.showingStatus = STATUS.COMING_SOON;
+      }
+    } else {
+      if (this.showingStatus !== STATUS.STOPPED) {
+        this.showingStatus = STATUS.SHOWING;
+      }
+    }
+  }
+  next();
+});
 
 module.exports = mongoose.model("Movie", MovieSchema);

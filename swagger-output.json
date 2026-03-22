@@ -465,6 +465,9 @@
                   "rate": {
                     "example": "any"
                   },
+                  "releaseDate": {
+                    "example": "any"
+                  },
                   "showingStatus": {
                     "example": "any"
                   }

@@ -51,6 +51,7 @@ const addMovie = async (req, res) => {
       director,
       actors,
       rate,
+      releaseDate,
       showingStatus,
     } = req.body;
     const movie = await Movie.create({
@@ -65,6 +66,7 @@ const addMovie = async (req, res) => {
       director,
       actors,
       rate,
+      releaseDate,
       showingStatus,
       status: STATUS.ACTIVE,
     });
@@ -79,12 +81,14 @@ const updateMovie = async (req, res) => {
   try {
     const { id } = req.params;
     const updateData = req.body;
-    const movie = await Movie.findByIdAndUpdate(id, updateData, { new: true });
+    const movie = await Movie.findById(id);
     if (!movie) {
       return res
         .status(404)
         .json({ message: `Not found movie with id ${id}!` });
     }
+    Object.assign(movie, updateData);
+    await movie.save();
     res.status(200).json(movie);
   } catch (error) {
     console.error(error);
