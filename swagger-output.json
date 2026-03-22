@@ -1365,11 +1365,11 @@
           }
         }
       },
-      "patch": {
+      "delete": {
         "tags": [
           "Showtimes"
         ],
-        "summary": "Update showtime status",
+        "summary": "Delete a showtime",
         "description": "",
         "parameters": [
           {
@@ -1385,14 +1385,50 @@
           "200": {
             "description": "OK"
           },
-          "400": {
-            "description": "Bad Request"
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "Showtimes"
+        ],
+        "summary": "Update a showtime (partial)",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
           },
           "401": {
             "description": "Unauthorized"
           },
           "404": {
             "description": "Not Found"
+          },
+          "409": {
+            "description": "Conflict"
           },
           "500": {
             "description": "Internal Server Error"
@@ -1409,6 +1445,18 @@
               "schema": {
                 "type": "object",
                 "properties": {
+                  "movieId": {
+                    "example": "any"
+                  },
+                  "startTime": {
+                    "example": "any"
+                  },
+                  "pricingRule": {
+                    "example": "any"
+                  },
+                  "cinemaRoomId": {
+                    "example": "any"
+                  },
                   "status": {
                     "example": "any"
                   }

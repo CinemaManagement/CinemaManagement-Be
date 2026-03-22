@@ -132,6 +132,87 @@ const getShowtimeSeats = async (req, res) => {
   }
 };
 
+const updateShowtime = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { movieId, startTime, pricingRule, cinemaRoomId, status } = req.body;
+
+    const showtime = await Showtime.findById(id);
+    if (!showtime) {
+      return res.status(404).json({ message: "Showtime not found!" });
+    }
+
+    const updateData = {};
+    let shouldCheckOverlap = false;
+
+    if (status) updateData.status = status;
+    if (pricingRule) updateData.pricingRule = pricingRule;
+
+    // Handle time/movie/room changes which require re-validation
+    let currentMovieId = movieId || showtime.movieId;
+    let currentStartTime = startTime ? new Date(startTime) : showtime.startTime;
+    let currentCinemaRoomId = cinemaRoomId || showtime.cinemaRoomId;
+
+    if (movieId || startTime || cinemaRoomId) {
+      shouldCheckOverlap = true;
+      const movie = await Movie.findById(currentMovieId);
+      if (!movie) return res.status(404).json({ message: "Movie not found!" });
+
+      updateData.movieId = currentMovieId;
+      updateData.startTime = currentStartTime;
+      updateData.cinemaRoomId = currentCinemaRoomId;
+      updateData.endTime = new Date(
+        currentStartTime.getTime() + movie.duration * 60 * 1000
+      );
+    }
+
+    if (shouldCheckOverlap) {
+      const overlapping = await Showtime.findOne({
+        _id: { $ne: id },
+        cinemaRoomId: currentCinemaRoomId,
+        status: { $ne: STATUS.CANCELLED },
+        startTime: { $lt: updateData.endTime || showtime.endTime },
+        endTime: { $gt: updateData.startTime || showtime.startTime },
+      });
+
+      if (overlapping) {
+        return res.status(409).json({
+          message: "Updated time slot overlaps with an existing showtime!",
+          conflictWith: {
+            id: overlapping._id,
+            startTime: overlapping.startTime,
+            endTime: overlapping.endTime,
+          },
+        });
+      }
+    }
+
+    const updatedShowtime = await Showtime.findByIdAndUpdate(
+      id,
+      { $set: updateData },
+      { new: true }
+    );
+    res.status(200).json(updatedShowtime);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Unexpected error occured!" });
+  }
+};
+
+const deleteShowtime = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const showtime = await Showtime.findByIdAndDelete(id);
+    if (!showtime) {
+      return res.status(404).json({ message: "Showtime not found!" });
+    }
+    res.status(200).json({ message: "Delete showtime successfully!" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Unexpected error occured!" });
+  }
+};
+
 const updateSeatStatus = async (req, res) => {
   try {
     const { showTimeId, seatCode } = req.params;
@@ -193,6 +274,8 @@ module.exports = {
   getShowtimeById,
   getShowtimesByMovie,
   addShowtime,
+  updateShowtime,
+  deleteShowtime,
   getShowtimeSeats,
   updateSeatStatus,
   updateShowtimeStatus,
