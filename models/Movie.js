@@ -10,6 +10,22 @@ const MovieSchema = new Schema(
     posterUrl: { type: String, require },
     trailerUrl: { type: String, require },
     revenueSharePercent: { type: Number, require },
+    category: [{ type: String }],
+    description: { type: String },
+    director: [{
+      name: { type: String },
+      avatar: { type: String }
+    }],
+    actors: [{
+      name: { type: String },
+      avatar: { type: String }
+    }],
+    rate: { type: Number },
+    showingStatus: {
+      type: String,
+      enum: [STATUS.SHOWING, STATUS.COMING_SOON, STATUS.STOPPED],
+      default: STATUS.SHOWING
+    },
     status: { type: String, default: STATUS.ACTIVE },
   },
   { timestamps: true },

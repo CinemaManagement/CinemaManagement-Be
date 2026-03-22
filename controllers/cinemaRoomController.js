@@ -16,7 +16,7 @@ const addCinemaRoom = async (req, res) => {
     const { roomName, seats } = req.body;
     const newRoom = await CinemaRoom.create({
       roomName,
-      seats: seats || [],
+      seats: seats || { NORMAL: [], VIP: [], COUPLE: [] },
     });
     res.status(201).json(newRoom);
   } catch (error) {
