@@ -14,6 +14,7 @@ const {
   addFoodToBookingService,
   cancelBookingService,
   cancelFoodBookingService,
+  getAllBookingHistoryService,
 } = require("../services/booking.services");
 const { search } = require("../routers/redisTest.route");
 

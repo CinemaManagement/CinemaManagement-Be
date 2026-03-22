@@ -268,18 +268,18 @@ if(booking.foodBookingId){
 };
 
 const getBookingHistoryService = async (userId) => {
-  const rawMovieBookingHistory = await MovieBooking.find({ userId })
+  const movieBookings = await MovieBooking.find({ userId })
     .populate("showtimeId")
     .populate("foodBookingId")
-    .lean()
-    .transform(bookings => bookings.map((booking) => {
+    .lean();
+
+  const rawMovieBookingHistory = movieBookings.map((booking) => {
     const { foodBookingId, ...rest } = booking;
     return {
       ...rest,
       foodBooking: foodBookingId || null,
     };
-    
-  }));    
+  });
   
   // Get array of ONLY the FoodBooking IDs as strings so .includes() will work
   const foodBookingIdsInMovieBooking = rawMovieBookingHistory
@@ -287,32 +287,29 @@ const getBookingHistoryService = async (userId) => {
     .map(booking => ( booking.foodBooking._id.toString()));
 
   // Get raw food bookings
-  const rawFoodBookingHistory = await FoodBooking.find({ userId }).lean();
+  const rawFoodBookingHistory = await FoodBooking.find().lean();
 
   // Filter out any FoodBookings that we already returned nested inside the movieBookingHistory
   const foodBookingHistory = rawFoodBookingHistory.filter(
     booking => !foodBookingIdsInMovieBooking.includes(booking._id.toString())
   );
 
-  
-  console.log(rawMovieBookingHistory)
-  console.log(foodBookingHistory)
   return { rawMovieBookingHistory, foodBookingHistory };
 };
 
 const getAllBookingHistoryService = async () => {
-  const rawMovieBookingHistory = await MovieBooking.find()
+  const movieBookings = await MovieBooking.find()
     .populate("showtimeId")
     .populate("foodBookingId")
-    .lean()
-    .transform(bookings => bookings.map((booking) => {
+    .lean();
+
+  const rawMovieBookingHistory = movieBookings.map((booking) => {
     const { foodBookingId, ...rest } = booking;
     return {
       ...rest,
       foodBooking: foodBookingId || null,
     };
-    
-  }));    
+  });
   
   // Get array of ONLY the FoodBooking IDs as strings so .includes() will work
   const foodBookingIdsInMovieBooking = rawMovieBookingHistory
@@ -320,16 +317,13 @@ const getAllBookingHistoryService = async () => {
     .map(booking => ( booking.foodBooking._id.toString()));
 
   // Get raw food bookings
-  const rawFoodBookingHistory = await FoodBooking.find({ userId }).lean();
+  const rawFoodBookingHistory = await FoodBooking.find().lean();
 
   // Filter out any FoodBookings that we already returned nested inside the movieBookingHistory
   const foodBookingHistory = rawFoodBookingHistory.filter(
     booking => !foodBookingIdsInMovieBooking.includes(booking._id.toString())
   );
 
-  
-  console.log(rawMovieBookingHistory)
-  console.log(foodBookingHistory)
   return { rawMovieBookingHistory, foodBookingHistory };
 };
 
