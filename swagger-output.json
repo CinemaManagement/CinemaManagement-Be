@@ -26,251 +26,9 @@
         }
       }
     },
-    "/foods": {
-      "get": {
-        "tags": [
-          "Foods"
-        ],
-        "summary": "Get food menu",
-        "description": "Return ACTIVE foods, optionally filter by type",
-        "parameters": [
-          {
-            "name": "type",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "enum": [
-                "SINGLE",
-                "COMBO"
-              ]
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "Foods"
-        ],
-        "summary": "Create a new food/combo",
-        "description": "",
-        "responses": {
-          "201": {
-            "description": "Created"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string",
-                    "example": "Popcorn"
-                  },
-                  "type": {
-                    "type": "string",
-                    "enum": [
-                      "SINGLE",
-                      "COMBO"
-                    ],
-                    "example": "SINGLE"
-                  },
-                  "price": {
-                    "type": "number",
-                    "example": 45000
-                  },
-                  "description": {
-                    "type": "string",
-                    "example": "Large salted popcorn"
-                  },
-                  "items": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "name": {
-                          "type": "string",
-                          "example": "Popcorn"
-                        },
-                        "quantity": {
-                          "type": "number",
-                          "example": 1
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/foods/{id}": {
-      "put": {
-        "tags": [
-          "Foods"
-        ],
-        "summary": "Update food details",
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string"
-                  },
-                  "type": {
-                    "type": "string",
-                    "enum": [
-                      "SINGLE",
-                      "COMBO"
-                    ]
-                  },
-                  "price": {
-                    "type": "number"
-                  },
-                  "status": {
-                    "type": "string"
-                  },
-                  "description": {
-                    "type": "string"
-                  },
-                  "items": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "name": {
-                          "type": "string"
-                        },
-                        "quantity": {
-                          "type": "number"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "Foods"
-        ],
-        "summary": "Delete (soft/hard) a food item",
-        "description": "Default soft delete (status=HIDDEN). Use ?hard=true for hard delete.",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "hard",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string",
-              "enum": [
-                "true",
-                "1"
-              ]
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        },
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ]
-      }
-    },
     "/auth/refresh": {
       "get": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "summary": "Refresh access token using refresh token in cookie",
         "description": "",
         "responses": {
@@ -291,9 +49,7 @@
     },
     "/auth/logout": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "summary": "Logout from the application",
         "description": "",
         "responses": {
@@ -308,9 +64,7 @@
     },
     "/auth/change-pass": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "summary": "Change password (require login)",
         "description": "",
         "responses": {
@@ -353,9 +107,7 @@
     },
     "/auth/reset-password": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "summary": "Reset password after verifying OTP",
         "description": "",
         "responses": {
@@ -390,9 +142,7 @@
     },
     "/auth/login": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "summary": "Login to the application",
         "description": "",
         "responses": {
@@ -430,9 +180,7 @@
     },
     "/auth/register": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "summary": "Register a new user",
         "description": "",
         "responses": {
@@ -470,9 +218,7 @@
     },
     "/otp/send": {
       "post": {
-        "tags": [
-          "OTP"
-        ],
+        "tags": ["OTP"],
         "summary": "Request to send OTP through email",
         "description": "",
         "responses": {
@@ -504,9 +250,7 @@
     },
     "/otp/verify": {
       "post": {
-        "tags": [
-          "OTP"
-        ],
+        "tags": ["OTP"],
         "summary": "Verify OTP",
         "description": "",
         "responses": {
@@ -538,9 +282,7 @@
     },
     "/api/movies/": {
       "get": {
-        "tags": [
-          "Movie"
-        ],
+        "tags": ["Movie"],
         "summary": "Get all active movies",
         "description": "",
         "responses": {
@@ -553,9 +295,7 @@
         }
       },
       "post": {
-        "tags": [
-          "Movie"
-        ],
+        "tags": ["Movie"],
         "summary": "Add a new movie",
         "description": "",
         "responses": {
@@ -610,9 +350,7 @@
     },
     "/api/movies/all": {
       "get": {
-        "tags": [
-          "Movie"
-        ],
+        "tags": ["Movie"],
         "summary": "Get all movies for manager",
         "description": "",
         "responses": {
@@ -664,6 +402,23 @@
         "tags": [
           "Movie"
         ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "put": {
+        "tags": ["Movie"],
         "summary": "Update movie details",
         "description": "",
         "parameters": [
@@ -697,9 +452,7 @@
         ]
       },
       "delete": {
-        "tags": [
-          "Movie"
-        ],
+        "tags": ["Movie"],
         "summary": "Hide (soft delete) a movie",
         "description": "",
         "parameters": [
@@ -733,6 +486,269 @@
         ]
       }
     },
+    "/api/discounts/": {
+      "get": {
+        "tags": [
+          "Discounts"
+        ],
+        "summary": "Get active discounts (public)",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Discounts"
+        ],
+        "summary": "Create new discount (manager)",
+        "description": "",
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "example": "any"
+                  },
+                  "description": {
+                    "example": "any"
+                  },
+                  "type": {
+                    "example": "any"
+                  },
+                  "discountType": {
+                    "example": "any"
+                  },
+                  "value": {
+                    "example": "any"
+                  },
+                  "movieId": {
+                    "example": "any"
+                  },
+                  "showtimeId": {
+                    "example": "any"
+                  },
+                  "code": {
+                    "example": "any"
+                  },
+                  "usageLimit": {
+                    "example": "any"
+                  },
+                  "startDate": {
+                    "example": "any"
+                  },
+                  "endDate": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/discounts/{id}": {
+      "patch": {
+        "tags": [
+          "Discounts"
+        ],
+        "summary": "Update discount (manager)",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "startDate": {
+                    "example": "any"
+                  },
+                  "endDate": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/expenses/": {
+      "get": {
+        "tags": [
+          "Expenses"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "fromDate",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "toDate",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Expenses"
+        ],
+        "description": "",
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "example": "any"
+                  },
+                  "amount": {
+                    "example": "any"
+                  },
+                  "date": {
+                    "example": "any"
+                  },
+                  "description": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/redis-test/": {
       "get": {
         "description": "",
@@ -746,11 +762,813 @@
         }
       }
     },
-    "/api/users/": {
+    "/api/foods/": {
       "get": {
         "tags": [
-          "Users"
+          "Foods"
         ],
+        "summary": "Get food menu",
+        "description": "",
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Foods"
+        ],
+        "summary": "Create a new food/combo",
+        "description": "",
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "example": "any"
+                  },
+                  "type": {
+                    "example": "any"
+                  },
+                  "price": {
+                    "example": "any"
+                  },
+                  "description": {
+                    "example": "any"
+                  },
+                  "items": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/foods/{id}": {
+      "put": {
+        "tags": [
+          "Foods"
+        ],
+        "summary": "Update food details",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "example": "any"
+                  },
+                  "items": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Foods"
+        ],
+        "summary": "Delete (soft/hard) a food item",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "hard",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/foods/": {
+      "get": {
+        "tags": [
+          "Foods"
+        ],
+        "summary": "Get food menu",
+        "description": "",
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Foods"
+        ],
+        "summary": "Create a new food/combo",
+        "description": "",
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "example": "any"
+                  },
+                  "type": {
+                    "example": "any"
+                  },
+                  "price": {
+                    "example": "any"
+                  },
+                  "description": {
+                    "example": "any"
+                  },
+                  "items": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/foods/{id}": {
+      "put": {
+        "tags": [
+          "Foods"
+        ],
+        "summary": "Update food details",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "example": "any"
+                  },
+                  "items": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Foods"
+        ],
+        "summary": "Delete (soft/hard) a food item",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "hard",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/users/": {
+      "get": {
+        "tags": ["Discounts"],
+        "summary": "Get active discounts (public)",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Discounts"],
+        "summary": "Create new discount (manager)",
+        "description": "",
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "example": "any"
+                  },
+                  "description": {
+                    "example": "any"
+                  },
+                  "type": {
+                    "example": "any"
+                  },
+                  "discountType": {
+                    "example": "any"
+                  },
+                  "value": {
+                    "example": "any"
+                  },
+                  "movieId": {
+                    "example": "any"
+                  },
+                  "showtimeId": {
+                    "example": "any"
+                  },
+                  "code": {
+                    "example": "any"
+                  },
+                  "usageLimit": {
+                    "example": "any"
+                  },
+                  "startDate": {
+                    "example": "any"
+                  },
+                  "endDate": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/discounts/{id}": {
+      "patch": {
+        "tags": ["Discounts"],
+        "summary": "Update discount (manager)",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "startDate": {
+                    "example": "any"
+                  },
+                  "endDate": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/expenses/": {
+      "get": {
+        "tags": ["Expenses"],
+        "description": "",
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "fromDate",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "toDate",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": ["Expenses"],
+        "description": "",
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "example": "any"
+                  },
+                  "amount": {
+                    "example": "any"
+                  },
+                  "date": {
+                    "example": "any"
+                  },
+                  "description": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/redis-test/": {
+      "get": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/foods/": {
+      "get": {
+        "tags": ["Foods"],
+        "summary": "Get food menu",
+        "description": "",
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Foods"],
+        "summary": "Create a new food/combo",
+        "description": "",
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "example": "any"
+                  },
+                  "type": {
+                    "example": "any"
+                  },
+                  "price": {
+                    "example": "any"
+                  },
+                  "description": {
+                    "example": "any"
+                  },
+                  "items": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/foods/{id}": {
+      "put": {
+        "tags": ["Foods"],
+        "summary": "Update food details",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "example": "any"
+                  },
+                  "items": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Foods"],
+        "summary": "Delete (soft/hard) a food item",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "hard",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/users/": {
+      "get": {
+        "tags": ["Users"],
         "summary": "Get all users",
         "description": "",
         "responses": {
@@ -771,9 +1589,7 @@
         ]
       },
       "post": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "summary": "Add new user",
         "description": "",
         "responses": {
@@ -819,9 +1635,7 @@
     },
     "/api/users/{id}": {
       "delete": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "summary": "Delete user",
         "description": "",
         "parameters": [
@@ -857,9 +1671,7 @@
     },
     "/api/users/{id}/block": {
       "put": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "summary": "Block user",
         "description": "",
         "parameters": [
@@ -895,9 +1707,7 @@
     },
     "/api/users/me": {
       "get": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "summary": "Get personal information",
         "description": "",
         "responses": {
@@ -923,9 +1733,7 @@
     },
     "/api/rooms/": {
       "get": {
-        "tags": [
-          "CinemaRooms"
-        ],
+        "tags": ["CinemaRooms"],
         "summary": "Get all cinema rooms",
         "description": "",
         "responses": {
@@ -946,9 +1754,7 @@
         ]
       },
       "post": {
-        "tags": [
-          "CinemaRooms"
-        ],
+        "tags": ["CinemaRooms"],
         "summary": "Create a new cinema room",
         "description": "",
         "responses": {
@@ -991,9 +1797,7 @@
     },
     "/api/rooms/{id}/seats": {
       "patch": {
-        "tags": [
-          "CinemaRooms"
-        ],
+        "tags": ["CinemaRooms"],
         "summary": "Update cinema room seats status",
         "description": "",
         "parameters": [
@@ -1046,9 +1850,7 @@
     },
     "/api/rooms/{id}/status": {
       "patch": {
-        "tags": [
-          "CinemaRooms"
-        ],
+        "tags": ["CinemaRooms"],
         "summary": "Update cinema room status",
         "description": "",
         "parameters": [
@@ -1101,9 +1903,7 @@
     },
     "/api/showtimes/": {
       "get": {
-        "tags": [
-          "Showtimes"
-        ],
+        "tags": ["Showtimes"],
         "summary": "Get all showtimes",
         "description": "",
         "responses": {
@@ -1124,9 +1924,7 @@
         ]
       },
       "post": {
-        "tags": [
-          "Showtimes"
-        ],
+        "tags": ["Showtimes"],
         "summary": "Create a new showtime",
         "description": "",
         "responses": {
@@ -1181,9 +1979,7 @@
     },
     "/api/showtimes/{id}/seats": {
       "get": {
-        "tags": [
-          "Showtimes"
-        ],
+        "tags": ["Showtimes"],
         "summary": "Get all seats of a showtime",
         "description": "",
         "parameters": [
@@ -1219,9 +2015,7 @@
     },
     "/api/showtimes/{showTimeId}/seats/{seatId}": {
       "patch": {
-        "tags": [
-          "Showtimes"
-        ],
+        "tags": ["Showtimes"],
         "summary": "Update seat status in a showtime",
         "description": "",
         "parameters": [
@@ -1282,9 +2076,7 @@
     },
     "/api/showtimes/{id}": {
       "patch": {
-        "tags": [
-          "Showtimes"
-        ],
+        "tags": ["Showtimes"],
         "summary": "Update showtime status",
         "description": "",
         "parameters": [
@@ -1333,6 +2125,394 @@
             }
           }
         }
+      }
+    },
+    "/api/bookings/movie": {
+      "post": {
+        "tags": [
+          "Bookings"
+        ],
+        "summary": "Reserve movie tickets",
+        "description": "",
+        "responses": {
+          "201": {
+            "description": "Booking created successfully",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "data": {
+                    "_id": "67d6f39cd8a4d18fb21461f3",
+                    "showtimeId": "67d6f295d8a4d18fb2145f2a",
+                    "userId": "67d6ef74d8a4d18fb2144f10",
+                    "seats": [
+                      "A1",
+                      "A2"
+                    ],
+                    "status": "PENDING"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "example": {
+                "showtimeId": "67d6f295d8a4d18fb2145f2a",
+                "seats": [
+                  "A1",
+                  "A2"
+                ],
+                "foodBookingId": "67d6f2f0d8a4d18fb2146011"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/bookings/food": {
+      "post": {
+        "tags": [
+          "Bookings"
+        ],
+        "summary": "Order food for booking",
+        "description": "",
+        "responses": {
+          "201": {
+            "description": "Food booking created successfully",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "data": {
+                    "_id": "67d6f59fd8a4d18fb2146470",
+                    "userId": "67d6ef74d8a4d18fb2144f10",
+                    "items": [
+                      {
+                        "foodId": "67d6f4f6d8a4d18fb21463a2",
+                        "quantity": 2,
+                        "price": 5.5
+                      },
+                      {
+                        "foodId": "67d6f506d8a4d18fb21463ad",
+                        "quantity": 1,
+                        "price": 4
+                      }
+                    ],
+                    "totalAmount": 15
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "example": {
+                "items": [
+                  {
+                    "foodId": "67d6f4f6d8a4d18fb21463a2",
+                    "quantity": 2
+                  },
+                  {
+                    "foodId": "67d6f506d8a4d18fb21463ad",
+                    "quantity": 1
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/bookings/{id}/pay": {
+      "post": {
+        "tags": [
+          "Bookings"
+        ],
+        "summary": "Confirm booking payment",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Movie booking id",
+            "example": "67d6f39cd8a4d18fb21461f3"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Payment confirmed successfully",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Payment confirmed",
+                  "booking": {
+                    "_id": "67d6f39cd8a4d18fb21461f3",
+                    "status": "PAID"
+                  },
+                  "finalAmount": 12.5
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "example": {
+                "method": "MOMO",
+                "transactionId": "TRX_20260317_0001",
+                "discountCode": "SUMMER20"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/bookings/history": {
+      "get": {
+        "tags": [
+          "Bookings"
+        ],
+        "summary": "Get booking history",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "Get booking history successfully",
+            "content": {
+              "application/json": {
+                "example": {
+                  "movieBookings": [
+                    {
+                      "_id": "67d6f39cd8a4d18fb21461f3",
+                      "showtimeId": "67d6f295d8a4d18fb2145f2a",
+                      "seats": [
+                        "A1",
+                        "A2"
+                      ],
+                      "status": "PAID"
+                    }
+                  ],
+                  "foodBookings": [
+                    {
+                      "_id": "67d6f59fd8a4d18fb2146470",
+                      "items": [
+                        {
+                          "foodId": "67d6f4f6d8a4d18fb21463a2",
+                          "quantity": 2
+                        }
+                      ],
+                      "totalAmount": 15
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/bookings/{id}/checkin": {
+      "patch": {
+        "tags": [
+          "Bookings"
+        ],
+        "summary": "Check in a booking",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Movie booking id",
+            "example": "67d6f39cd8a4d18fb21461f3"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Check in booking successfully",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Checked in successfully",
+                  "booking": {
+                    "_id": "67d6f39cd8a4d18fb21461f3",
+                    "status": "CHECKED_IN"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/bookings/{id}/cancel": {
+      "patch": {
+        "tags": [
+          "Bookings"
+        ],
+        "summary": "Cancel a booking",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/bookings/add-food-order": {
+      "patch": {
+        "tags": [
+          "Bookings"
+        ],
+        "summary": "Attach a food booking to a movie booking",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "movieBookingId": {
+                    "example": "any"
+                  },
+                  "foodBookingId": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/bookings/food/{id}/cancel": {
+      "patch": {
+        "tags": [
+          "Bookings"
+        ],
+        "summary": "Cancel a standalone food booking",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     }
   },
