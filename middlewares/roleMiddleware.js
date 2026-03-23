@@ -1,7 +1,5 @@
 const verifyRoles = (...allowedRoles) => {
   return (req, res, next) => {
-    console.log("req.role in verifyRoles:", req.role);
-    console.log("allowedRoles:", allowedRoles);
     const role = req.role;
     if (!role) {
       return res

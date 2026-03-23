@@ -17,6 +17,14 @@ const {
 const verifyJwt = require("../../middlewares/authMiddleware");
 const router = express.Router();
 
+router.route("/all").get(
+  // #swagger.tags = ['Movie']
+  // #swagger.summary = 'Get all movies for manager'
+  verifyJwt,
+  verifyRoles(ROLE.MANAGER),
+  getAllMovies,
+);
+
 // no need jwt
 router.route("/").get(
   // #swagger.tags = ['Movie']
@@ -63,16 +71,9 @@ router.route("/").post(
     "trailerUrl",
     "revenueSharePercent",
     "description",
-    "rate"
+    "rate",
   ),
   addMovie,
-);
-
-router.route("/all").get(
-  // #swagger.tags = ['Movie']
-  // #swagger.summary = 'Get all movies for manager'
-  verifyRoles(ROLE.MANAGER),
-  getAllMovies,
 );
 
 router

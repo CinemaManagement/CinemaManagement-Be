@@ -14,8 +14,6 @@ cron.schedule("* * * * *", async () => {
 
     if (expiredBookings.length === 0) return;
 
-    console.log(`Found ${expiredBookings.length} expired bookings. Releasing seats...`);
-
     for (const booking of expiredBookings) {
       // 1. Mark booking as EXPIRED
       booking.status = STATUS.EXPIRED;
@@ -26,7 +24,9 @@ cron.schedule("* * * * *", async () => {
       if (showtime) {
         let seatsChanged = false;
         booking.seats.forEach((bSeat) => {
-          const sSeat = showtime.seats.find((s) => s.seatCode === bSeat.seatCode);
+          const sSeat = showtime.seats.find(
+            (s) => s.seatCode === bSeat.seatCode,
+          );
           if (sSeat && sSeat.status === STATUS.HELD) {
             sSeat.status = STATUS.AVAILABLE;
             seatsChanged = true;
