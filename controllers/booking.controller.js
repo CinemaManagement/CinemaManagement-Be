@@ -17,6 +17,7 @@ const {
   getAllBookingHistoryService,
   createPaymentUrlService,
   vnpayReturnService,
+  getBookingByIdService,
 } = require("../services/booking.services");
 const { search } = require("../routers/redisTest.route");
 
@@ -214,6 +215,22 @@ const vnpayReturn = async (req, res) => {
   }
 };
 
+const getBookingById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const booking = await getBookingByIdService(id);
+    res.status(200).json({ success: true, data: booking });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(error.status || 500)
+      .json({
+        success: false,
+        message: error.message || "Internal server error",
+      });
+  }
+};
+
 module.exports = {
   reserveMovieTickets,
   orderFood,
@@ -226,4 +243,5 @@ module.exports = {
   cancelFoodBooking,
   createVnpayPaymentUrl,
   vnpayReturn,
+  getBookingById,
 };
