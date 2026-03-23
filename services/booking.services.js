@@ -620,6 +620,27 @@ const vnpayReturnService = async (vnpayQuery) => {
   return { success: true, message: "Payment confirmed", bookingId };
 };
 
+const getBookingByIdService = async (id) => {
+  // Try MovieBooking first
+  let booking = await MovieBooking.findById(id)
+    .populate("showtimeId")
+    .populate("foodBookingId")
+    .lean();
+
+  if (booking) {
+    const { foodBookingId, ...rest } = booking;
+    return { type: "movie", ...rest, foodBooking: foodBookingId || null };
+  }
+
+  // Try FoodBooking
+  booking = await FoodBooking.findById(id).lean();
+  if (booking) {
+    return { type: "food", ...booking };
+  }
+
+  throw { status: 404, message: "Booking not found" };
+};
+
 module.exports = {
   reserveMovieTicketsService,
   foodOrderService,
@@ -632,4 +653,5 @@ module.exports = {
   cancelFoodBookingService,
   createPaymentUrlService,
   vnpayReturnService,
+  getBookingByIdService,
 };

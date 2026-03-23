@@ -168,6 +168,20 @@ router.get("/all-history",
   bookingController.getAllBookingHistory,
 );
 
+router.get("/:id",
+  verifyRoles(ROLE.CUSTOMER, ROLE.ADMIN, ROLE.CINEMA, ROLE.MANAGER),
+  // #swagger.tags = ['Bookings']
+  // #swagger.summary = 'Get booking detail by ID'
+  // #swagger.security = [{ "bearerAuth": [] }]
+  /* #swagger.parameters['id'] = {
+     in: 'path',
+     description: 'Booking ID (movie or food)',
+     required: true,
+     type: 'string',
+     example: '67d6f39cd8a4d18fb21461f3'
+   }*/
+  bookingController.getBookingById,
+);
 
 router.patch("/:id/checkin",
   verifyRoles(ROLE.CINEMA),
