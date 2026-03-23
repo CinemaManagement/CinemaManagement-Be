@@ -9,6 +9,8 @@ const cron = require("node-cron");
 const vnpay = require("../config/vnpay.config");
 const { ProductCode, VnpLocale } = require("vnpay");
 
+const { createBarcodeAndSendEmail } = require("../helpers/createBarcode");
+
 const reserveMovieTicketsService = async (showtimeId, seats, userId) => {
   // 1. Check ticket limit (e.g., max 8 seats per booking)
   if (seats.length > 8) {
@@ -26,10 +28,16 @@ const reserveMovieTicketsService = async (showtimeId, seats, userId) => {
   for (const seatCode of seats) {
     const seatObj = showtime.seats.find((s) => s.seatCode === seatCode);
     if (!seatObj) {
-      throw { status: 400, message: `Seat ${seatCode} is invalid for this showtime` };
+      throw {
+        status: 400,
+        message: `Seat ${seatCode} is invalid for this showtime`,
+      };
     }
     if (seatObj.status !== STATUS.AVAILABLE) {
-      throw { status: 400, message: `Seat ${seatCode} is currently not available` };
+      throw {
+        status: 400,
+        message: `Seat ${seatCode} is currently not available`,
+      };
     }
 
     // Prepare booking details
@@ -37,7 +45,11 @@ const reserveMovieTicketsService = async (showtimeId, seats, userId) => {
     if (seatObj.price === showtime.pricingRule.VIP) type = "VIP";
     if (seatObj.price === showtime.pricingRule.COUPLE) type = "COUPLE";
 
-    reservedSeatsDetails.push({ seatCode: seatObj.seatCode, type, price: seatObj.price });
+    reservedSeatsDetails.push({
+      seatCode: seatObj.seatCode,
+      type,
+      price: seatObj.price,
+    });
     totalAmount += seatObj.price;
   }
 
@@ -45,30 +57,34 @@ const reserveMovieTicketsService = async (showtimeId, seats, userId) => {
   const updateQuery = {
     _id: showtimeId,
     seats: {
-      $all: seats.map(seatCode => ({
+      $all: seats.map((seatCode) => ({
         $elemMatch: {
           seatCode,
-          status: STATUS.AVAILABLE
-        }
-      }))
-    }
+          status: STATUS.AVAILABLE,
+        },
+      })),
+    },
   };
 
   // Atomic update to mark them as HELD
   const updatedShowtime = await Showtime.findOneAndUpdate(
     updateQuery,
     {
-      $set: { "seats.$[elem].status": STATUS.HELD }
+      $set: { "seats.$[elem].status": STATUS.HELD },
     },
     {
       arrayFilters: [{ "elem.seatCode": { $in: seats } }],
-      new: true
-    }
+      new: true,
+    },
   );
 
   if (!updatedShowtime) {
     // If update fails, it means someone else booked at least one of these seats literally milliseconds ago
-    throw { status: 409, message: "One or more seats were just booked by another user. Please choose different seats." };
+    throw {
+      status: 409,
+      message:
+        "One or more seats were just booked by another user. Please choose different seats.",
+    };
   }
 
   const bookingCode = crypto.randomBytes(4).toString("hex").toUpperCase();
@@ -88,29 +104,27 @@ const reserveMovieTicketsService = async (showtimeId, seats, userId) => {
   return newBooking;
 };
 
-const addFoodToBookingService = async(movieBookingId, foodBookingId) => {
-  if(!movieBookingId || !foodBookingId)
-    throw ({status: 400, message: "Missing movie booking or food booking ID"})
+const addFoodToBookingService = async (movieBookingId, foodBookingId) => {
+  if (!movieBookingId || !foodBookingId)
+    throw { status: 400, message: "Missing movie booking or food booking ID" };
 
   const movieBooking = await MovieBooking.findById(movieBookingId);
 
-  if(!movieBooking)
-      throw ({status: 404, message: "Movie booking not found"})
-
+  if (!movieBooking) throw { status: 404, message: "Movie booking not found" };
 
   const foodBooking = await FoodBooking.findById(foodBookingId);
-  if(!foodBooking)
-      throw ({status: 404, message: "Food booking not found"})
+  if (!foodBooking) throw { status: 404, message: "Food booking not found" };
 
-  if(foodBooking.status !== STATUS.PENDING)
-      throw ({status: 400, message: "Food booking must be pending"})
+  if (foodBooking.status !== STATUS.PENDING)
+    throw { status: 400, message: "Food booking must be pending" };
 
   movieBooking.foodBookingId = foodBookingId;
   await movieBooking.save();
 
-  const updatedMovieBooking = await MovieBooking.findById(movieBookingId).populate("foodBookingId")
-  return updatedMovieBooking
-}
+  const updatedMovieBooking =
+    await MovieBooking.findById(movieBookingId).populate("foodBookingId");
+  return updatedMovieBooking;
+};
 
 const foodOrderService = async (items, userId) => {
   let totalAmount = 0;
@@ -119,10 +133,10 @@ const foodOrderService = async (items, userId) => {
   for (const item of items) {
     const foodItem = await Food.findById(item.foodId);
     if (!foodItem)
-      throw ({
+      throw {
         status: 404,
         message: `Food item ${item.foodId} not found`,
-      });
+      };
 
     const subtotal = foodItem.price * item.quantity;
     totalAmount += subtotal;
@@ -145,7 +159,7 @@ const foodOrderService = async (items, userId) => {
   });
 
   await newFoodBooking.save();
-  return newFoodBooking
+  return newFoodBooking;
 };
 
 const paymentService = async (id, method, transactionId, discountCode) => {
@@ -158,12 +172,12 @@ const paymentService = async (id, method, transactionId, discountCode) => {
     booking = await FoodBooking.findById(id);
     isMovieBooking = false;
     if (!booking) {
-      throw ({ status: 404, message: "Booking not found" });
+      throw { status: 404, message: "Booking not found" };
     }
   }
 
   if (booking.status === STATUS.PAID) {
-    throw ({ status: 400, message: "Booking is already paid" });
+    throw { status: 400, message: "Booking is already paid" };
   }
 
   if (
@@ -184,19 +198,19 @@ const paymentService = async (id, method, transactionId, discountCode) => {
     }
     booking.status = STATUS.EXPIRED;
     await booking.save();
-    throw ({ status: 400, message: "Booking has expired" });
+    throw { status: 400, message: "Booking has expired" };
   }
 
   let finalAmount = booking.totalAmount;
   let foodBooking = null;
 
   // If there's an attached food order, add its amount to the final total
-if(booking.foodBookingId){
-  foodBooking = await FoodBooking.findById(booking.foodBookingId)
-  if(foodBooking){
-    finalAmount += foodBooking.totalAmount
+  if (booking.foodBookingId) {
+    foodBooking = await FoodBooking.findById(booking.foodBookingId);
+    if (foodBooking) {
+      finalAmount += foodBooking.totalAmount;
+    }
   }
-}
 
   // Apply Discount
   if (discountCode) {
@@ -206,12 +220,18 @@ if(booking.foodBookingId){
     });
 
     if (!discount || discount.usedCount >= discount.usageLimit) {
-      throw { status: 400, message: "Discount code is invalid or has reached its usage limit" };
+      throw {
+        status: 400,
+        message: "Discount code is invalid or has reached its usage limit",
+      };
     }
 
     const currentDate = new Date();
     if (currentDate < discount.startDate || currentDate > discount.endDate) {
-      throw { status: 400, message: "Discount code is expired or not active yet" };
+      throw {
+        status: 400,
+        message: "Discount code is expired or not active yet",
+      };
     }
 
     // Apply the discount safely
@@ -225,9 +245,9 @@ if(booking.foodBookingId){
     // Increment usage
     discount.usedCount += 1;
     await discount.save();
-    
+
     // SAVE THE DISCOUNTED AMOUNT AND ID to the booking document
-    booking.totalAmount = finalAmount; 
+    booking.totalAmount = finalAmount;
     booking.discountId = discount._id;
   }
 
@@ -266,7 +286,15 @@ if(booking.foodBookingId){
   }
 
   await booking.save();
-  return {finalAmount, booking}
+
+  // Generate barcode and send email (async, don't necessarily need to await it here if we want faster response,
+  // but since it updates the same booking, it's safer to await or handle carefully.
+  // Given the user request, I'll await it to ensure DB is updated before returning.)
+  if (isMovieBooking) {
+    await createBarcodeAndSendEmail(booking);
+  }
+
+  return { finalAmount, booking };
 };
 
 const getBookingHistoryService = async (userId) => {
@@ -282,18 +310,18 @@ const getBookingHistoryService = async (userId) => {
       foodBooking: foodBookingId || null,
     };
   });
-  
+
   // Get array of ONLY the FoodBooking IDs as strings so .includes() will work
   const foodBookingIdsInMovieBooking = rawMovieBookingHistory
-    .filter(booking => booking.foodBooking)
-    .map(booking => ( booking.foodBooking._id.toString()));
+    .filter((booking) => booking.foodBooking)
+    .map((booking) => booking.foodBooking._id.toString());
 
   // Get raw food bookings
   const rawFoodBookingHistory = await FoodBooking.find().lean();
 
   // Filter out any FoodBookings that we already returned nested inside the movieBookingHistory
   const foodBookingHistory = rawFoodBookingHistory.filter(
-    booking => !foodBookingIdsInMovieBooking.includes(booking._id.toString())
+    (booking) => !foodBookingIdsInMovieBooking.includes(booking._id.toString()),
   );
 
   return { rawMovieBookingHistory, foodBookingHistory };
@@ -312,52 +340,57 @@ const getAllBookingHistoryService = async () => {
       foodBooking: foodBookingId || null,
     };
   });
-  
+
   // Get array of ONLY the FoodBooking IDs as strings so .includes() will work
   const foodBookingIdsInMovieBooking = rawMovieBookingHistory
-    .filter(booking => booking.foodBooking)
-    .map(booking => ( booking.foodBooking._id.toString()));
+    .filter((booking) => booking.foodBooking)
+    .map((booking) => booking.foodBooking._id.toString());
 
   // Get raw food bookings
   const rawFoodBookingHistory = await FoodBooking.find().lean();
 
   // Filter out any FoodBookings that we already returned nested inside the movieBookingHistory
   const foodBookingHistory = rawFoodBookingHistory.filter(
-    booking => !foodBookingIdsInMovieBooking.includes(booking._id.toString())
+    (booking) => !foodBookingIdsInMovieBooking.includes(booking._id.toString()),
   );
 
   return { rawMovieBookingHistory, foodBookingHistory };
 };
 
+const checkInService = async (bookingCode) => {
+  const booking = await MovieBooking.find({ bookingCode });
+  if (!booking) throw { status: 404, message: "Movie Booking not found" };
 
-const checkInService = async (id) =>{
-   
-    const booking = await MovieBooking.findById(id);
-    if (!booking) throw ({ status: 404, message: "Movie Booking not found" });
+  if (booking.status !== STATUS.PAID) {
+    throw { status: 400, message: "Booking must be PAID to check in" };
+  }
 
-    if (booking.status !== STATUS.PAID) {
-      throw ({ status: 400, message: "Booking must be PAID to check in" });
-    }
-
-    booking.status = STATUS.CHECKED_IN;
-    await booking.save();
-    return booking;
-}
+  booking.status = STATUS.CHECKED_IN;
+  await booking.save();
+  return booking;
+};
 
 const cancelBookingService = async (id) => {
   const booking = await MovieBooking.findById(id);
-  if (!booking) throw ({ status: 404, message: "Movie Booking not found" });
+  if (!booking) throw { status: 404, message: "Movie Booking not found" };
 
   const showtime = await Showtime.findById(booking.showtimeId);
   if (!showtime) throw { status: 404, message: "Showtime not found" };
 
   // Check timeframe: Cannot cancel within 1 hours of the movie starting (standard cinema policy)
-  const hoursUntilMovie = (new Date(showtime.startTime) - new Date()) / (1000 * 60 * 60);
+  const hoursUntilMovie =
+    (new Date(showtime.startTime) - new Date()) / (1000 * 60 * 60);
   if (hoursUntilMovie < 1 && booking.status === STATUS.PAID) {
-    throw { status: 400, message: "Cannot cancel tickets within 1 hours of the showtime" };
+    throw {
+      status: 400,
+      message: "Cannot cancel tickets within 1 hours of the showtime",
+    };
   }
 
-  if (booking.status === STATUS.CANCELLED || booking.status === STATUS.EXPIRED) {
+  if (
+    booking.status === STATUS.CANCELLED ||
+    booking.status === STATUS.EXPIRED
+  ) {
     throw { status: 400, message: "Booking is already cancelled or expired" };
   }
 
@@ -370,7 +403,10 @@ const cancelBookingService = async (id) => {
   let countReleased = 0;
   booking.seats.forEach((bSeat) => {
     const sSeat = showtime.seats.find((s) => s.seatCode === bSeat.seatCode);
-    if (sSeat && (sSeat.status === STATUS.HELD || sSeat.status === STATUS.SOLD)) {
+    if (
+      sSeat &&
+      (sSeat.status === STATUS.HELD || sSeat.status === STATUS.SOLD)
+    ) {
       sSeat.status = STATUS.AVAILABLE;
       countReleased++;
     }
@@ -382,11 +418,11 @@ const cancelBookingService = async (id) => {
 
   // Cancel attached food booking if exists
   if (booking.foodBookingId) {
-     const foodBooking = await FoodBooking.findById(booking.foodBookingId);
-     if (foodBooking) {
-       foodBooking.status = STATUS.CANCELLED;
-       await foodBooking.save();
-     }
+    const foodBooking = await FoodBooking.findById(booking.foodBookingId);
+    if (foodBooking) {
+      foodBooking.status = STATUS.CANCELLED;
+      await foodBooking.save();
+    }
   }
 
   // Mark MovieBooking as Cancelled
@@ -408,13 +444,12 @@ const cancelFoodBookingService = async (foodBookingId) => {
   foodBooking.status = STATUS.CANCELLED;
   await foodBooking.save();
 
-  // If this food booking was attached to a MovieBooking, you might want to remove the link 
+  // If this food booking was attached to a MovieBooking, you might want to remove the link
   // so the user can order food again on the same movie ticket
   await MovieBooking.updateMany(
     { foodBookingId: foodBookingId },
-    { $unset: { foodBookingId: "" } } 
+    { $unset: { foodBookingId: "" } },
   );
-
 
   return foodBooking;
 };

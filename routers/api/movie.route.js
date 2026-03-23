@@ -6,6 +6,8 @@ const {
   hideMovie,
   getAllMovies,
   getMovieById,
+  rateMovie,
+  getUserMovieRating,
 } = require("../../controllers/movieController");
 const verifyRoles = require("../../middlewares/roleMiddleware");
 const { ROLE } = require("../../constraints/role");
@@ -88,6 +90,26 @@ router
     // #swagger.security = [{ "bearerAuth": [] }]
     verifyRoles(ROLE.ADMIN, ROLE.MANAGER),
     hideMovie,
+  );
+
+router
+  .route("/:id/rate")
+  .get(
+    // #swagger.tags = ['Movie']
+    // #swagger.summary = 'Get current user rate for a movie'
+    // #swagger.security = [{ "bearerAuth": [] }]
+    getUserMovieRating,
+  )
+  .post(
+    // #swagger.tags = ['Movie']
+    // #swagger.summary = 'Rate a movie'
+    // #swagger.security = [{ "bearerAuth": [] }]
+    /*  #swagger.parameters['score'] = {
+          in: 'body',
+          description: 'Movie score (1-5)',
+          schema: { score: 5 }
+    } */
+    rateMovie,
   );
 
 module.exports = router;

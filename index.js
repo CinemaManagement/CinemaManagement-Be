@@ -35,6 +35,7 @@ app.get("/", (req, res) => {
 app.use("/auth", require("./routers/auth.route.js"));
 app.use("/otp", require("./routers/otp.route.js"));
 app.use("/api/movies", require("./routers/api/movie.route.js"));
+app.use("/api/movie-status", require("./routers/api/movieStatus.route.js"));
 app.use("/api/discounts", require("./routers/api/discount.route.js"));
 app.use("/api/expenses", require("./routers/api/expense.route.js"));
 app.use("/redis-test", require("./routers/redisTest.route.js"));
@@ -53,6 +54,7 @@ app.use("/api/foods", require("./routers/api/food.route.js"));
 app.use("/api/cart", require("./routers/api/cart.route.js"));
 
 app.use("/api/bookings", require("./routers/api/booking.route.js"));
+app.use("/api/statistics", require("./routers/api/statistics.route.js"));
 app.use("/api/discounts", require("./routers/api/discount.route.js"));
 
 app.use((req, res, next) => {

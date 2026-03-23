@@ -20,7 +20,13 @@ const MovieSchema = new Schema(
       name: { type: String },
       avatar: { type: String }
     }],
-    rate: { type: Number },
+    rate: { type: Number, default: 0 },
+    ratings: [
+      {
+        userId: { type: Schema.Types.ObjectId, ref: "User" },
+        score: { type: Number },
+      },
+    ],
     releaseDate: { type: Date },
     showingStatus: {
       type: String,
