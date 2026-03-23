@@ -18,7 +18,7 @@ const {
   createPaymentUrlService,
   vnpayReturnService,
   getBookingByIdService,
-  getBookingPrice,
+  getBookingPriceService,
 } = require("../services/booking.services");
 const { search } = require("../routers/redisTest.route");
 
@@ -236,7 +236,7 @@ const getBookingById = async (req, res) => {
 const getBookingPrice = async (req, res) => {
   try {
     const { id } = req.params;
-    const price = await getBookingPrice(id);
+    const price = await getBookingPriceService(id);
     res.status(200).json({ success: true, price });
   } catch (error) {
     console.error(error);

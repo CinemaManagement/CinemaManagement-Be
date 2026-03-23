@@ -341,7 +341,7 @@ const getDiscountAmount = (discount, amount) => {
   return amount;
 }
 
-const getBookingPrice = async (id) => {
+const getBookingPriceService = async (id) => {
   let booking = await MovieBooking.findById(id)
     .populate({
       path: "foodBookingId",
@@ -725,5 +725,5 @@ module.exports = {
   createPaymentUrlService,
   vnpayReturnService,
   getBookingByIdService,
-  getBookingPriceService, // Added getBookingPriceService to exports
+  getBookingPriceService,
 };
