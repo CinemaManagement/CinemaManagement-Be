@@ -3,6 +3,7 @@ const Movie = require("../../models/Movie");
 const STATUS = require("../../constraints/status");
 
 const updateMovieStatuses = async () => {
+  
   try {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
