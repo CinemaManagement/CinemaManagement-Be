@@ -24,6 +24,12 @@ router.route("/").get(
   getAllActiveMovies,
 );
 
+router.route("/:id").get(
+  // #swagger.tags = ['Movie']
+  // #swagger.summary = 'Get movie by id'
+  getMovieById,
+);
+
 // need jwt
 router.use(verifyJwt);
 router.route("/").post(
@@ -67,12 +73,6 @@ router.route("/all").get(
   // #swagger.summary = 'Get all movies for manager'
   verifyRoles(ROLE.MANAGER),
   getAllMovies,
-);
-
-router.route("/:id").get(
-  // #swagger.tags = ['Movie']
-  // #swagger.summary = 'Get movie by id'
-  getMovieById,
 );
 
 router
