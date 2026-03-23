@@ -6,6 +6,8 @@ const Food = require("../models/Food");
 const STATUS = require("../constraints/status");
 const crypto = require("crypto");
 const cron = require("node-cron");
+const vnpay = require("../config/vnpay.config");
+const { ProductCode, VnpLocale } = require("vnpay");
 
 const { createBarcodeAndSendEmail } = require("../helpers/createBarcode");
 
@@ -452,6 +454,172 @@ const cancelFoodBookingService = async (foodBookingId) => {
   return foodBooking;
 };
 
+const createPaymentUrlService = async (id, discountCode, ipAddr) => {
+  // Find booking
+  let booking = await MovieBooking.findById(id);
+  let isMovieBooking = true;
+
+  if (!booking) {
+    booking = await FoodBooking.findById(id);
+    isMovieBooking = false;
+    if (!booking) {
+      throw { status: 404, message: "Booking not found" };
+    }
+  }
+
+  if (booking.status === STATUS.PAID) {
+    throw { status: 400, message: "Booking is already paid" };
+  }
+
+  // Check expiry for movie bookings
+  if (
+    isMovieBooking &&
+    new Date() > new Date(booking.expiredAt) &&
+    booking.status === STATUS.HELD
+  ) {
+    const showtime = await Showtime.findById(booking.showtimeId);
+    if (showtime) {
+      booking.seats.forEach((bSeat) => {
+        const sSeat = showtime.seats.find((s) => s.seatCode === bSeat.seatCode);
+        if (sSeat && sSeat.status === STATUS.HELD) {
+          sSeat.status = STATUS.AVAILABLE;
+        }
+      });
+      await showtime.save();
+    }
+    booking.status = STATUS.EXPIRED;
+    await booking.save();
+    throw { status: 400, message: "Booking has expired" };
+  }
+
+  let finalAmount = booking.totalAmount;
+  let foodBooking = null;
+
+  // Add food total if attached
+  if (booking.foodBookingId) {
+    foodBooking = await FoodBooking.findById(booking.foodBookingId);
+    if (foodBooking) {
+      finalAmount += foodBooking.totalAmount;
+    }
+  }
+
+  // Apply Discount (save to booking but do NOT mark as paid yet)
+  if (discountCode) {
+    const discount = await Discount.findOne({
+      code: discountCode,
+      status: STATUS.ACTIVE,
+    });
+
+    if (!discount || discount.usedCount >= discount.usageLimit) {
+      throw { status: 400, message: "Discount code is invalid or has reached its usage limit" };
+    }
+
+    const currentDate = new Date();
+    if (currentDate < discount.startDate || currentDate > discount.endDate) {
+      throw { status: 400, message: "Discount code is expired or not active yet" };
+    }
+
+    if (discount.discountType === "PERCENT") {
+      finalAmount -= finalAmount * (discount.value / 100);
+    } else if (discount.discountType === "FIXED") {
+      finalAmount -= discount.value;
+      if (finalAmount < 0) finalAmount = 0;
+    }
+
+    // Increment usage now (to prevent double-use during redirect)
+    discount.usedCount += 1;
+    await discount.save();
+
+    booking.totalAmount = finalAmount;
+    booking.discountId = discount._id;
+    await booking.save();
+  }
+
+  // Build VNPay payment URL
+  const paymentUrl = vnpay.buildPaymentUrl({
+    vnp_Amount: finalAmount,
+    vnp_IpAddr: ipAddr || "127.0.0.1",
+    vnp_TxnRef: booking._id.toString(),
+    vnp_OrderInfo: `Thanh toan don hang ${booking._id}`,
+    vnp_OrderType: ProductCode.Other,
+    vnp_ReturnUrl: process.env.VNPAY_RETURN_URL,
+    vnp_Locale: VnpLocale.VN,
+  });
+
+  return { paymentUrl, finalAmount };
+};
+
+const vnpayReturnService = async (vnpayQuery) => {
+  const verify = vnpay.verifyReturnUrl(vnpayQuery);
+
+  if (!verify.isVerified) {
+    throw { status: 400, message: "Invalid VNPay signature" };
+  }
+
+  if (!verify.isSuccess) {
+    return { success: false, message: "Payment was not successful", code: vnpayQuery.vnp_ResponseCode };
+  }
+
+  const bookingId = vnpayQuery.vnp_TxnRef;
+  const transactionId = vnpayQuery.vnp_TransactionNo;
+
+  // Find booking
+  let booking = await MovieBooking.findById(bookingId);
+  let isMovieBooking = true;
+
+  if (!booking) {
+    booking = await FoodBooking.findById(bookingId);
+    isMovieBooking = false;
+    if (!booking) {
+      return { success: false, message: "Booking not found" };
+    }
+  }
+
+  if (booking.status === STATUS.PAID) {
+    return { success: true, message: "Booking already paid", bookingId };
+  }
+
+  // Mark as PAID
+  booking.payment = {
+    method: "ONLINE",
+    paidAt: new Date(),
+    transactionId: transactionId,
+  };
+  booking.status = STATUS.PAID;
+
+  // Also mark attached food booking as paid
+  if (booking.foodBookingId) {
+    const foodBooking = await FoodBooking.findById(booking.foodBookingId);
+    if (foodBooking) {
+      foodBooking.payment = booking.payment;
+      foodBooking.status = STATUS.PAID;
+      await foodBooking.save();
+    }
+  }
+
+  if (isMovieBooking) {
+    // Generate barcodes
+    booking.seats.forEach((seat) => {
+      seat.barcode = crypto.randomBytes(6).toString("hex").toUpperCase();
+    });
+
+    // Update seats to SOLD
+    const showtime = await Showtime.findById(booking.showtimeId);
+    if (showtime) {
+      booking.seats.forEach((bSeat) => {
+        const sSeat = showtime.seats.find((s) => s.seatCode === bSeat.seatCode);
+        if (sSeat) {
+          sSeat.status = STATUS.SOLD;
+        }
+      });
+      await showtime.save();
+    }
+  }
+
+  await booking.save();
+  return { success: true, message: "Payment confirmed", bookingId };
+};
+
 module.exports = {
   reserveMovieTicketsService,
   foodOrderService,
@@ -462,4 +630,6 @@ module.exports = {
   addFoodToBookingService,
   cancelBookingService,
   cancelFoodBookingService,
+  createPaymentUrlService,
+  vnpayReturnService,
 };

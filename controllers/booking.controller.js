@@ -15,6 +15,8 @@ const {
   cancelBookingService,
   cancelFoodBookingService,
   getAllBookingHistoryService,
+  createPaymentUrlService,
+  vnpayReturnService,
 } = require("../services/booking.services");
 const { search } = require("../routers/redisTest.route");
 
@@ -142,6 +144,43 @@ const cancelFoodBooking = async (req, res) => {
   }
 };
 
+const createVnpayPaymentUrl = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { discountCode } = req.body;
+    const ipAddr =
+      req.headers["x-forwarded-for"] ||
+      req.connection?.remoteAddress ||
+      req.socket?.remoteAddress ||
+      req.ip;
+
+    const { paymentUrl, finalAmount } = await createPaymentUrlService(
+      id,
+      discountCode,
+      ipAddr
+    );
+
+    res.status(200).json({ success: true, paymentUrl, finalAmount });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(error.status || 500)
+      .json({ success: false, message: error.message || "Internal server error" });
+  }
+};
+
+const vnpayReturn = async (req, res) => {
+  try {
+    const result = await vnpayReturnService(req.query);
+    res.status(200).json(result);
+  } catch (error) {
+    console.error(error);
+    res
+      .status(error.status || 500)
+      .json({ success: false, message: error.message || "Internal server error" });
+  }
+};
+
 module.exports = {
   reserveMovieTickets,
   orderFood,
@@ -151,5 +190,7 @@ module.exports = {
   checkIn,
   addFoodToBooking,
   cancelBooking,
-  cancelFoodBooking
+  cancelFoodBooking,
+  createVnpayPaymentUrl,
+  vnpayReturn,
 };

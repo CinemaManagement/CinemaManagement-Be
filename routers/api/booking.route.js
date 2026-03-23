@@ -222,4 +222,41 @@ router.patch("/food/:id/cancel",
   bookingController.cancelFoodBooking,
 );
 
+router.post("/:id/create-vnpay-url",
+  verifyRoles(ROLE.CUSTOMER, ROLE.CINEMA),
+  // #swagger.tags = ['Bookings']
+  // #swagger.summary = 'Create VNPay payment URL for a booking'
+  // #swagger.security = [{ "bearerAuth": [] }]
+  /* #swagger.parameters['id'] = {
+     in: 'path',
+     description: 'Booking id (movie or food)',
+     required: true,
+     type: 'string',
+     example: '67d6f39cd8a4d18fb21461f3'
+   }*/
+  /* #swagger.requestBody = {
+     required: false,
+     content: {
+       "application/json": {
+         example: {
+           "discountCode": "SUMMER20"
+         }
+       }
+     }
+   }*/
+  /* #swagger.responses[200] = {
+     description: 'VNPay payment URL created',
+     content: {
+       "application/json": {
+         example: {
+           "success": true,
+           "paymentUrl": "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?...",
+           "finalAmount": 150000
+         }
+       }
+     }
+   }*/
+  bookingController.createVnpayPaymentUrl,
+);
+
 module.exports = router;

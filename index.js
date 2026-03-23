@@ -42,6 +42,10 @@ app.use("/redis-test", require("./routers/redisTest.route.js"));
 app.use("/api/foods", require("./routers/api/food.route.js"));
 app.use("/api/showtimes", require("./routers/api/showtime.route.js"));
 
+// VNPay return callback (public, no JWT - VNPay redirects browser here)
+app.get("/api/bookings/vnpay-return", require("./controllers/booking.controller").vnpayReturn);
+
+
 // verify jwt
 app.use(verifyJwt);
 app.use("/api/users", require("./routers/api/user.route.js"));
