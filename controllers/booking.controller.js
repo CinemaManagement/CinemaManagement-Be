@@ -17,13 +17,12 @@ const {
   getAllBookingHistoryService,
   createPaymentUrlService,
   vnpayReturnService,
-  getBookingByIdService,
 } = require("../services/booking.services");
 const { search } = require("../routers/redisTest.route");
 
 const reserveMovieTickets = async (req, res) => {
   try {
-    const { showtimeId, seats} = req.body; // seats: [seatCode]
+    const { showtimeId, seats } = req.body; // seats: [seatCode]
     const userId = req.userId;
 
     const newBooking = await reserveMovieTicketsService(
@@ -91,7 +90,7 @@ const getAllBookingHistory = async (req, res) => {
   try {
     const { rawMovieBookingHistory, foodBookingHistory } =
       await getAllBookingHistoryService();
-    
+
     res.status(200).json({
       movieBookingHistory: rawMovieBookingHistory,
       foodBookingHistory: foodBookingHistory,
@@ -115,22 +114,38 @@ const checkIn = async (req, res) => {
 
 const addFoodToBooking = async (req, res) => {
   try {
-    const {movieBookingId, foodBookingId} = req.body;
-    const updatedMovieBooking = await addFoodToBookingService(movieBookingId, foodBookingId);
-    return res.status(200).json({success:true, data: updatedMovieBooking})
+    const { movieBookingId, foodBookingId } = req.body;
+    const updatedMovieBooking = await addFoodToBookingService(
+      movieBookingId,
+      foodBookingId,
+    );
+    return res.status(200).json({ success: true, data: updatedMovieBooking });
   } catch (error) {
-    return res.status(error.status).json({success:false, message: error.message})
+    return res
+      .status(error.status)
+      .json({ success: false, message: error.message });
   }
-}
+};
 
 const cancelBooking = async (req, res) => {
   try {
     const { id } = req.params;
     const booking = await cancelBookingService(id);
-    res.status(200).json({ success: true, message: "Booking cancelled successfully", data: booking });
+    res
+      .status(200)
+      .json({
+        success: true,
+        message: "Booking cancelled successfully",
+        data: booking,
+      });
   } catch (error) {
     console.error(error);
-    res.status(error.status || 500).json({ success: false, message: error.message || "Internal server error" });
+    res
+      .status(error.status || 500)
+      .json({
+        success: false,
+        message: error.message || "Internal server error",
+      });
   }
 };
 
@@ -138,10 +153,21 @@ const cancelFoodBooking = async (req, res) => {
   try {
     const { id } = req.params;
     const foodBooking = await cancelFoodBookingService(id);
-    res.status(200).json({ success: true, message: "Food booking cancelled successfully", data: foodBooking });
+    res
+      .status(200)
+      .json({
+        success: true,
+        message: "Food booking cancelled successfully",
+        data: foodBooking,
+      });
   } catch (error) {
     console.error(error);
-    res.status(error.status || 500).json({ success: false, message: error.message || "Internal server error" });
+    res
+      .status(error.status || 500)
+      .json({
+        success: false,
+        message: error.message || "Internal server error",
+      });
   }
 };
 
@@ -158,7 +184,7 @@ const createVnpayPaymentUrl = async (req, res) => {
     const { paymentUrl, finalAmount } = await createPaymentUrlService(
       id,
       discountCode,
-      ipAddr
+      ipAddr,
     );
 
     res.status(200).json({ success: true, paymentUrl, finalAmount });
@@ -166,7 +192,10 @@ const createVnpayPaymentUrl = async (req, res) => {
     console.error(error);
     res
       .status(error.status || 500)
-      .json({ success: false, message: error.message || "Internal server error" });
+      .json({
+        success: false,
+        message: error.message || "Internal server error",
+      });
   }
 };
 
@@ -178,18 +207,10 @@ const vnpayReturn = async (req, res) => {
     console.error(error);
     res
       .status(error.status || 500)
-      .json({ success: false, message: error.message || "Internal server error" });
-  }
-};
-
-const getBookingById = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const booking = await getBookingByIdService(id);
-    res.status(200).json({ success: true, data: booking });
-  } catch (error) {
-    console.error(error);
-    res.status(error.status || 500).json({ success: false, message: error.message || "Internal server error" });
+      .json({
+        success: false,
+        message: error.message || "Internal server error",
+      });
   }
 };
 
@@ -205,5 +226,4 @@ module.exports = {
   cancelFoodBooking,
   createVnpayPaymentUrl,
   vnpayReturn,
-  getBookingById,
 };
