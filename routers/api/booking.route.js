@@ -273,4 +273,30 @@ router.post("/:id/create-vnpay-url",
   bookingController.createVnpayPaymentUrl,
 );
 
+router.get("/:id/price",
+  verifyRoles(ROLE.CUSTOMER, ROLE.ADMIN, ROLE.CINEMA, ROLE.MANAGER),
+  // #swagger.tags = ['Bookings']
+  // #swagger.summary = 'Get current total price for a booking'
+  // #swagger.security = [{ "bearerAuth": [] }]
+  /* #swagger.parameters['id'] = {
+     in: 'path',
+     description: 'Booking ID (movie or food)',
+     required: true,
+     type: 'string',
+     example: '67d6f39cd8a4d18fb21461f3'
+   }*/
+  /* #swagger.responses[200] = {
+     description: 'Total price retrieved successfully',
+     content: {
+       "application/json": {
+         example: {
+           "success": true,
+           "price": 150000
+         }
+       }
+     }
+   }*/
+  bookingController.getBookingPrice,
+);
+
 module.exports = router;

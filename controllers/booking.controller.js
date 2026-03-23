@@ -18,16 +18,18 @@ const {
   createPaymentUrlService,
   vnpayReturnService,
   getBookingByIdService,
+  getBookingPrice,
 } = require("../services/booking.services");
 const { search } = require("../routers/redisTest.route");
 
 const reserveMovieTickets = async (req, res) => {
   try {
-    const { showtimeId, seats } = req.body; // seats: [seatCode]
+    const { showtimeId, movieBookingId, seats } = req.body; // seats: [seatCode]
     const userId = req.userId;
 
     const newBooking = await reserveMovieTicketsService(
       showtimeId,
+      movieBookingId,
       seats,
       userId,
     );
@@ -231,6 +233,22 @@ const getBookingById = async (req, res) => {
   }
 };
 
+const getBookingPrice = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const price = await getBookingPrice(id);
+    res.status(200).json({ success: true, price });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(error.status || 500)
+      .json({
+        success: false,
+        message: error.message || "Internal server error",
+      });
+  }
+};
+
 module.exports = {
   reserveMovieTickets,
   orderFood,
@@ -244,4 +262,5 @@ module.exports = {
   createVnpayPaymentUrl,
   vnpayReturn,
   getBookingById,
+  getBookingPrice,
 };
