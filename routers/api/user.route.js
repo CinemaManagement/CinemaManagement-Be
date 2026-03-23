@@ -21,14 +21,14 @@ router.route("/").get(
   getAllUsers,
 );
 router.route("/:id").delete(
-  verifyRoles(ROLE.ADMIN),
+  verifyRoles(ROLE.ADMIN, ROLE.MANAGER, ROLE.CUSTOMER),
   deleteUser,
   // #swagger.tags = ['Users']
   // #swagger.summary = 'Delete user'
   // #swagger.security = [{ "bearerAuth": [] }]
 );
 router.route("/:id/block").put(
-  verifyRoles(ROLE.ADMIN),
+  verifyRoles(ROLE.ADMIN, ROLE.MANAGER),
   blockUser,
   // #swagger.tags = ['Users']
   // #swagger.summary = 'Block user'
