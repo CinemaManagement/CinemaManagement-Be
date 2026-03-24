@@ -2414,9 +2414,8 @@
           "content": {
             "application/json": {
               "example": {
-                "method": "MOMO",
-                "transactionId": "TRX_20260317_0001",
-                "discountCode": "SUMMER20"
+                "method": "VNPAY",
+                "transactionId": "TRX_20260317_0001"
               }
             }
           }
