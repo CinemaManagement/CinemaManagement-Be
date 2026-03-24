@@ -2,6 +2,13 @@ const Movie = require("../models/Movie");
 const STATUS = require("../constraints/status");
 const redisClient = require("../config/redis");
 
+const getMovieUrlFromEmbedeLink = (embedLink) => {
+  if (!embedLink) return "";
+  const regex = /src="([^"]+)"/;
+  const match = embedLink.match(regex);
+  return match ? match[1] : embedLink;
+};
+
 const updateCacheMovie = async (newMovies) => {
   try {
     await redisClient.set("active-movies", JSON.stringify(newMovies), {
@@ -75,7 +82,7 @@ const addMovie = async (req, res) => {
       duration,
       ageRestriction,
       posterUrl,
-      trailerUrl,
+      trailerUrl: getMovieUrlFromEmbedeLink(trailerUrl),
       revenueSharePercent,
       category,
       description,
@@ -98,6 +105,9 @@ const updateMovie = async (req, res) => {
   try {
     const { id } = req.params;
     const updateData = req.body;
+    if (updateData.trailerUrl) {
+      updateData.trailerUrl = getMovieUrlFromEmbedeLink(updateData.trailerUrl);
+    }
     const movie = await Movie.findById(id);
     if (!movie) {
       return res
