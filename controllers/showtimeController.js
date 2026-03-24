@@ -73,6 +73,15 @@ const addShowtime = async (req, res) => {
 
     // Compute endTime from startTime + duration (minutes)
     const startDate = new Date(startTime);
+    const now = new Date();
+    const oneHourFromNow = new Date(now.getTime() + 60 * 60 * 1000);
+
+    if (startDate < oneHourFromNow) {
+      return res.status(400).json({
+        message: "Start time must be at least 1 hour from now!",
+      });
+    }
+
     const endDate = new Date(startDate.getTime() + movie.duration * 60 * 1000);
 
     // Fetch CinemaRoom to get seats
@@ -84,7 +93,7 @@ const addShowtime = async (req, res) => {
     // Check for time overlap with existing showtimes in the same room
     const overlapping = await Showtime.findOne({
       cinemaRoomId,
-      status: { $ne: STATUS.CANCELLED },
+      status: { $nin: [STATUS.CANCELLED, STATUS.FINISHED] },
       $or: [
         // New showtime starts during an existing one
         { startTime: { $lt: endDate }, endTime: { $gt: startDate } },
@@ -159,6 +168,24 @@ const updateShowtime = async (req, res) => {
       return res.status(404).json({ message: "Showtime not found!" });
     }
 
+    // 1. Check if showtime has already started
+    const now = new Date();
+    if (showtime.startTime <= now) {
+      return res.status(400).json({
+        message: "Cannot update showtime after it has started!",
+      });
+    }
+
+    // 2. Check if there are any existing bookings
+    const hasBookings = showtime.seats.some(
+      (seat) => seat.status !== STATUS.AVAILABLE,
+    );
+    if (hasBookings) {
+      return res.status(400).json({
+        message: "Cannot update showtime because some seats are already booked!",
+      });
+    }
+
     const updateData = {};
     let shouldCheckOverlap = false;
 
@@ -169,6 +196,16 @@ const updateShowtime = async (req, res) => {
     let currentMovieId = movieId || showtime.movieId;
     let currentStartTime = startTime ? new Date(startTime) : showtime.startTime;
     let currentCinemaRoomId = cinemaRoomId || showtime.cinemaRoomId;
+
+    if (startTime) {
+      const now = new Date();
+      const oneHourFromNow = new Date(now.getTime() + 60 * 60 * 1000);
+      if (new Date(startTime) < oneHourFromNow) {
+        return res.status(400).json({
+          message: "New start time must be at least 1 hour from now!",
+        });
+      }
+    }
 
     if (movieId || startTime || cinemaRoomId) {
       shouldCheckOverlap = true;
@@ -187,7 +224,7 @@ const updateShowtime = async (req, res) => {
       const overlapping = await Showtime.findOne({
         _id: { $ne: id },
         cinemaRoomId: currentCinemaRoomId,
-        status: { $ne: STATUS.CANCELLED },
+        status: { $nin: [STATUS.CANCELLED, STATUS.FINISHED] },
         startTime: { $lt: updateData.endTime || showtime.endTime },
         endTime: { $gt: updateData.startTime || showtime.startTime },
       });
@@ -219,10 +256,31 @@ const updateShowtime = async (req, res) => {
 const deleteShowtime = async (req, res) => {
   try {
     const { id } = req.params;
-    const showtime = await Showtime.findByIdAndDelete(id);
+    const showtime = await Showtime.findById(id);
+
     if (!showtime) {
       return res.status(404).json({ message: "Showtime not found!" });
     }
+
+    // 1. Check if showtime has already started
+    const now = new Date();
+    if (showtime.startTime <= now) {
+      return res.status(400).json({
+        message: "Cannot delete showtime after it has started!",
+      });
+    }
+
+    // 2. Check if there are any existing bookings
+    const hasBookings = showtime.seats.some(
+      (seat) => seat.status !== STATUS.AVAILABLE,
+    );
+    if (hasBookings) {
+      return res.status(400).json({
+        message: "Cannot delete showtime because some seats are already booked!",
+      });
+    }
+
+    await Showtime.findByIdAndDelete(id);
     res.status(200).json({ message: "Delete showtime successfully!" });
   } catch (error) {
     console.error(error);
