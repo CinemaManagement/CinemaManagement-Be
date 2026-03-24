@@ -710,7 +710,13 @@ const vnpayReturnService = async (vnpayQuery) => {
 const getBookingByIdService = async (id) => {
   // Try MovieBooking first
   let booking = await MovieBooking.findById(id)
-    .populate("showtimeId")
+    .populate({
+      path: "showtimeId",
+      populate: [
+        { path: "movieId" },
+        { path: "cinemaRoomId" }
+      ]
+    })
     .populate("foodBookingId")
     .lean();
 
