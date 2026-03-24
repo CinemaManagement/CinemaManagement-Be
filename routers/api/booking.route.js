@@ -317,7 +317,7 @@ router.patch("/release-seat",
      content: {
        "application/json": {
           example: {
-            "success": true,
+            "deleted": true,
             "message": "Release old seats successfully",
             "data":{
             

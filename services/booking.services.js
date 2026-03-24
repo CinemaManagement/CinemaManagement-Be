@@ -848,13 +848,13 @@ const releaseSeatService = async (movieBookingId) => {
           arrayFilters: [{ "elem.seatCode": { $in: oldSeats } }],
         },
       );
-      return {success:true, message:"Release old seats successfully"}
+      return {deleted:true, message:"Release old seats successfully"}
     }
-    throw {status:400, message:"Movie booking is not in HELD status"}
+    return {deleted:false, message:"Movie booking is not in HELD status"}
 
   }
 
-  throw {status:400, message:"no movie booking Id"};
+    return {deleted:false, message:"no movie booking Id"};
 };
 
 module.exports = {
