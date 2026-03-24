@@ -11,7 +11,12 @@ const { ProductCode, VnpLocale } = require("vnpay");
 
 const { createBarcodeAndSendEmail } = require("../helpers/createBarcode");
 
-const reserveMovieTicketsService = async (showtimeId, movieBookingId, seats, userId) => {
+const reserveMovieTicketsService = async (
+  showtimeId,
+  movieBookingId,
+  seats,
+  userId,
+) => {
   // 1. Check ticket limit (e.g., max 8 seats per booking)
   if (seats.length > 8) {
     throw { status: 400, message: "You can only book up to 8 seats at a time" };
@@ -322,22 +327,20 @@ const paymentService = async (id, method, transactionId) => {
 };
 
 const getDiscountAmount = (discount, amount) => {
-  if(!discount) return amount;
-  switch(discount.discountType){
-    case "PERCENT":
-      {
-        amount  -= amount * discount.value/100;
-        break;
-      }
-    case "FIXED":
-      {
-        amount -= discount.value;
-        break;
-      }
+  if (!discount) return amount;
+  switch (discount.discountType) {
+    case "PERCENT": {
+      amount -= (amount * discount.value) / 100;
+      break;
+    }
+    case "FIXED": {
+      amount -= discount.value;
+      break;
+    }
   }
-  if(amount < 0) amount = 0;
+  if (amount < 0) amount = 0;
   return amount;
-}
+};
 
 const getBookingPriceService = async (id) => {
   let booking = await MovieBooking.findById(id)
@@ -346,7 +349,7 @@ const getBookingPriceService = async (id) => {
       populate: { path: "discountId" },
     })
     .populate("discountId");
-    
+
   if (!booking) {
     booking = await FoodBooking.findById(id).populate("discountId");
 
@@ -359,7 +362,7 @@ const getBookingPriceService = async (id) => {
     if (booking.foodBookingId) {
       foodAmount = getDiscountAmount(
         booking.foodBookingId.discountId,
-        booking.foodBookingId.totalAmount
+        booking.foodBookingId.totalAmount,
       );
     }
     return getDiscountAmount(booking.discountId, amount + foodAmount);
@@ -580,12 +583,18 @@ const createPaymentUrlService = async (id, discountCode, ipAddr) => {
     });
 
     if (!discount || discount.usedCount >= discount.usageLimit) {
-      throw { status: 400, message: "Discount code is invalid or has reached its usage limit" };
+      throw {
+        status: 400,
+        message: "Discount code is invalid or has reached its usage limit",
+      };
     }
 
     const currentDate = new Date();
     if (currentDate < discount.startDate || currentDate > discount.endDate) {
-      throw { status: 400, message: "Discount code is expired or not active yet" };
+      throw {
+        status: 400,
+        message: "Discount code is expired or not active yet",
+      };
     }
 
     if (discount.discountType === "PERCENT") {
@@ -626,18 +635,22 @@ const vnpayReturnService = async (vnpayQuery) => {
   }
 
   if (!verify.isSuccess) {
-    return { success: false, message: "Payment was not successful", code: vnpayQuery.vnp_ResponseCode };
+    return {
+      success: false,
+      message: "Payment was not successful",
+      code: vnpayQuery.vnp_ResponseCode,
+    };
   }
 
   const bookingId = vnpayQuery.vnp_TxnRef;
   const transactionId = vnpayQuery.vnp_TransactionNo;
 
   // Find booking
-  let booking = await MovieBooking.findById(bookingId).populate('userId').lean();
+  let booking = await MovieBooking.findById(bookingId);
   let isMovieBooking = true;
 
   if (!booking) {
-    booking = await FoodBooking.findById(bookingId).populate('userId').lean();
+    booking = await FoodBooking.findById(bookingId);
     isMovieBooking = false;
     if (!booking) {
       return { success: false, message: "Booking not found" };
@@ -646,7 +659,12 @@ const vnpayReturnService = async (vnpayQuery) => {
 
   // Already paid
   if (booking.status === STATUS.PAID) {
-    return { success: true, message: "Booking already paid", bookingId, finalAmount: booking.totalAmount };
+    return {
+      success: true,
+      message: "Booking already paid",
+      bookingId,
+      finalAmount: booking.totalAmount,
+    };
   }
 
   // Mark as PAID
@@ -687,16 +705,21 @@ const vnpayReturnService = async (vnpayQuery) => {
   }
 
   await booking.save();
-
+  let bookingPopulate = await booking.populate("userId");
   if (isMovieBooking) {
     try {
-      await createBarcodeAndSendEmail(booking);
+      await createBarcodeAndSendEmail(bookingPopulate);
     } catch (err) {
       console.error("Failed to send barcode email after VNPay return:", err);
     }
   }
 
-  return { success: true, message: "Payment confirmed", bookingId, finalAmount: booking.totalAmount };
+  return {
+    success: true,
+    message: "Payment confirmed",
+    bookingId,
+    finalAmount: booking.totalAmount,
+  };
 };
 
 const getBookingByIdService = async (id) => {
@@ -720,7 +743,13 @@ const getBookingByIdService = async (id) => {
   throw { status: 404, message: "Booking not found" };
 };
 
-const checkoutAndPayService = async (movieBookingId, foodItems, discountCode, ipAddr, userId) => {
+const checkoutAndPayService = async (
+  movieBookingId,
+  foodItems,
+  discountCode,
+  ipAddr,
+  userId,
+) => {
   // 1. Find and validate the MovieBooking
   const booking = await MovieBooking.findById(movieBookingId);
   if (!booking) throw { status: 404, message: "Movie booking not found" };
@@ -728,28 +757,40 @@ const checkoutAndPayService = async (movieBookingId, foodItems, discountCode, ip
   if (booking.status === STATUS.PAID) {
     throw { status: 400, message: "Booking is already paid" };
   }
-  if (booking.status === STATUS.EXPIRED || booking.status === STATUS.CANCELLED) {
+  if (
+    booking.status === STATUS.EXPIRED ||
+    booking.status === STATUS.CANCELLED
+  ) {
     throw { status: 400, message: "Booking is expired or cancelled" };
   }
 
   // Check expiry
-  if (new Date() > new Date(booking.expiredAt) && booking.status === STATUS.HELD) {
+  if (
+    new Date() > new Date(booking.expiredAt) &&
+    booking.status === STATUS.HELD
+  ) {
     const showtime = await Showtime.findById(booking.showtimeId);
     if (showtime) {
       booking.seats.forEach((bSeat) => {
         const sSeat = showtime.seats.find((s) => s.seatCode === bSeat.seatCode);
-        if (sSeat && sSeat.status === STATUS.HELD) sSeat.status = STATUS.AVAILABLE;
+        if (sSeat && sSeat.status === STATUS.HELD)
+          sSeat.status = STATUS.AVAILABLE;
       });
       await showtime.save();
     }
     booking.status = STATUS.EXPIRED;
     await booking.save();
-    throw { status: 400, message: "Booking has expired. Please select seats again." };
+    throw {
+      status: 400,
+      message: "Booking has expired. Please select seats again.",
+    };
   }
 
   // 2. Handle Food Booking updates vs creation
   if (booking.foodBookingId) {
-    const existingFoodBooking = await FoodBooking.findById(booking.foodBookingId);
+    const existingFoodBooking = await FoodBooking.findById(
+      booking.foodBookingId,
+    );
     if (existingFoodBooking && existingFoodBooking.status === STATUS.PENDING) {
       if (!foodItems || foodItems.length === 0) {
         // User removed all food items – cancel the existing one
@@ -764,11 +805,15 @@ const checkoutAndPayService = async (movieBookingId, foodItems, discountCode, ip
 
         for (const item of foodItems) {
           const foodItem = await Food.findById(item.foodId);
-          if (!foodItem) throw { status: 404, message: `Food item ${item.foodId} not found` };
-          
+          if (!foodItem)
+            throw {
+              status: 404,
+              message: `Food item ${item.foodId} not found`,
+            };
+
           const subtotal = foodItem.price * item.quantity;
           totalAmount += subtotal;
-          
+
           detailedItems.push({
             foodId: foodItem._id,
             name: foodItem.name,
@@ -792,7 +837,11 @@ const checkoutAndPayService = async (movieBookingId, foodItems, discountCode, ip
   }
 
   // 4. Build VNPay URL (reuse existing service, which also handles discount logic)
-  const { paymentUrl, finalAmount } = await createPaymentUrlService(movieBookingId, discountCode, ipAddr);
+  const { paymentUrl, finalAmount } = await createPaymentUrlService(
+    movieBookingId,
+    discountCode,
+    ipAddr,
+  );
 
   return { paymentUrl, finalAmount };
 };
