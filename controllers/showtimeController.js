@@ -93,7 +93,7 @@ const addShowtime = async (req, res) => {
     // Check for time overlap with existing showtimes in the same room
     const overlapping = await Showtime.findOne({
       cinemaRoomId,
-      status: { $ne: STATUS.CANCELLED },
+      status: { $nin: [STATUS.CANCELLED, STATUS.FINISHED] },
       $or: [
         // New showtime starts during an existing one
         { startTime: { $lt: endDate }, endTime: { $gt: startDate } },
@@ -206,7 +206,7 @@ const updateShowtime = async (req, res) => {
       const overlapping = await Showtime.findOne({
         _id: { $ne: id },
         cinemaRoomId: currentCinemaRoomId,
-        status: { $ne: STATUS.CANCELLED },
+        status: { $nin: [STATUS.CANCELLED, STATUS.FINISHED] },
         startTime: { $lt: updateData.endTime || showtime.endTime },
         endTime: { $gt: updateData.startTime || showtime.startTime },
       });

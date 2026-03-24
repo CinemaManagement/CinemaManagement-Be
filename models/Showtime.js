@@ -19,7 +19,7 @@ const ShowtimeSchema = new Schema(
     },
     status: {
       type: String,
-      enum: [STATUS.ACTIVE, STATUS.CANCELLED, STATUS.FINISHED],
+      enum: [STATUS.ACTIVE, STATUS.SHOWING, STATUS.CANCELLED, STATUS.FINISHED],
       default: STATUS.ACTIVE,
     },
     pricingRule: {
@@ -34,6 +34,10 @@ const ShowtimeSchema = new Schema(
     },
     seats: [
       {
+        // seatId: {
+        //   type: Schema.Types.ObjectId,
+        //   required: true,
+        // },
         seatCode: {
           type: String,
           required: true,
