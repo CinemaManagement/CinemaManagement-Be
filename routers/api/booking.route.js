@@ -130,7 +130,7 @@ router.post(
 
 router.get(
   "/history",
-  verifyRoles(ROLE.CUSTOMER, ROLE.CINEMA),
+  verifyRoles(ROLE.CUSTOMER, ROLE.CINEMA,ROLE.MANAGER),
   // #swagger.tags = ['Bookings']
   // #swagger.summary = 'Get booking history'
   // #swagger.security = [{ "bearerAuth": [] }]
