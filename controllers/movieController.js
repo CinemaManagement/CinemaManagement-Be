@@ -67,7 +67,6 @@ const addMovie = async (req, res) => {
       description,
       director,
       actors,
-      rate,
       releaseDate,
       showingStatus,
     } = req.body;
@@ -82,7 +81,6 @@ const addMovie = async (req, res) => {
       description,
       director,
       actors,
-      rate,
       releaseDate,
       showingStatus,
       status: STATUS.ACTIVE,

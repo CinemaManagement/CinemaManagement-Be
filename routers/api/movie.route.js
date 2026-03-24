@@ -24,12 +24,6 @@ router.route("/").get(
   getAllActiveMovies,
 );
 
-router.route("/:id").get(
-  // #swagger.tags = ['Movie']
-  // #swagger.summary = 'Get movie by id'
-  getMovieById,
-);
-
 // need jwt
 router.use(verifyJwt);
 router.route("/").post(
@@ -66,6 +60,12 @@ router.route("/").post(
     "rate"
   ),
   addMovie,
+);
+
+router.route("/:id").get(
+  // #swagger.tags = ['Movie']
+  // #swagger.summary = 'Get movie by id'
+  getMovieById,
 );
 
 router.route("/all").get(

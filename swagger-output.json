@@ -472,9 +472,6 @@
                   "actors": {
                     "example": "any"
                   },
-                  "rate": {
-                    "example": "any"
-                  },
                   "releaseDate": {
                     "example": "any"
                   },
@@ -484,26 +481,6 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "/api/movies/all": {
-      "get": {
-        "tags": [
-          "Movie"
-        ],
-        "summary": "Get all movies for manager",
-        "description": "",
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "500": {
-            "description": "Internal Server Error"
           }
         }
       }
@@ -611,6 +588,26 @@
             "bearerAuth": []
           }
         ]
+      }
+    },
+    "/api/movies/all": {
+      "get": {
+        "tags": [
+          "Movie"
+        ],
+        "summary": "Get all movies for manager",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
       }
     },
     "/api/movies/{id}/rate": {
@@ -1665,6 +1662,9 @@
           },
           "401": {
             "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           },
           "404": {
             "description": "Not Found"
