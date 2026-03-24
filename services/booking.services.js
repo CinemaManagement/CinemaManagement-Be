@@ -17,27 +17,12 @@ const reserveMovieTicketsService = async (
   seats,
   userId,
 ) => {
+  let oldBooking = null;
+  if (movieBookingId) oldBooking = await MovieBooking.findById(movieBookingId);
+
   // 1. Check ticket limit (e.g., max 8 seats per booking)
   if (seats.length > 8) {
     throw { status: 400, message: "You can only book up to 8 seats at a time" };
-  }
-
-  // 2. Handle Reselection: Release old seats if movieBookingId is provided
-  let oldBooking = null;
-  if (movieBookingId) {
-    oldBooking = await MovieBooking.findById(movieBookingId);
-    if (oldBooking && oldBooking.status === STATUS.HELD) {
-      const oldSeats = oldBooking.seats.map((s) => s.seatCode);
-      await Showtime.findByIdAndUpdate(
-        oldBooking.showtimeId,
-        {
-          $set: { "seats.$[elem].status": STATUS.AVAILABLE },
-        },
-        {
-          arrayFilters: [{ "elem.seatCode": { $in: oldSeats } }],
-        },
-      );
-    }
   }
 
   // 3. Find showtime (re-fetch to get updated seat statuses if we just released some)
@@ -846,6 +831,32 @@ const checkoutAndPayService = async (
   return { paymentUrl, finalAmount };
 };
 
+const releaseSeatService = async (movieBookingId) => {
+  // 2. Handle Reselection: Release old seats if movieBookingId is provided
+  let oldBooking = null;
+  if (movieBookingId) {
+    oldBooking = await MovieBooking.findById(movieBookingId);
+    if(!oldBooking) throw {status:404, message:"Movie booking not found"}
+    if (oldBooking.status === STATUS.HELD) {
+      const oldSeats = oldBooking.seats.map((s) => s.seatCode);
+      await Showtime.findByIdAndUpdate(
+        oldBooking.showtimeId,
+        {
+          $set: { "seats.$[elem].status": STATUS.AVAILABLE },
+        },
+        {
+          arrayFilters: [{ "elem.seatCode": { $in: oldSeats } }],
+        },
+      );
+      return {success:true, message:"Release old seats successfully"}
+    }
+    throw {status:400, message:"Movie booking is not in HELD status"}
+
+  }
+
+  throw {status:400, message:"no movie booking Id"};
+};
+
 module.exports = {
   reserveMovieTicketsService,
   foodOrderService,
@@ -861,4 +872,5 @@ module.exports = {
   getBookingByIdService,
   getBookingPriceService,
   checkoutAndPayService,
+  releaseSeatService,
 };
