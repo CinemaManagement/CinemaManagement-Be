@@ -47,12 +47,10 @@ router.route("/").post(
             ageRestriction: 13,
             posterUrl: "http://url",
             trailerUrl: "http://url",
-            revenueSharePercent: 50,
             category: ["Action"],
             description: "Some description here",
             director: [{ name: "Director Name", avatar: "Dir url"}],
             actors: [{ name: "Actor name", avatar: "Actor url"}],
-            rate: 5,
             showingStatus: "Đang chiếu"
         }
 } */
@@ -63,9 +61,7 @@ router.route("/").post(
     "ageRestriction",
     "posterUrl",
     "trailerUrl",
-    "revenueSharePercent",
     "description",
-    "rate",
   ),
   addMovie,
 );
