@@ -107,8 +107,8 @@ const getAllBookingHistory = async (req, res) => {
 };
 const checkIn = async (req, res) => {
   try {
-    const { id } = req.params;
-    const booking = await checkInService(id);
+    const { bookingCode } = req.params;
+    const booking = await checkInService(bookingCode);
 
     res.status(200).json({ message: "Checked in successfully", booking });
   } catch (error) {
