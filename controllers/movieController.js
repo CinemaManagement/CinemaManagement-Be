@@ -214,7 +214,7 @@ const getUserMovieRating = async (req, res) => {
     }
 
     const userRating = movie.ratings.find(
-      (r) => r.userId?.toString() === userId.toString()
+      (r) => r.userId?.toString() === userId.toString(),
     );
 
     res.status(200).json({ score: userRating ? userRating.score : 0 });

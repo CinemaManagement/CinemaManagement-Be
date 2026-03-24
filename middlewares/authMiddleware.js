@@ -17,7 +17,6 @@ const verifyJwt = (req, res, next) => {
         .json({ message: "Your token has expired or you hasn't logged in!" });
     }
 
-    console.log("Decoded token:", decoded);
     req.email = decoded.email;
     req.role = decoded.role;
     req.userId = decoded.userId;
