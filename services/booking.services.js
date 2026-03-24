@@ -644,8 +644,9 @@ const vnpayReturnService = async (vnpayQuery) => {
     }
   }
 
+  // Already paid
   if (booking.status === STATUS.PAID) {
-    return { success: true, message: "Booking already paid", bookingId };
+    return { success: true, message: "Booking already paid", bookingId, finalAmount: booking.totalAmount };
   }
 
   // Mark as PAID
@@ -686,7 +687,17 @@ const vnpayReturnService = async (vnpayQuery) => {
   }
 
   await booking.save();
-  return { success: true, message: "Payment confirmed", bookingId };
+
+  if (isMovieBooking) {
+    // Generate barcode and send email
+    try {
+      await createBarcodeAndSendEmail(booking);
+    } catch (err) {
+      console.error("Failed to send barcode email after VNPay return:", err);
+    }
+  }
+
+  return { success: true, message: "Payment confirmed", bookingId, finalAmount: booking.totalAmount };
 };
 
 const getBookingByIdService = async (id) => {
