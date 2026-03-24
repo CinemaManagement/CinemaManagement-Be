@@ -2505,6 +2505,58 @@
         ]
       }
     },
+    "/api/bookings/{id}/checkout": {
+      "post": {
+        "tags": [
+          "Bookings"
+        ],
+        "summary": "Checkout: create food booking (optional) and return VNPay payment URL",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Movie booking id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "example": {
+                "foodItems": [
+                  {
+                    "foodId": "67d6f4f6d8a4d18fb21463a2",
+                    "quantity": 2
+                  }
+                ],
+                "discountCode": "SUMMER20"
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/bookings/{id}": {
       "get": {
         "tags": [

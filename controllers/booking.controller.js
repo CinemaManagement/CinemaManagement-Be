@@ -19,6 +19,7 @@ const {
   vnpayReturnService,
   getBookingByIdService,
   getBookingPriceService,
+  checkoutAndPayService,
 } = require("../services/booking.services");
 const { search } = require("../routers/redisTest.route");
 
@@ -233,6 +234,34 @@ const getBookingById = async (req, res) => {
   }
 };
 
+const checkoutAndPay = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { foodItems, discountCode } = req.body;
+    const userId = req.userId;
+    const ipAddr =
+      req.headers["x-forwarded-for"] ||
+      req.connection?.remoteAddress ||
+      req.socket?.remoteAddress ||
+      req.ip;
+
+    const { paymentUrl, finalAmount } = await checkoutAndPayService(
+      id,
+      foodItems,
+      discountCode,
+      ipAddr,
+      userId,
+    );
+
+    res.status(200).json({ success: true, paymentUrl, finalAmount });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(error.status || 500)
+      .json({ success: false, message: error.message || "Internal server error" });
+  }
+};
+
 const getBookingPrice = async (req, res) => {
   try {
     const { id } = req.params;
@@ -263,4 +292,5 @@ module.exports = {
   vnpayReturn,
   getBookingById,
   getBookingPrice,
+  checkoutAndPay,
 };

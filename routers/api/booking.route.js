@@ -168,6 +168,31 @@ router.get("/all-history",
   bookingController.getAllBookingHistory,
 );
 
+router.post("/:id/checkout",
+  verifyRoles(ROLE.CUSTOMER, ROLE.CINEMA),
+  // #swagger.tags = ['Bookings']
+  // #swagger.summary = 'Checkout: create food booking (optional) and return VNPay payment URL'
+  // #swagger.security = [{ "bearerAuth": [] }]
+  /* #swagger.parameters['id'] = {
+     in: 'path',
+     description: 'Movie booking id',
+     required: true,
+     type: 'string'
+   }*/
+  /* #swagger.requestBody = {
+     required: false,
+     content: {
+       "application/json": {
+         example: {
+           "foodItems": [{ "foodId": "67d6f4f6d8a4d18fb21463a2", "quantity": 2 }],
+           "discountCode": "SUMMER20"
+         }
+       }
+     }
+   }*/
+  bookingController.checkoutAndPay,
+);
+
 router.get("/:id",
   verifyRoles(ROLE.CUSTOMER, ROLE.ADMIN, ROLE.CINEMA, ROLE.MANAGER),
   // #swagger.tags = ['Bookings']
