@@ -174,6 +174,8 @@ const rateMovie = async (req, res) => {
     movie.rate = (totalScore / movie.ratings.length).toFixed(1);
 
     await movie.save();
+    const movies = await Movie.find({ status: STATUS.ACTIVE });
+    await updateCacheMovie(movies);
     res.status(200).json({
       message: "Rating updated successfully",
       rate: movie.rate,
