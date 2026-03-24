@@ -712,6 +712,83 @@ const getBookingByIdService = async (id) => {
   throw { status: 404, message: "Booking not found" };
 };
 
+const checkoutAndPayService = async (movieBookingId, foodItems, discountCode, ipAddr, userId) => {
+  // 1. Find and validate the MovieBooking
+  const booking = await MovieBooking.findById(movieBookingId);
+  if (!booking) throw { status: 404, message: "Movie booking not found" };
+
+  if (booking.status === STATUS.PAID) {
+    throw { status: 400, message: "Booking is already paid" };
+  }
+  if (booking.status === STATUS.EXPIRED || booking.status === STATUS.CANCELLED) {
+    throw { status: 400, message: "Booking is expired or cancelled" };
+  }
+
+  // Check expiry
+  if (new Date() > new Date(booking.expiredAt) && booking.status === STATUS.HELD) {
+    const showtime = await Showtime.findById(booking.showtimeId);
+    if (showtime) {
+      booking.seats.forEach((bSeat) => {
+        const sSeat = showtime.seats.find((s) => s.seatCode === bSeat.seatCode);
+        if (sSeat && sSeat.status === STATUS.HELD) sSeat.status = STATUS.AVAILABLE;
+      });
+      await showtime.save();
+    }
+    booking.status = STATUS.EXPIRED;
+    await booking.save();
+    throw { status: 400, message: "Booking has expired. Please select seats again." };
+  }
+
+  // 2. Handle Food Booking updates vs creation
+  if (booking.foodBookingId) {
+    const existingFoodBooking = await FoodBooking.findById(booking.foodBookingId);
+    if (existingFoodBooking && existingFoodBooking.status === STATUS.PENDING) {
+      if (!foodItems || foodItems.length === 0) {
+        // User removed all food items – cancel the existing one
+        existingFoodBooking.status = STATUS.CANCELLED;
+        await existingFoodBooking.save();
+        booking.foodBookingId = undefined;
+        await booking.save();
+      } else {
+        // User changed their food choices – update the existing booking instead of creating a new one
+        let totalAmount = 0;
+        const detailedItems = [];
+
+        for (const item of foodItems) {
+          const foodItem = await Food.findById(item.foodId);
+          if (!foodItem) throw { status: 404, message: `Food item ${item.foodId} not found` };
+          
+          const subtotal = foodItem.price * item.quantity;
+          totalAmount += subtotal;
+          
+          detailedItems.push({
+            foodId: foodItem._id,
+            name: foodItem.name,
+            type: foodItem.type,
+            price: foodItem.price,
+            quantity: item.quantity,
+            subtotal,
+          });
+        }
+
+        existingFoodBooking.items = detailedItems;
+        existingFoodBooking.totalAmount = totalAmount;
+        await existingFoodBooking.save();
+      }
+    }
+  } else if (foodItems && foodItems.length > 0) {
+    // 3. No existing food booking, so create a new one
+    const newFoodBooking = await foodOrderService(foodItems, userId);
+    booking.foodBookingId = newFoodBooking._id;
+    await booking.save();
+  }
+
+  // 4. Build VNPay URL (reuse existing service, which also handles discount logic)
+  const { paymentUrl, finalAmount } = await createPaymentUrlService(movieBookingId, discountCode, ipAddr);
+
+  return { paymentUrl, finalAmount };
+};
+
 module.exports = {
   reserveMovieTicketsService,
   foodOrderService,
@@ -726,4 +803,5 @@ module.exports = {
   vnpayReturnService,
   getBookingByIdService,
   getBookingPriceService,
+  checkoutAndPayService,
 };
