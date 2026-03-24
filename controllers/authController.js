@@ -107,8 +107,6 @@ const handleLogin = async (req, res) => {
 };
 const handleRefreshAccessToken = async (req, res) => {
   try {
-    console.log("refresh");
-
     const cookies = req.cookies;
 
     if (!cookies?.jwt) {
