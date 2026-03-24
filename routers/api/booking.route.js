@@ -297,4 +297,36 @@ router.post("/:id/create-vnpay-url",
   bookingController.createVnpayPaymentUrl,
 );
 
+router.patch("/release-seat",
+  verifyRoles(ROLE.CUSTOMER, ROLE.CINEMA),
+  // #swagger.tags = ['Bookings']
+  // #swagger.summary = 'Release seats for a movie booking'
+  // #swagger.security = [{ "bearerAuth": [] }]
+  /* #swagger.requestBody = {
+     required: true,
+     content: {
+       "application/json": {
+         example: {
+           "movieBookingId": "67d6f39cd8a4d18fb21461f3"
+         }
+       }
+     }
+   }*/
+  /* #swagger.responses[200] = {
+     description: 'Release seats successfully',
+     content: {
+       "application/json": {
+          example: {
+            "success": true,
+            "message": "Release old seats successfully",
+            "data":{
+            
+            }
+         }
+       }
+     }
+   }*/
+  bookingController.releaseSeat,
+);
+
 module.exports = router;
