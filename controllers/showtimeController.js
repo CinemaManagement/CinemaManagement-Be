@@ -168,6 +168,24 @@ const updateShowtime = async (req, res) => {
       return res.status(404).json({ message: "Showtime not found!" });
     }
 
+    // 1. Check if showtime has already started
+    const now = new Date();
+    if (showtime.startTime <= now) {
+      return res.status(400).json({
+        message: "Cannot update showtime after it has started!",
+      });
+    }
+
+    // 2. Check if there are any existing bookings
+    const hasBookings = showtime.seats.some(
+      (seat) => seat.status !== STATUS.AVAILABLE,
+    );
+    if (hasBookings) {
+      return res.status(400).json({
+        message: "Cannot update showtime because some seats are already booked!",
+      });
+    }
+
     const updateData = {};
     let shouldCheckOverlap = false;
 
@@ -238,10 +256,31 @@ const updateShowtime = async (req, res) => {
 const deleteShowtime = async (req, res) => {
   try {
     const { id } = req.params;
-    const showtime = await Showtime.findByIdAndDelete(id);
+    const showtime = await Showtime.findById(id);
+
     if (!showtime) {
       return res.status(404).json({ message: "Showtime not found!" });
     }
+
+    // 1. Check if showtime has already started
+    const now = new Date();
+    if (showtime.startTime <= now) {
+      return res.status(400).json({
+        message: "Cannot delete showtime after it has started!",
+      });
+    }
+
+    // 2. Check if there are any existing bookings
+    const hasBookings = showtime.seats.some(
+      (seat) => seat.status !== STATUS.AVAILABLE,
+    );
+    if (hasBookings) {
+      return res.status(400).json({
+        message: "Cannot delete showtime because some seats are already booked!",
+      });
+    }
+
+    await Showtime.findByIdAndDelete(id);
     res.status(200).json({ message: "Delete showtime successfully!" });
   } catch (error) {
     console.error(error);
