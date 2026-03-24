@@ -2847,6 +2847,83 @@
         }
       }
     },
+    "/api/bookings/{movieBookingId}/get-vietqr-info": {
+      "post": {
+        "tags": [
+          "Bookings"
+        ],
+        "summary": "Get VietQR payment information for a booking",
+        "description": "",
+        "parameters": [
+          {
+            "name": "movieBookingId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Booking id (movie or food)",
+            "required": true,
+            "example": "67d6f39cd8a4d18fb21461f3",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "VietQR payment information retrieved",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "bankBin": "970422",
+                  "accountNumber": "123456789",
+                  "amount": 150000,
+                  "description": "Booking payment for booking ID: 67d6f39cd8a4d18fb21461f3",
+                  "bookingId": "67d6f39cd8a4d18fb21461f3"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "example": {
+                "foodItems": [
+                  {
+                    "foodId": "67d6f4f6d8a4d18fb21463a2",
+                    "quantity": 2
+                  },
+                  {
+                    "foodId": "67d6f4f6d8a4d18fb21463a2",
+                    "quantity": 2
+                  }
+                ],
+                "discountCode": "SUMMER20"
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/statistics/dashboard": {
       "get": {
         "tags": [
