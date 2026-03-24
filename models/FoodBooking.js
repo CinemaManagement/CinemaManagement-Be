@@ -18,7 +18,7 @@ const FoodBookingSchema = new Schema(
     totalAmount: { type: Number, required: true },
     status: { type: String, default: STATUS.PENDING },
     payment: {
-      method: { type: String, enum: ["CASH", "ONLINE"] },
+      method: { type: String },
       paidAt: { type: Date },
       transactionId: { type: String },
     },
