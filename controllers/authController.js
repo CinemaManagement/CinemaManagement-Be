@@ -72,7 +72,7 @@ const handleLogin = async (req, res) => {
         userId: matchUser._id,
       },
       process.env.REFRESH_TOKEN_SECRET,
-      { expiresIn: "1d" },
+      { expiresIn: "7d" },
     );
 
     const accessToken = jwt.sign(
@@ -92,15 +92,9 @@ const handleLogin = async (req, res) => {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    // matchUser.refreshToken = refreshToken;
-    // await matchUser.save();
-    const resutl = await redisClient.set(
-      `token:${matchUser._id}`,
-      refreshToken,
-      {
-        EX: 60 * 60 * 24 * 7,
-      },
-    );
+    await redisClient.set(`token:${matchUser._id}`, refreshToken, {
+      EX: 60 * 60 * 24 * 7,
+    });
 
     res.status(200).json({
       accessToken,
@@ -113,6 +107,8 @@ const handleLogin = async (req, res) => {
 };
 const handleRefreshAccessToken = async (req, res) => {
   try {
+    console.log("refresh");
+
     const cookies = req.cookies;
 
     if (!cookies?.jwt) {
@@ -155,6 +151,16 @@ const handleRefreshAccessToken = async (req, res) => {
 
     res.json({ accessToken });
   } catch (error) {
+    if (error.name === "TokenExpiredError") {
+      return res.status(403).json({
+        message: "Refresh token has expired. Please log in again.",
+      });
+    }
+    if (error.name === "JsonWebTokenError") {
+      return res.status(403).json({
+        message: "Invalid refresh token.",
+      });
+    }
     console.error(error);
     res.sendStatus(500);
   }

@@ -16,7 +16,21 @@ const getAllShowtimes = async (req, res) => {
 
 const addShowtime = async (req, res) => {
   try {
-    const { movieId, startTime, endTime, pricingRule, cinemaRoomId } = req.body;
+    const { movieId, startTime, pricingRule, cinemaRoomId } = req.body;
+
+    // Fetch movie to get duration
+    const movie = await Movie.findById(movieId);
+    if (!movie) {
+      return res.status(404).json({ message: "Movie not found!" });
+    }
+
+    if (movie.showingStatus !== STATUS.SHOWING) {
+      return res.status(400).json({ message: "Movie is not showing!" });
+    }
+
+    // Compute endTime from startTime + duration (minutes)
+    const startDate = new Date(startTime);
+    const endDate = new Date(startDate.getTime() + movie.duration * 60 * 1000);
 
     // Fetch CinemaRoom to get seats
     const room = await CinemaRoom.findById(cinemaRoomId);
@@ -78,7 +92,7 @@ const updateSeatStatus = async (req, res) => {
           "seats.$.status": status,
         },
       },
-      { new: true }
+      { new: true },
     );
 
     if (!showtime) {
@@ -104,7 +118,7 @@ const updateShowtimeStatus = async (req, res) => {
     const showtime = await Showtime.findByIdAndUpdate(
       id,
       { status },
-      { new: true }
+      { new: true },
     );
 
     if (!showtime) {

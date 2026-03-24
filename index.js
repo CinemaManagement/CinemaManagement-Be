@@ -3,7 +3,7 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const verifyJwt = require("./middlewares/authMiddleware");
 const credentials = require("./middlewares/credentials");
-const corOptions = require("./config/allowedOrigins");
+const corOptions = require("./config/corOptions.js");
 const express = require("express");
 const app = express();
 require("dotenv").config();
@@ -33,6 +33,14 @@ app.use("/auth", require("./routers/auth.route.js"));
 app.use("/otp", require("./routers/otp.route.js"));
 app.use("/api/movies", require("./routers/api/movie.route.js"));
 app.use("/redis-test", require("./routers/redisTest.route.js"));
+app.use("/api/foods", require("./routers/api/food.route.js"));
+app.use("/api/showtimes", require("./routers/api/showtime.route.js"));
+
+// VNPay return callback (public, no JWT - VNPay redirects browser here)
+app.get(
+  "/api/bookings/vnpay-return",
+  require("./controllers/booking.controller").vnpayReturn,
+);
 
 // verify jwt
 app.use(verifyJwt);

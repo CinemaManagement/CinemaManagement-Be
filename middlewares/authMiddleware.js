@@ -11,6 +11,11 @@ const verifyJwt = (req, res, next) => {
 
   jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
     if (err) {
+      if (err.name === "TokenExpiredError") {
+        console.log("Access Token expired");
+      } else {
+        console.log("JWT verify error:", err.message);
+      }
       return res
         .status(401)
         .json({ message: "Your token has expired or you hasn't logged in!" });
