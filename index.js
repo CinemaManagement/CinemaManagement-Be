@@ -39,7 +39,6 @@ app.use("/api/movie-status", require("./routers/api/movieStatus.route.js"));
 app.use("/api/discounts", require("./routers/api/discount.route.js"));
 app.use("/api/expenses", require("./routers/api/expense.route.js"));
 app.use("/redis-test", require("./routers/redisTest.route.js"));
-app.use("/api/foods", require("./routers/api/food.route.js"));
 app.use("/api/showtimes", require("./routers/api/showtime.route.js"));
 
 // VNPay return callback (public, no JWT - VNPay redirects browser here)
