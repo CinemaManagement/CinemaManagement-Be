@@ -100,9 +100,8 @@ router.post("/:id/pay",
      content: {
        "application/json": {
          example: {
-           "method": "MOMO",
+           "method": "VNPAY",
            "transactionId": "TRX_20260317_0001",
-           "discountCode": "SUMMER20"
          }
        }
      }
