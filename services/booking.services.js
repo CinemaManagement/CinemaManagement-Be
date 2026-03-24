@@ -633,11 +633,11 @@ const vnpayReturnService = async (vnpayQuery) => {
   const transactionId = vnpayQuery.vnp_TransactionNo;
 
   // Find booking
-  let booking = await MovieBooking.findById(bookingId);
+  let booking = await MovieBooking.findById(bookingId).populate('userId').lean();
   let isMovieBooking = true;
 
   if (!booking) {
-    booking = await FoodBooking.findById(bookingId);
+    booking = await FoodBooking.findById(bookingId).populate('userId').lean();
     isMovieBooking = false;
     if (!booking) {
       return { success: false, message: "Booking not found" };
@@ -689,7 +689,6 @@ const vnpayReturnService = async (vnpayQuery) => {
   await booking.save();
 
   if (isMovieBooking) {
-    // Generate barcode and send email
     try {
       await createBarcodeAndSendEmail(booking);
     } catch (err) {
