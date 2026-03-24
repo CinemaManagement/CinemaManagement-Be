@@ -88,7 +88,7 @@ const handleLogin = async (req, res) => {
     res.cookie("jwt", refreshToken, {
       httpOnly: true,
       secure: true,
-      sameSite: "strict",
+      sameSite: "none",
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -180,7 +180,7 @@ const handleLogout = async (req, res) => {
       res.clearCookie("jwt", {
         httpOnly: true,
         secure: true,
-        sameSite: "strict",
+        sameSite: "none",
       });
       return res.sendStatus(204);
     }
@@ -190,7 +190,7 @@ const handleLogout = async (req, res) => {
     res.clearCookie("jwt", {
       httpOnly: true,
       secure: true,
-      sameSite: "strict",
+      sameSite: "none",
     });
     res.sendStatus(204);
   } catch (error) {
