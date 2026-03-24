@@ -113,6 +113,22 @@ const getDashboardStats = async (req, res) => {
     const ticketsSold = movieStats[0]?.totalTicketsSold || 0;
     const productionShare = movieStats[0]?.totalProductionShare || 0;
 
+    // 5. Recent Transactions
+    const recentTransactions = await MovieBooking.find()
+      .sort({ createdAt: -1 })
+      .limit(10)
+      .populate("userId")
+      .populate({
+        path: "showtimeId",
+        select: "movieId",
+        populate: {
+          path: "movieId",
+          select: "title",
+        },
+      });
+
+    console.log(recentTransactions);
+
     res.status(200).json({
       success: true,
       data: {
@@ -123,6 +139,7 @@ const getDashboardStats = async (req, res) => {
         ticketRevenue: ticketRevenue,
         foodRevenue: foodRevenue,
         productionShare: productionShare,
+        recentTransactions: recentTransactions,
         timeRange: {
           start: startOfMonth,
           end: endOfMonth,

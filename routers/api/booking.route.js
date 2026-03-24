@@ -5,7 +5,8 @@ const verifyRoles = require("../../middlewares/roleMiddleware");
 const { ROLE } = require("../../constraints/role");
 
 // Booking specific endpoints
-router.post("/movie",
+router.post(
+  "/movie",
   verifyRoles(ROLE.CUSTOMER, ROLE.CINEMA),
   // #swagger.tags = ['Bookings']
   // #swagger.summary = 'Reserve movie tickets'
@@ -21,7 +22,7 @@ router.post("/movie",
        }
      }
    }*/
-  
+
   /* #swagger.responses[201] = {
      description: 'Booking created successfully',
      content: {
@@ -42,7 +43,8 @@ router.post("/movie",
   bookingController.reserveMovieTickets,
 );
 
-router.post("/food",
+router.post(
+  "/food",
   verifyRoles(ROLE.CUSTOMER, ROLE.CINEMA),
   // #swagger.tags = ['Bookings']
   // #swagger.summary = 'Order food for booking'
@@ -60,7 +62,7 @@ router.post("/food",
        }
      }
    }*/
- /* #swagger.responses[201] = {
+  /* #swagger.responses[201] = {
    description: 'Food booking created successfully',
    content: {
      "application/json": {
@@ -82,7 +84,8 @@ router.post("/food",
   bookingController.orderFood,
 );
 
-router.post("/:id/pay",
+router.post(
+  "/:id/pay",
   verifyRoles(ROLE.CUSTOMER, ROLE.CINEMA),
   // #swagger.tags = ['Bookings']
   // #swagger.summary = 'Confirm booking payment'
@@ -125,8 +128,9 @@ router.post("/:id/pay",
   bookingController.confirmPayment,
 );
 
-router.get("/history",
-  verifyRoles(ROLE.CUSTOMER),
+router.get(
+  "/history",
+  verifyRoles(ROLE.CUSTOMER, ROLE.CINEMA,ROLE.MANAGER),
   // #swagger.tags = ['Bookings']
   // #swagger.summary = 'Get booking history'
   // #swagger.security = [{ "bearerAuth": [] }]
@@ -147,7 +151,7 @@ router.get("/history",
              {
                "_id": "67d6f59fd8a4d18fb2146470",
                "items": [
-                 { "foodId": "67d6f4f6d8a4d18fb21463a2", "quantity": 2 }
+                 { "foodId": "67d6f4f6d8a4d18fb21463a2", "quantity": 2 },
                ],
                "totalAmount": 15
              }
@@ -159,7 +163,8 @@ router.get("/history",
   bookingController.getBookingHistory,
 );
 
-router.get("/all-history",
+router.get(
+  "/all-history",
   verifyRoles(ROLE.ADMIN, ROLE.CINEMA, ROLE.MANAGER),
   // #swagger.tags = ['Bookings']
   // #swagger.summary = 'Get all booking history in the system'
@@ -167,7 +172,8 @@ router.get("/all-history",
   bookingController.getAllBookingHistory,
 );
 
-router.post("/:id/checkout",
+router.post(
+  "/:id/checkout",
   verifyRoles(ROLE.CUSTOMER, ROLE.CINEMA),
   // #swagger.tags = ['Bookings']
   // #swagger.summary = 'Checkout: create food booking (optional) and return VNPay payment URL'
@@ -192,7 +198,8 @@ router.post("/:id/checkout",
   bookingController.checkoutAndPay,
 );
 
-router.get("/:id",
+router.get(
+  "/:id",
   verifyRoles(ROLE.CUSTOMER, ROLE.ADMIN, ROLE.CINEMA, ROLE.MANAGER),
   // #swagger.tags = ['Bookings']
   // #swagger.summary = 'Get booking detail by ID'
@@ -207,17 +214,18 @@ router.get("/:id",
   bookingController.getBookingById,
 );
 
-router.patch("/:id/checkin",
+router.patch(
+  "/:bookingCode/checkin",
   verifyRoles(ROLE.CINEMA),
   // #swagger.tags = ['Bookings']
   // #swagger.summary = 'Check in a booking'
   // #swagger.security = [{ "bearerAuth": [] }]
-  /* #swagger.parameters['id'] = {
+  /* #swagger.parameters['bookingCode'] = {
      in: 'path',
-     description: 'Movie booking id',
+     description: 'Movie booking code',
      required: true,
      type: 'string',
-     example: '67d6f39cd8a4d18fb21461f3'
+     example: 'ABCDE'
    }*/
   /* #swagger.responses[200] = {
      description: 'Check in booking successfully',
@@ -236,7 +244,8 @@ router.patch("/:id/checkin",
   bookingController.checkIn,
 );
 
-router.patch("/:id/cancel",
+router.patch(
+  "/:id/cancel",
   verifyRoles(ROLE.CUSTOMER),
   // #swagger.tags = ['Bookings']
   // #swagger.summary = 'Cancel a booking'
@@ -244,7 +253,8 @@ router.patch("/:id/cancel",
   bookingController.cancelBooking,
 );
 
-router.patch("/add-food-order",
+router.patch(
+  "/add-food-order",
   verifyRoles(ROLE.CUSTOMER, ROLE.CINEMA),
   // #swagger.tags = ['Bookings']
   // #swagger.summary = 'Attach a food booking to a movie booking'
@@ -252,7 +262,8 @@ router.patch("/add-food-order",
   bookingController.addFoodToBooking,
 );
 
-router.patch("/food/:id/cancel",
+router.patch(
+  "/food/:id/cancel",
   verifyRoles(ROLE.CUSTOMER),
   // #swagger.tags = ['Bookings']
   // #swagger.summary = 'Cancel a standalone food booking'
@@ -260,7 +271,8 @@ router.patch("/food/:id/cancel",
   bookingController.cancelFoodBooking,
 );
 
-router.post("/:id/create-vnpay-url",
+router.post(
+  "/:id/create-vnpay-url",
   verifyRoles(ROLE.CUSTOMER, ROLE.CINEMA),
   // #swagger.tags = ['Bookings']
   // #swagger.summary = 'Create VNPay payment URL for a booking'
@@ -297,7 +309,8 @@ router.post("/:id/create-vnpay-url",
   bookingController.createVnpayPaymentUrl,
 );
 
-router.patch("/release-seat",
+router.patch(
+  "/release-seat",
   verifyRoles(ROLE.CUSTOMER, ROLE.CINEMA),
   // #swagger.tags = ['Bookings']
   // #swagger.summary = 'Release seats for a movie booking'
@@ -327,6 +340,51 @@ router.patch("/release-seat",
      }
    }*/
   bookingController.releaseSeat,
+);
+
+router.post(
+  "/:movieBookingId/get-vietqr-info",
+  verifyRoles(ROLE.CUSTOMER, ROLE.CINEMA),
+  // #swagger.tags = ['Bookings']
+  // #swagger.summary = 'Get VietQR payment information for a booking'
+  // #swagger.security = [{ "bearerAuth": [] }]
+  /* #swagger.parameters['id'] = {
+     in: 'path',
+     description: 'Booking id (movie or food)',
+     required: true,
+     type: 'string',
+     example: '67d6f39cd8a4d18fb21461f3'
+   }*/
+  /* #swagger.requestBody = {
+     required: false,
+     content: {
+       "application/json": {
+         example: {
+           "foodItems": [
+             {"foodId": "67d6f4f6d8a4d18fb21463a2", "quantity": 2},
+             {"foodId": "67d6f4f6d8a4d18fb21463a2", "quantity": 2},
+           ],
+           "discountCode": "SUMMER20"
+         }
+       }
+     }
+   }*/
+  /* #swagger.responses[200] = {
+     description: 'VietQR payment information retrieved',
+     content: {
+       "application/json": {
+         example: {
+           "success": true,
+           "bankBin": "970422",
+           "accountNumber": "123456789",
+           "amount": 150000,
+           "description": "Booking payment for booking ID: 67d6f39cd8a4d18fb21461f3",
+           "bookingId": "67d6f39cd8a4d18fb21461f3"
+         }
+       }
+     }
+   }*/
+  bookingController.getVietQRInfo,
 );
 
 module.exports = router;

@@ -19,7 +19,7 @@ const MovieBookingSchema = new Schema(
     status: { type: String, default: STATUS.HELD },
     foodBookingId: { type: Schema.Types.ObjectId, ref: "FoodBooking" },
     payment: {
-      method: { type: String, enum: ["CASH", "ONLINE"] },
+      method: { type: String },
       paidAt: { type: Date },
       transactionId: { type: String },
     },

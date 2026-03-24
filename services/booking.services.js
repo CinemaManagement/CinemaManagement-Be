@@ -415,7 +415,7 @@ const getAllBookingHistoryService = async () => {
 };
 
 const checkInService = async (bookingCode) => {
-  const booking = await MovieBooking.find({ bookingCode });
+  const booking = await MovieBooking.findOne({ bookingCode });
   if (!booking) throw { status: 404, message: "Movie Booking not found" };
 
   if (booking.status !== STATUS.PAID) {
