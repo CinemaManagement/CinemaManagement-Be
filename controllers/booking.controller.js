@@ -412,6 +412,7 @@ const getVietQRInfo = async (req, res) => {
       success: true,
       bankBin: process.env.VIETQR_BANK_BIN,
       accountNumber: process.env.VIETQR_ACCOUNT,
+      accountName: process.env.VIETQR_ACCOUNT_NAME ?? "CINEMA MANAGEMENT",
       amount: finalAmount,
       description: `Booking payment for booking ID: ${movieBookingId}`,
       bookingId: movieBookingId,
