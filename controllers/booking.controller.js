@@ -57,13 +57,8 @@ const orderFood = async (req, res) => {
 const confirmPayment = async (req, res) => {
   try {
     const { id } = req.params;
-    const { method, transactionId, discountCode } = req.body;
-    const { finalAmount, booking } = await paymentService(
-      id,
-      method,
-      transactionId,
-      discountCode,
-    );
+    const { method, transactionId } = req.body;
+    const { finalAmount, booking } = await paymentService(id, method, transactionId);
     res
       .status(200)
       .json({ message: "Payment confirmed", booking, finalAmount });

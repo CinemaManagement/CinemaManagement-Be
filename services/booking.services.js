@@ -189,7 +189,7 @@ const foodOrderService = async (items, userId) => {
   return newFoodBooking;
 };
 
-const paymentService = async (id, method, transactionId, discountCode) => {
+const paymentService = async (id, method, transactionId) => {
   // Check if it's a MovieBooking
   let booking = await MovieBooking.findById(id);
   let isMovieBooking = true;
@@ -240,11 +240,8 @@ const paymentService = async (id, method, transactionId, discountCode) => {
   }
 
   // Apply Discount
-  if (discountCode) {
-    const discount = await Discount.findOne({
-      code: discountCode,
-      status: STATUS.ACTIVE,
-    });
+  if (booking.discountId) {
+    const discount = await Discount.findById(booking.discountId);
 
     if (!discount || discount.usedCount >= discount.usageLimit) {
       throw {
@@ -338,6 +335,7 @@ const getDiscountAmount = (discount, amount) => {
         break;
       }
   }
+  if(amount < 0) amount = 0;
   return amount;
 }
 
