@@ -7,14 +7,18 @@ const {
 } = require("../../controllers/food.controller");
 const verifyRoles = require("../../middlewares/roleMiddleware");
 const { ROLE } = require("../../constraints/role");
-const { checkRequiredFields } = require("../../middlewares/checkRequiredFields");
+const {
+  checkRequiredFields,
+} = require("../../middlewares/checkRequiredFields");
 const router = express.Router();
 
 router.get(
   "/",
-  // Public menu
+  verifyRoles(ROLE.MANAGER, ROLE.CUSTOMER, ROLE.CINEMA),
+  // Protected menu (requires login)
   // #swagger.tags = ['Foods']
   // #swagger.summary = 'Get food menu'
+  // #swagger.security = [{ "bearerAuth": [] }]
   getFoods,
 );
 
