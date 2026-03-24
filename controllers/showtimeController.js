@@ -2,10 +2,24 @@ const Showtime = require("../models/Showtime");
 const CinemaRoom = require("../models/CinemaRoom");
 const Movie = require("../models/Movie");
 const STATUS = require("../constraints/status");
+const { ROLE } = require("../constraints/role");
 
 const getAllShowtimes = async (req, res) => {
   try {
-    const showtimes = await Showtime.find()
+    const now = new Date();
+    const query = {};
+    
+    // Privileged roles see all showtimes; others (CUSTOMER) see only ACTIVE shows
+    const isPrivileged = [ROLE.MANAGER, ROLE.CINEMA, ROLE.ADMIN].includes(req.role);
+    if (!isPrivileged) {
+      query.status = STATUS.ACTIVE;
+      query.startTime = { $gt: now };
+    }
+    
+    console.log(`[getAllShowtimes] UserRole: ${req.role}, Query:`, JSON.stringify(query));
+
+
+    const showtimes = await Showtime.find(query)
       .populate("movieId")
       .populate("cinemaRoomId");
     res.status(200).json(showtimes);
@@ -18,7 +32,19 @@ const getAllShowtimes = async (req, res) => {
 const getShowtimeById = async (req, res) => {
   try {
     const { id } = req.params;
-    const showtime = await Showtime.findById(id)
+    const now = new Date();
+    const query = { _id: id };
+    
+    const isPrivileged = [ROLE.MANAGER, ROLE.CINEMA, ROLE.ADMIN].includes(req.role);
+    if (!isPrivileged) {
+      query.status = STATUS.ACTIVE;
+      query.startTime = { $gt: now };
+    }
+
+    console.log(`[getShowtimeById] UserRole: ${req.role}, Query:`, JSON.stringify(query));
+
+
+    const showtime = await Showtime.findOne(query)
       .populate("movieId")
       .populate("cinemaRoomId");
     if (!showtime) {
@@ -34,7 +60,19 @@ const getShowtimeById = async (req, res) => {
 const getShowtimeByRoomId = async (req, res) => {
   try {
     const { roomId } = req.params;
-    const showtime = await Showtime.find({ cinemaRoomId: roomId })
+    const now = new Date();
+    const query = { cinemaRoomId: roomId };
+    
+    const isPrivileged = [ROLE.MANAGER, ROLE.CINEMA, ROLE.ADMIN].includes(req.role);
+    if (!isPrivileged) {
+      query.status = STATUS.ACTIVE;
+      query.startTime = { $gt: now };
+    }
+
+    console.log(`[getShowtimeByRoomId] UserRole: ${req.role}, Query:`, JSON.stringify(query));
+
+
+    const showtime = await Showtime.find(query)
       .select("movieId startTime endTime status")
       .sort({ startTime: 1 });
     if (!showtime) {
@@ -50,7 +88,19 @@ const getShowtimeByRoomId = async (req, res) => {
 const getShowtimesByMovie = async (req, res) => {
   try {
     const { movieId } = req.params;
-    const showtimes = await Showtime.find({ movieId })
+    const now = new Date();
+    const query = { movieId };
+    
+    const isPrivileged = [ROLE.MANAGER, ROLE.CINEMA, ROLE.ADMIN].includes(req.role);
+    if (!isPrivileged) {
+      query.status = STATUS.ACTIVE;
+      query.startTime = { $gt: now };
+    }
+
+    console.log(`[getShowtimesByMovie] UserRole: ${req.role}, Query:`, JSON.stringify(query));
+
+
+    const showtimes = await Showtime.find(query)
       .populate("movieId")
       .populate("cinemaRoomId")
       .sort({ startTime: 1 });
@@ -297,7 +347,20 @@ const updateSeatStatus = async (req, res) => {
       return res.status(400).json({ message: "Invalid seat status!" });
     }
 
-    const showtime = await Showtime.findOneAndUpdate(
+    const showtime = await Showtime.findById(showTimeId);
+    if (!showtime) {
+      return res.status(404).json({ message: "Showtime not found!" });
+    }
+
+    // Block booking if showtime has started
+    const now = new Date();
+    if (showtime.startTime <= now) {
+      return res.status(400).json({
+        message: "Cannot book or change seats after the showtime has started!",
+      });
+    }
+
+    const updatedShowtime = await Showtime.findOneAndUpdate(
       { _id: showTimeId, "seats.seatCode": seatCode },
       {
         $set: {
@@ -323,7 +386,7 @@ const updateShowtimeStatus = async (req, res) => {
     const { id } = req.params;
     const { status } = req.body;
 
-    if (![STATUS.ACTIVE, STATUS.CANCELLED, STATUS.FINISHED].includes(status)) {
+    if (![STATUS.ACTIVE, STATUS.SHOWING, STATUS.CANCELLED, STATUS.FINISHED].includes(status)) {
       return res.status(400).json({ message: "Invalid showtime status!" });
     }
 
