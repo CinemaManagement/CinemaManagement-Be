@@ -278,17 +278,14 @@ const releaseSeat = async (req, res) => {
   try {
     const { movieBookingId } = req.body;
     const result = await releaseSeatService(movieBookingId);
-    if(result.success){
-      const booking = await getBookingByIdService(movieBookingId);
-      return res.status(200).json({ success: true, message: result.message, data: booking });
-    }
-    return res.status(400).json({ success: false, message: result.message });
+    const booking = await getBookingByIdService(movieBookingId);
+    return res.status(200).json({ deleted: result.deleted, message: result.message, data: booking });
   } catch (error) {
     console.error(error);
     res
       .status(error.status || 500)
       .json({
-        success: false,
+        deleted: false,
         message: error.message || "Internal server error",
       });
   }

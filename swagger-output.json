@@ -2805,15 +2805,12 @@
             "content": {
               "application/json": {
                 "example": {
-                  "success": true,
+                  "deleted": true,
                   "message": "Release old seats successfully",
                   "data": {}
                 }
               }
             }
-          },
-          "400": {
-            "description": "Bad Request"
           },
           "401": {
             "description": "Unauthorized"
