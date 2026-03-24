@@ -13,19 +13,24 @@ const CinemaRoomSchema = new Schema({
     enum: [STATUS.ACTIVE, STATUS.MAINTENANCE],
     default: STATUS.ACTIVE,
   },
-  seats: [
-    {
-      seatCode: {
-        type: String,
-        required: true,
-      },
-      type: {
-        type: String,
-        enum: Object.values(TYPES),
-        default: TYPES.NORMAL,
-      },
-    },
-  ],
+  // seats: [
+  //   {
+  //     seatCode: {
+  //       type: String,
+  //       required: true,
+  //     },
+  //     type: {
+  //       type: String,
+  //       enum: Object.values(TYPES),
+  //       default: TYPES.NORMAL,
+  //     },
+  //   },
+  // ],
+  seats: {
+    NORMAL: [String],
+    VIP: [String],
+    COUPLE: [String],
+  },
 });
 
 module.exports = mongoose.model("CinemaRoom", CinemaRoomSchema);

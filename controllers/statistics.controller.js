@@ -54,39 +54,37 @@ const getDashboardStats = async (req, res) => {
         },
       },
       { $unwind: { path: "$movie", preserveNullAndEmptyArrays: true } },
-      // {
-      //   $addFields: {
-      //     // If food is attached, totalAmount includes it. We subtract it to get net ticket revenue.
-      //     foodAmount: {
-      //       $ifNull: [{ $arrayElemAt: ["$attachedFood.totalAmount", 0] }, 0],
-      //     },
-      //     // Production share percent defaults to 0 if movie not found
-      //     sharePercent: { $ifNull: ["$movie.revenueSharePercent", 0] },
-      //   },
-      // },
-      // {
-      //   $addFields: {
-      //     netTicketRevenue: { $subtract: ["$totalAmount", "$foodAmount"] },
-      //   },
-      // },
-      // {
-      //   $group: {
-      //     _id: null,
-      //     totalTicketRevenue: { $sum: "$netTicketRevenue" },
-      //     totalTicketsSold: { $sum: { $size: "$seats" } },
-      //     totalProductionShare: {
-      //       $sum: {
-      //         $multiply: [
-      //           "$netTicketRevenue",
-      //           { $divide: ["$sharePercent", 100] },
-      //         ],
-      //       },
-      //     },
-      //   },
-      // },
+      {
+        $addFields: {
+          // If food is attached, totalAmount includes it. We subtract it to get net ticket revenue.
+          foodAmount: {
+            $ifNull: [{ $arrayElemAt: ["$attachedFood.totalAmount", 0] }, 0],
+          },
+          // Production share percent defaults to 0 if movie not found
+          sharePercent: { $ifNull: ["$movie.revenueSharePercent", 0] },
+        },
+      },
+      {
+        $addFields: {
+          netTicketRevenue: { $subtract: ["$totalAmount", "$foodAmount"] },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalTicketRevenue: { $sum: "$netTicketRevenue" },
+          totalTicketsSold: { $sum: { $size: "$seats" } },
+          totalProductionShare: {
+            $sum: {
+              $multiply: [
+                "$netTicketRevenue",
+                { $divide: ["$sharePercent", 100] },
+              ],
+            },
+          },
+        },
+      },
     ]);
-
-    // console.log(movieStats[0]);
 
     // 2. Total Food Revenue (Calculated from all paid food bookings)
     const foodStats = await FoodBooking.aggregate([

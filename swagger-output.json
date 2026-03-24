@@ -7,6 +7,10 @@
   },
   "servers": [
     {
+      "url": "https://cinemamanagement-be.onrender.com",
+      "description": "Online server"
+    },
+    {
       "url": "http://localhost:3800",
       "description": "Local server"
     }
@@ -18,6 +22,16 @@
         "responses": {
           "200": {
             "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/bookings/vnpay-return": {
+      "get": {
+        "description": "",
+        "responses": {
+          "default": {
+            "description": ""
           }
         }
       }
@@ -292,6 +306,26 @@
         }
       }
     },
+    "/api/movies/all": {
+      "get": {
+        "tags": [
+          "Movie"
+        ],
+        "summary": "Get all movies for manager",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
     "/api/movies/": {
       "get": {
         "tags": [
@@ -314,6 +348,87 @@
         ],
         "summary": "Add a new movie",
         "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "description": "New movie data",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "example": "Movie Title"
+                },
+                "duration": {
+                  "type": "number",
+                  "example": 120
+                },
+                "ageRestriction": {
+                  "type": "number",
+                  "example": 13
+                },
+                "posterUrl": {
+                  "type": "string",
+                  "example": "http://url"
+                },
+                "trailerUrl": {
+                  "type": "string",
+                  "example": "http://url"
+                },
+                "category": {
+                  "type": "array",
+                  "example": [
+                    "Action"
+                  ],
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "description": {
+                  "type": "string",
+                  "example": "Some description here"
+                },
+                "director": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "example": "Director Name"
+                      },
+                      "avatar": {
+                        "type": "string",
+                        "example": "Dir url"
+                      }
+                    }
+                  }
+                },
+                "actors": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "example": "Actor name"
+                      },
+                      "avatar": {
+                        "type": "string",
+                        "example": "Actor url"
+                      }
+                    }
+                  }
+                },
+                "showingStatus": {
+                  "type": "string",
+                  "example": "Đang chiếu"
+                }
+              }
+            }
+          }
+        ],
         "responses": {
           "201": {
             "description": "Created"
@@ -356,6 +471,24 @@
                   },
                   "revenueSharePercent": {
                     "example": "any"
+                  },
+                  "category": {
+                    "example": "any"
+                  },
+                  "description": {
+                    "example": "any"
+                  },
+                  "director": {
+                    "example": "any"
+                  },
+                  "actors": {
+                    "example": "any"
+                  },
+                  "releaseDate": {
+                    "example": "any"
+                  },
+                  "showingStatus": {
+                    "example": "any"
                   }
                 }
               }
@@ -364,13 +497,23 @@
         }
       }
     },
-    "/api/movies/all": {
+    "/api/movies/{id}": {
       "get": {
         "tags": [
           "Movie"
         ],
-        "summary": "Get all movies for manager",
+        "summary": "Get movie by id",
         "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK"
@@ -378,13 +521,14 @@
           "401": {
             "description": "Unauthorized"
           },
+          "404": {
+            "description": "Not Found"
+          },
           "500": {
             "description": "Internal Server Error"
           }
         }
-      }
-    },
-    "/api/movies/{id}": {
+      },
       "put": {
         "tags": [
           "Movie"
@@ -458,6 +602,402 @@
         ]
       }
     },
+    "/api/movies/{id}/rate": {
+      "get": {
+        "tags": [
+          "Movie"
+        ],
+        "summary": "Get current user rate for a movie",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Movie"
+        ],
+        "summary": "Rate a movie",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "score",
+            "in": "body",
+            "description": "Movie score (1-5)",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "score": {
+                  "type": "number",
+                  "example": 5
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "score": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/movie-status/{showingStatus}": {
+      "get": {
+        "tags": [
+          "Movie"
+        ],
+        "summary": "Get movies by showing status",
+        "description": "",
+        "parameters": [
+          {
+            "name": "showingStatus",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Status of the movie (NOW_SHOWING, COMING_SOON)"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/discounts/": {
+      "get": {
+        "tags": [
+          "Discounts"
+        ],
+        "summary": "Get active discounts (public)",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Discounts"
+        ],
+        "summary": "Create new discount (manager)",
+        "description": "",
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "example": "any"
+                  },
+                  "description": {
+                    "example": "any"
+                  },
+                  "type": {
+                    "example": "any"
+                  },
+                  "discountType": {
+                    "example": "any"
+                  },
+                  "value": {
+                    "example": "any"
+                  },
+                  "movieId": {
+                    "example": "any"
+                  },
+                  "showtimeId": {
+                    "example": "any"
+                  },
+                  "code": {
+                    "example": "any"
+                  },
+                  "usageLimit": {
+                    "example": "any"
+                  },
+                  "startDate": {
+                    "example": "any"
+                  },
+                  "endDate": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/discounts/{id}": {
+      "patch": {
+        "tags": [
+          "Discounts"
+        ],
+        "summary": "Update discount (manager)",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "startDate": {
+                    "example": "any"
+                  },
+                  "endDate": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/expenses/": {
+      "get": {
+        "tags": [
+          "Expenses"
+        ],
+        "description": "",
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "fromDate",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "toDate",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Expenses"
+        ],
+        "description": "",
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "example": "any"
+                  },
+                  "amount": {
+                    "example": "any"
+                  },
+                  "date": {
+                    "example": "any"
+                  },
+                  "description": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/redis-test/": {
       "get": {
         "description": "",
@@ -467,6 +1007,555 @@
           },
           "500": {
             "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/foods/": {
+      "get": {
+        "tags": [
+          "Foods"
+        ],
+        "summary": "Get food menu",
+        "description": "",
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Foods"
+        ],
+        "summary": "Create a new food/combo",
+        "description": "",
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "example": "any"
+                  },
+                  "type": {
+                    "example": "any"
+                  },
+                  "price": {
+                    "example": "any"
+                  },
+                  "description": {
+                    "example": "any"
+                  },
+                  "items": {
+                    "example": "any"
+                  },
+                  "imageUrl": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/foods/{id}": {
+      "put": {
+        "tags": [
+          "Foods"
+        ],
+        "summary": "Update food details",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "example": "any"
+                  },
+                  "items": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Foods"
+        ],
+        "summary": "Delete (soft/hard) a food item",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "hard",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/showtimes/": {
+      "get": {
+        "tags": [
+          "Showtimes"
+        ],
+        "summary": "Get all showtimes (public)",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Showtimes"
+        ],
+        "summary": "Create a new showtime (endTime auto-computed from movie duration)",
+        "description": "",
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "movieId": {
+                    "example": "any"
+                  },
+                  "startTime": {
+                    "example": "any"
+                  },
+                  "pricingRule": {
+                    "example": "any"
+                  },
+                  "cinemaRoomId": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/showtimes/movie/{movieId}": {
+      "get": {
+        "tags": [
+          "Showtimes"
+        ],
+        "summary": "Get all showtimes by movieId (public)",
+        "description": "",
+        "parameters": [
+          {
+            "name": "movieId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/showtimes/room/{roomId}": {
+      "get": {
+        "tags": [
+          "Showtimes"
+        ],
+        "summary": "Get all showtimes by roomId (public)",
+        "description": "",
+        "parameters": [
+          {
+            "name": "roomId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/api/showtimes/{id}/seats": {
+      "get": {
+        "tags": [
+          "Showtimes"
+        ],
+        "summary": "Get all seats of a showtime",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/showtimes/{showTimeId}/seats/{seatCode}": {
+      "patch": {
+        "tags": [
+          "Showtimes"
+        ],
+        "summary": "Update seat status in a showtime using seatCode",
+        "description": "",
+        "parameters": [
+          {
+            "name": "showTimeId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "seatCode",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/showtimes/{id}": {
+      "get": {
+        "tags": [
+          "Showtimes"
+        ],
+        "summary": "Get a showtime by id (public)",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Showtimes"
+        ],
+        "summary": "Delete a showtime",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "Showtimes"
+        ],
+        "summary": "Update a showtime (partial)",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "409": {
+            "description": "Conflict"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "movieId": {
+                    "example": "any"
+                  },
+                  "startTime": {
+                    "example": "any"
+                  },
+                  "pricingRule": {
+                    "example": "any"
+                  },
+                  "cinemaRoomId": {
+                    "example": "any"
+                  },
+                  "status": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -565,6 +1654,9 @@
           },
           "401": {
             "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           },
           "404": {
             "description": "Not Found"
@@ -714,6 +1806,136 @@
         }
       }
     },
+    "/api/rooms/{id}": {
+      "get": {
+        "tags": [
+          "CinemaRooms"
+        ],
+        "summary": "Get a cinema room by id",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "CinemaRooms"
+        ],
+        "summary": "Delete a cinema room",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "patch": {
+        "tags": [
+          "CinemaRooms"
+        ],
+        "summary": "Update a cinema room (partial)",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "roomName": {
+                    "example": "any"
+                  },
+                  "status": {
+                    "example": "any"
+                  },
+                  "seats": {
+                    "example": "any"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/rooms/{id}/seats": {
       "patch": {
         "tags": [
@@ -824,12 +2046,12 @@
         }
       }
     },
-    "/api/showtimes/": {
+    "/api/cart/": {
       "get": {
         "tags": [
-          "Showtimes"
+          "Cart"
         ],
-        "summary": "Get all showtimes",
+        "summary": "Get current user cart",
         "description": "",
         "responses": {
           "200": {
@@ -837,6 +2059,9 @@
           },
           "401": {
             "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           },
           "500": {
             "description": "Internal Server Error"
@@ -847,14 +2072,19 @@
             "bearerAuth": []
           }
         ]
-      },
+      }
+    },
+    "/api/cart/add": {
       "post": {
         "tags": [
-          "Showtimes"
+          "Cart"
         ],
-        "summary": "Create a new showtime",
+        "summary": "Add item to cart",
         "description": "",
         "responses": {
+          "200": {
+            "description": "OK"
+          },
           "201": {
             "description": "Created"
           },
@@ -864,6 +2094,9 @@
           "401": {
             "description": "Unauthorized"
           },
+          "403": {
+            "description": "Forbidden"
+          },
           "404": {
             "description": "Not Found"
           },
@@ -877,43 +2110,73 @@
           }
         ],
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "movieId": {
-                    "example": "any"
-                  },
-                  "startTime": {
-                    "example": "any"
-                  },
-                  "endTime": {
-                    "example": "any"
-                  },
-                  "pricingRule": {
-                    "example": "any"
-                  },
-                  "cinemaRoomId": {
-                    "example": "any"
-                  }
-                }
+              "example": {
+                "foodId": "67d6f4f6d8a4d18fb21463a2",
+                "quantity": 2
               }
             }
           }
         }
       }
     },
-    "/api/showtimes/{id}/seats": {
-      "get": {
+    "/api/cart/update": {
+      "put": {
         "tags": [
-          "Showtimes"
+          "Cart"
         ],
-        "summary": "Get all seats of a showtime",
+        "summary": "Update item quantity in cart",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "example": {
+                "foodId": "67d6f4f6d8a4d18fb21463a2",
+                "quantity": 5
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/cart/remove/{foodId}": {
+      "delete": {
+        "tags": [
+          "Cart"
+        ],
+        "summary": "Remove item from cart",
         "description": "",
         "parameters": [
           {
-            "name": "id",
+            "name": "foodId",
             "in": "path",
             "required": true,
             "schema": {
@@ -927,6 +2190,9 @@
           },
           "401": {
             "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
           },
           "404": {
             "description": "Not Found"
@@ -942,43 +2208,189 @@
         ]
       }
     },
-    "/api/showtimes/{showTimeId}/seats/{seatId}": {
-      "patch": {
+    "/api/cart/clear": {
+      "delete": {
         "tags": [
-          "Showtimes"
+          "Cart"
         ],
-        "summary": "Update seat status in a showtime",
+        "summary": "Clear all items from cart",
         "description": "",
-        "parameters": [
-          {
-            "name": "showTimeId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "seatId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
         "responses": {
           "200": {
             "description": "OK"
           },
-          "400": {
-            "description": "Bad Request"
-          },
           "401": {
             "description": "Unauthorized"
           },
-          "404": {
-            "description": "Not Found"
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/bookings/movie": {
+      "post": {
+        "tags": [
+          "Bookings"
+        ],
+        "summary": "Reserve movie tickets",
+        "description": "",
+        "responses": {
+          "201": {
+            "description": "Booking created successfully",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "data": {
+                    "_id": "67d6f39cd8a4d18fb21461f3",
+                    "showtimeId": "67d6f295d8a4d18fb2145f2a",
+                    "userId": "67d6ef74d8a4d18fb2144f10",
+                    "seats": [
+                      "A1",
+                      "A2"
+                    ],
+                    "status": "PENDING"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "example": {
+                "showtimeId": "67d6f295d8a4d18fb2145f2a",
+                "seats": [
+                  "A1",
+                  "A2"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/bookings/food": {
+      "post": {
+        "tags": [
+          "Bookings"
+        ],
+        "summary": "Order food for booking",
+        "description": "",
+        "responses": {
+          "201": {
+            "description": "Food booking created successfully",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "data": {
+                    "_id": "67d6f59fd8a4d18fb2146470",
+                    "userId": "67d6ef74d8a4d18fb2144f10",
+                    "items": [
+                      {
+                        "foodId": "67d6f4f6d8a4d18fb21463a2",
+                        "quantity": 2,
+                        "price": 5.5
+                      },
+                      {
+                        "foodId": "67d6f506d8a4d18fb21463ad",
+                        "quantity": 1,
+                        "price": 4
+                      }
+                    ],
+                    "totalAmount": 15
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "example": {
+                "items": [
+                  {
+                    "foodId": "67d6f4f6d8a4d18fb21463a2",
+                    "quantity": 2
+                  },
+                  {
+                    "foodId": "67d6f506d8a4d18fb21463ad",
+                    "quantity": 1
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/bookings/{id}/pay": {
+      "post": {
+        "tags": [
+          "Bookings"
+        ],
+        "summary": "Confirm booking payment",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Movie booking id",
+            "example": "67d6f39cd8a4d18fb21461f3"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Payment confirmed successfully",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Payment confirmed",
+                  "booking": {
+                    "_id": "67d6f39cd8a4d18fb21461f3",
+                    "status": "PAID"
+                  },
+                  "finalAmount": 12.5
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
           },
           "500": {
             "description": "Internal Server Error"
@@ -990,27 +2402,237 @@
           }
         ],
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "status": {
-                    "example": "any"
-                  }
-                }
+              "example": {
+                "method": "VNPAY",
+                "transactionId": "TRX_20260317_0001"
               }
             }
           }
         }
       }
     },
-    "/api/showtimes/{id}": {
+    "/api/bookings/history": {
+      "get": {
+        "tags": [
+          "Bookings"
+        ],
+        "summary": "Get booking history",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "Get booking history successfully",
+            "content": {
+              "application/json": {
+                "example": {
+                  "movieBookings": [
+                    {
+                      "_id": "67d6f39cd8a4d18fb21461f3",
+                      "showtimeId": "67d6f295d8a4d18fb2145f2a",
+                      "seats": [
+                        "A1",
+                        "A2"
+                      ],
+                      "status": "PAID"
+                    }
+                  ],
+                  "foodBookings": [
+                    {
+                      "_id": "67d6f59fd8a4d18fb2146470",
+                      "items": [
+                        {
+                          "foodId": "67d6f4f6d8a4d18fb21463a2",
+                          "quantity": 2
+                        }
+                      ],
+                      "totalAmount": 15
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/bookings/all-history": {
+      "get": {
+        "tags": [
+          "Bookings"
+        ],
+        "summary": "Get all booking history in the system",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/bookings/{id}/checkout": {
+      "post": {
+        "tags": [
+          "Bookings"
+        ],
+        "summary": "Checkout: create food booking (optional) and return VNPay payment URL",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Movie booking id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "example": {
+                "foodItems": [
+                  {
+                    "foodId": "67d6f4f6d8a4d18fb21463a2",
+                    "quantity": 2
+                  }
+                ],
+                "discountCode": "SUMMER20"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/bookings/{id}": {
+      "get": {
+        "tags": [
+          "Bookings"
+        ],
+        "summary": "Get booking detail by ID",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Booking ID (movie or food)",
+            "example": "67d6f39cd8a4d18fb21461f3"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/bookings/{id}/checkin": {
       "patch": {
         "tags": [
-          "Showtimes"
+          "Bookings"
         ],
-        "summary": "Update showtime status",
+        "summary": "Check in a booking",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Movie booking id",
+            "example": "67d6f39cd8a4d18fb21461f3"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Check in booking successfully",
+            "content": {
+              "application/json": {
+                "example": {
+                  "message": "Checked in successfully",
+                  "booking": {
+                    "_id": "67d6f39cd8a4d18fb21461f3",
+                    "status": "CHECKED_IN"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/bookings/{id}/cancel": {
+      "patch": {
+        "tags": [
+          "Bookings"
+        ],
+        "summary": "Cancel a booking",
         "description": "",
         "parameters": [
           {
@@ -1026,17 +2648,33 @@
           "200": {
             "description": "OK"
           },
-          "400": {
-            "description": "Bad Request"
-          },
           "401": {
             "description": "Unauthorized"
           },
-          "404": {
-            "description": "Not Found"
-          },
           "500": {
             "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/bookings/add-food-order": {
+      "patch": {
+        "tags": [
+          "Bookings"
+        ],
+        "summary": "Attach a food booking to a movie booking",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
           }
         },
         "security": [
@@ -1050,7 +2688,10 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "status": {
+                  "movieBookingId": {
+                    "example": "any"
+                  },
+                  "foodBookingId": {
                     "example": "any"
                   }
                 }
@@ -1058,6 +2699,122 @@
             }
           }
         }
+      }
+    },
+    "/api/bookings/food/{id}/cancel": {
+      "patch": {
+        "tags": [
+          "Bookings"
+        ],
+        "summary": "Cancel a standalone food booking",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/api/bookings/{id}/create-vnpay-url": {
+      "post": {
+        "tags": [
+          "Bookings"
+        ],
+        "summary": "Create VNPay payment URL for a booking",
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Booking id (movie or food)",
+            "example": "67d6f39cd8a4d18fb21461f3"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "VNPay payment URL created",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "paymentUrl": "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html?...",
+                  "finalAmount": 150000
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "example": {
+                "discountCode": "SUMMER20"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/statistics/dashboard": {
+      "get": {
+        "tags": [
+          "Statistics"
+        ],
+        "summary": "Get dashboard statistics",
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
       }
     }
   },

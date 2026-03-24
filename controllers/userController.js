@@ -42,14 +42,41 @@ const addUser = async (req, res) => {
 const deleteUser = async (req, res) => {
   try {
     const id = req.params?.id;
-    const user = await User.findById(id);
-    if (!user) {
+    const requesterId = req.userId;
+    const requesterRole = req.role;
+
+    const userToDelete = await User.findById(id);
+    if (!userToDelete) {
       return res.status(404).json({ message: `Not found user with id ${id}!` });
     }
+
+    // Role-based deletion logic
+    if (requesterRole === ROLE.CUSTOMER) {
+      // Customer can only delete their own account
+      if (id !== requesterId) {
+        return res
+          .status(403)
+          .json({ message: "You can only delete your own account!" });
+      }
+    } else if (requesterRole === ROLE.ADMIN || requesterRole === ROLE.MANAGER) {
+      // Admin/Manager cannot delete themselves
+      if (id === requesterId) {
+        return res.status(403).json({
+          message: "You cannot delete your own administrative account!",
+        });
+      }
+      // Admin/Manager can only delete Customers
+      if (userToDelete.role !== ROLE.CUSTOMER) {
+        return res
+          .status(403)
+          .json({ message: "You can only delete customer accounts!" });
+      }
+    }
+
     await User.deleteOne({ _id: id });
     res
       .status(200)
-      .json({ message: `Delete user ${user.email} successfully!` });
+      .json({ message: `Delete user ${userToDelete.email} successfully!` });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Unexpected error occured!" });

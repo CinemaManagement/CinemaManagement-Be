@@ -1,7 +1,10 @@
 const express = require("express");
 const {
   getAllCinemaRooms,
+  getCinemaRoomById,
   addCinemaRoom,
+  updateCinemaRoom,
+  deleteCinemaRoom,
   updateCinemaRoomStatus,
 } = require("../../controllers/cinemaRoomController");
 const verifyRoles = require("../../middlewares/roleMiddleware");
@@ -18,6 +21,30 @@ router.route("/").get(
   // #swagger.security = [{ "bearerAuth": [] }]
   getAllCinemaRooms,
 );
+
+router
+  .route("/:id")
+  .get(
+    verifyRoles(ROLE.MANAGER, ROLE.CINEMA),
+    // #swagger.tags = ['CinemaRooms']
+    // #swagger.summary = 'Get a cinema room by id'
+    // #swagger.security = [{ "bearerAuth": [] }]
+    getCinemaRoomById
+  )
+  .patch(
+    verifyRoles(ROLE.MANAGER),
+    // #swagger.tags = ['CinemaRooms']
+    // #swagger.summary = 'Update a cinema room (partial)'
+    // #swagger.security = [{ "bearerAuth": [] }]
+    updateCinemaRoom
+  )
+  .delete(
+    verifyRoles(ROLE.MANAGER),
+    // #swagger.tags = ['CinemaRooms']
+    // #swagger.summary = 'Delete a cinema room'
+    // #swagger.security = [{ "bearerAuth": [] }]
+    deleteCinemaRoom
+  );
 
 router.route("/").post(
   verifyRoles(ROLE.MANAGER),
