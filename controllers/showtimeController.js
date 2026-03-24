@@ -73,6 +73,15 @@ const addShowtime = async (req, res) => {
 
     // Compute endTime from startTime + duration (minutes)
     const startDate = new Date(startTime);
+    const now = new Date();
+    const oneHourFromNow = new Date(now.getTime() + 60 * 60 * 1000);
+
+    if (startDate < oneHourFromNow) {
+      return res.status(400).json({
+        message: "Start time must be at least 1 hour from now!",
+      });
+    }
+
     const endDate = new Date(startDate.getTime() + movie.duration * 60 * 1000);
 
     // Fetch CinemaRoom to get seats
@@ -169,6 +178,16 @@ const updateShowtime = async (req, res) => {
     let currentMovieId = movieId || showtime.movieId;
     let currentStartTime = startTime ? new Date(startTime) : showtime.startTime;
     let currentCinemaRoomId = cinemaRoomId || showtime.cinemaRoomId;
+
+    if (startTime) {
+      const now = new Date();
+      const oneHourFromNow = new Date(now.getTime() + 60 * 60 * 1000);
+      if (new Date(startTime) < oneHourFromNow) {
+        return res.status(400).json({
+          message: "New start time must be at least 1 hour from now!",
+        });
+      }
+    }
 
     if (movieId || startTime || cinemaRoomId) {
       shouldCheckOverlap = true;
