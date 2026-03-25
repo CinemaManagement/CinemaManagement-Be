@@ -116,7 +116,7 @@ const getDashboardStats = async (req, res) => {
     // 5. Recent Transactions
     const recentTransactions = await MovieBooking.find()
       .sort({ createdAt: -1 })
-      .limit(10)
+      // .limit(10)
       .populate("userId")
       .populate({
         path: "showtimeId",
