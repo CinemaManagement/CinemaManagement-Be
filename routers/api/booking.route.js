@@ -130,7 +130,7 @@ router.post(
 
 router.get(
   "/history",
-  verifyRoles(ROLE.CUSTOMER, ROLE.CINEMA),
+  verifyRoles(ROLE.CUSTOMER, ROLE.CINEMA,ROLE.MANAGER),
   // #swagger.tags = ['Bookings']
   // #swagger.summary = 'Get booking history'
   // #swagger.security = [{ "bearerAuth": [] }]
@@ -215,17 +215,17 @@ router.get(
 );
 
 router.patch(
-  "/:id/checkin",
+  "/:bookingCode/checkin",
   verifyRoles(ROLE.CINEMA),
   // #swagger.tags = ['Bookings']
   // #swagger.summary = 'Check in a booking'
   // #swagger.security = [{ "bearerAuth": [] }]
-  /* #swagger.parameters['id'] = {
+  /* #swagger.parameters['bookingCode'] = {
      in: 'path',
-     description: 'Movie booking id',
+     description: 'Movie booking code',
      required: true,
      type: 'string',
-     example: '67d6f39cd8a4d18fb21461f3'
+     example: 'ABCDE'
    }*/
   /* #swagger.responses[200] = {
      description: 'Check in booking successfully',

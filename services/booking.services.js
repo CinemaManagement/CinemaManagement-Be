@@ -415,10 +415,10 @@ const getAllBookingHistoryService = async () => {
 };
 
 const checkInService = async (bookingCode) => {
-  const booking = await MovieBooking.find({ bookingCode });
+  const booking = await MovieBooking.findOne({ bookingCode });
   if (!booking) throw { status: 404, message: "Movie Booking not found" };
 
-  if (booking.status === STATUS.PAID) {
+  if (booking.status !== STATUS.PAID) {
     throw { status: 400, message: "Booking must be PAID to check in" };
   }
 
@@ -710,7 +710,13 @@ const vnpayReturnService = async (vnpayQuery) => {
 const getBookingByIdService = async (id) => {
   // Try MovieBooking first
   let booking = await MovieBooking.findById(id)
-    .populate("showtimeId")
+    .populate({
+      path: "showtimeId",
+      populate: [
+        { path: "movieId" },
+        { path: "cinemaRoomId" }
+      ]
+    })
     .populate("foodBookingId")
     .lean();
 
